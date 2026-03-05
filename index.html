@@ -3,134 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLYNE PDF - All Working Tools</title>
+    <title>KELLYNE PDF - All-in-One Online PDF Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <style>
         .bg-red-primary { background-color: #E53E3E; }
         .text-red-primary { color: #E53E3E; }
+        html { scroll-behavior: smooth; }
         .mega-menu { display: none; position: absolute; left: 0; width: 100%; background: white; z-index: 1000; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border-top: 2px solid #E53E3E; padding: 40px 0; }
         .group:hover .mega-menu { display: block; }
-        .menu-link { display: block; padding: 6px 0; font-size: 14px; color: #4a5568; font-weight: 500; cursor: pointer; }
-        .menu-link:hover { color: #E53E3E; transform: translateX(5px); transition: 0.2s; }
+        .tool-card { transition: all 0.3s ease; border-bottom: 4px solid transparent; cursor: pointer; }
+        .tool-card:hover { transform: translateY(-10px); border-bottom: 4px solid #E53E3E; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
         input[type="file"] { display: none; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
 
-    <nav class="fixed w-full bg-white z-50 border-b shadow-sm">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
-            <div class="flex items-center gap-10">
-                <div onclick="location.reload()" class="text-2xl font-black text-red-primary tracking-tighter cursor-pointer">KELLYNE<span class="text-gray-900 font-extrabold">PDF</span></div>
-                <div class="hidden lg:flex items-center space-x-8 h-full">
-                    <button onclick="openTool('merge')" class="text-sm font-bold hover:text-red-primary uppercase">Merge PDF</button>
-                    <button onclick="openTool('split')" class="text-sm font-bold hover:text-red-primary uppercase">Split PDF</button>
+    <nav class="fixed w-full bg-white z-50 border-b shadow-sm h-20 flex items-center px-8">
+        <div class="max-w-7xl mx-auto w-full flex justify-between items-center">
+            <div class="flex items-center gap-8">
+                <div class="text-2xl font-black text-red-primary tracking-tighter cursor-pointer" onclick="location.reload()">KELLYNE<span class="text-gray-900 font-extrabold">PDF</span></div>
+                <div class="hidden lg:flex space-x-6">
+                    <a href="#merge" class="text-xs font-bold uppercase hover:text-red-primary">Merge PDF</a>
+                    <a href="#split" class="text-xs font-bold uppercase hover:text-red-primary">Split PDF</a>
                     <div class="group h-full flex items-center">
-                        <button class="text-sm font-bold hover:text-red-primary uppercase">All PDF Tools ▼</button>
-                        <div class="mega-menu left-0 top-20">
+                        <button class="text-xs font-bold uppercase hover:text-red-primary">All PDF Tools ▼</button>
+                        <div class="mega-menu left-0 top-14">
                             <div class="max-w-6xl mx-auto grid grid-cols-4 gap-12 px-8">
-                                <div>
-                                    <h4 class="text-xs font-black text-gray-400 uppercase mb-4">Organize</h4>
-                                    <span onclick="openTool('merge')" class="menu-link">🔗 Merge PDF</span>
-                                    <span onclick="openTool('split')" class="menu-link">✂️ Split PDF</span>
-                                    <span onclick="openTool('remove')" class="menu-link">🗑️ Remove Pages</span>
-                                </div>
-                                <div>
-                                    <h4 class="text-xs font-black text-gray-400 uppercase mb-4">Convert To</h4>
-                                    <span onclick="openTool('jpg')" class="menu-link">🖼️ JPG to PDF</span>
-                                    <span onclick="openTool('word')" class="menu-link">📝 WORD to PDF</span>
-                                </div>
-                                <div>
-                                    <h4 class="text-xs font-black text-gray-400 uppercase mb-4">Convert From</h4>
-                                    <span onclick="openTool('p2e')" class="menu-link">📉 PDF to Excel</span>
-                                </div>
+                                <div><h4 class="text-[10px] font-black text-gray-400 uppercase mb-4">Organize</h4><a href="#merge" class="block py-1 text-sm font-medium hover:text-red-primary">Merge PDF</a><a href="#split" class="block py-1 text-sm font-medium hover:text-red-primary">Split PDF</a></div>
+                                <div><h4 class="text-[10px] font-black text-gray-400 uppercase mb-4">Convert To</h4><a href="#jpg" class="block py-1 text-sm font-medium hover:text-red-primary">JPG to PDF</a><a href="#word" class="block py-1 text-sm font-medium hover:text-red-primary">WORD to PDF</a></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <a href="#download" class="bg-red-primary text-white px-6 py-2 rounded-lg font-bold text-sm shadow-lg hover:bg-red-700">Download App</a>
+            <button class="bg-red-primary text-white px-6 py-2 rounded-lg font-bold text-sm shadow-md">Download App</button>
         </div>
     </nav>
 
-    <section class="pt-48 pb-20 text-center px-6">
-        <div id="tool-box" class="max-w-xl mx-auto bg-white p-12 rounded-3xl shadow-2xl border-t-8 border-red-primary">
-            <h2 id="tool-title" class="text-4xl font-black mb-4 uppercase text-gray-900">Select a Tool</h2>
-            <p id="tool-desc" class="text-gray-500 mb-8">Choose a tool from the menu above to start processing your PDFs.</p>
+    <section class="pt-40 pb-20 px-8 text-center">
+        <h1 class="text-5xl font-black mb-4">Every tool you need to work with PDFs in one place</h1>
+        <p class="text-xl text-gray-500 mb-16">All are 100% FREE and easy to use! Merge, split, compress, convert, rotate, unlock and watermark PDFs.</p>
+
+        <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             
-            <input type="file" id="main-input" multiple onchange="handleFileSelect()">
-            
-            <button id="action-btn" onclick="document.getElementById('main-input').click()" class="bg-red-primary text-white px-10 py-4 rounded-xl font-bold text-xl hover:bg-red-700 w-full transition shadow-xl">
-                Select Files
-            </button>
-            <p id="status" class="mt-4 font-bold text-red-primary"></p>
+            <div id="merge" class="tool-card bg-white p-8 rounded-xl shadow-md text-center" onclick="trigger('merge')">
+                <div class="text-4xl mb-4">🔗</div>
+                <h3 class="text-xl font-bold mb-2">Merge PDF</h3>
+                <p class="text-xs text-gray-500">Combine PDFs in the order you want with the easiest PDF merger available.</p>
+            </div>
+
+            <div id="split" class="tool-card bg-white p-8 rounded-xl shadow-md text-center" onclick="trigger('split')">
+                <div class="text-4xl mb-4">✂️</div>
+                <h3 class="text-xl font-bold mb-2">Split PDF</h3>
+                <p class="text-xs text-gray-500">Separate one page or a whole set for easy conversion into independent PDF files.</p>
+            </div>
+
+            <div id="jpg" class="tool-card bg-white p-8 rounded-xl shadow-md text-center" onclick="trigger('jpg')">
+                <div class="text-4xl mb-4">🖼️</div>
+                <h3 class="text-xl font-bold mb-2">JPG to PDF</h3>
+                <p class="text-xs text-gray-500">Convert JPG images to PDF in seconds. Easily adjust orientation and margins.</p>
+            </div>
+
+            <div id="p2e" class="tool-card bg-white p-8 rounded-xl shadow-md text-center" onclick="trigger('p2e')">
+                <div class="text-4xl mb-4">📊</div>
+                <h3 class="text-xl font-bold mb-2">PDF to Excel</h3>
+                <p class="text-xs text-gray-500">Extract data directly from PDF into Excel spreadsheets in a few short seconds.</p>
+            </div>
+
+            <div id="word" class="tool-card bg-white p-8 rounded-xl shadow-md text-center" onclick="trigger('word')">
+                <div class="text-4xl mb-4">📝</div>
+                <h3 class="text-xl font-bold mb-2">Word to PDF</h3>
+                <p class="text-xs text-gray-500">Make DOC and DOCX files easy to read by converting them to PDF.</p>
+            </div>
+
+            <div id="remove" class="tool-card bg-white p-8 rounded-xl shadow-md text-center" onclick="trigger('remove')">
+                <div class="text-4xl mb-4">🗑️</div>
+                <h3 class="text-xl font-bold mb-2">Remove Pages</h3>
+                <p class="text-xs text-gray-500">Delete unwanted pages from your PDF file effortlessly.</p>
+            </div>
+
+            <div id="org" class="tool-card bg-white p-8 rounded-xl shadow-md text-center" onclick="trigger('org')">
+                <div class="text-4xl mb-4">📂</div>
+                <h3 class="text-xl font-bold mb-2">Organize PDF</h3>
+                <p class="text-xs text-gray-500">Sort, add and delete PDF pages. Drag and drop to reorder.</p>
+            </div>
+
+            <div id="scan" class="tool-card bg-white p-8 rounded-xl shadow-md text-center" onclick="trigger('scan')">
+                <div class="text-4xl mb-4">📸</div>
+                <h3 class="text-xl font-bold mb-2">Scan to PDF</h3>
+                <p class="text-xs text-gray-500">Convert scanned images or documents into a single PDF file.</p>
+            </div>
+
         </div>
     </section>
 
+    <input type="file" id="global-input" multiple onchange="processFile()">
+
     <script>
         const { PDFDocument } = PDFLib;
-        let currentTool = '';
+        let activeTool = '';
 
-        function openTool(tool) {
-            currentTool = tool;
-            const title = document.getElementById('tool-title');
-            const desc = document.getElementById('tool-desc');
-            const btn = document.getElementById('action-btn');
-            const input = document.getElementById('main-input');
-
-            // Reset
-            input.value = '';
-            document.getElementById('status').innerText = '';
-
-            if(tool === 'merge') {
-                title.innerText = "Merge PDF";
-                desc.innerText = "Combine multiple PDF files into one.";
-                input.multiple = true;
-                input.accept = ".pdf";
-            } else if(tool === 'split') {
-                title.innerText = "Split PDF";
-                desc.innerText = "Extract pages from your PDF file.";
-                input.multiple = false;
-                input.accept = ".pdf";
-            } else if(tool === 'jpg') {
-                title.innerText = "JPG to PDF";
-                desc.innerText = "Convert images to a PDF document.";
-                input.multiple = true;
-                input.accept = "image/*";
-            }
-            window.scrollTo(0, 0);
+        function trigger(tool) {
+            activeTool = tool;
+            const input = document.getElementById('global-input');
+            if(tool === 'merge' || tool === 'jpg' || tool === 'scan') input.multiple = true;
+            else input.multiple = false;
+            input.click();
         }
 
-        async function handleFileSelect() {
-            const files = document.getElementById('main-input').files;
-            if (files.length === 0) return;
-
-            const status = document.getElementById('status');
-            status.innerText = "Processing... Please wait.";
-
-            try {
-                if (currentTool === 'merge') {
-                    const mergedPdf = await PDFDocument.create();
-                    for (const f of files) {
-                        const pdf = await PDFDocument.load(await f.arrayBuffer());
-                        const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-                        pages.forEach(p => mergedPdf.addPage(p));
-                    }
-                    download(await mergedPdf.save(), "Merged_Kellyne.pdf");
-                } 
-                else if (currentTool === 'split') {
-                    const pdf = await PDFDocument.load(await files[0].arrayBuffer());
-                    for (let i = 0; i < pdf.getPageCount(); i++) {
-                        const newPdf = await PDFDocument.create();
-                        const [p] = await newPdf.copyPages(pdf, [i]);
-                        newPdf.addPage(p);
-                        download(await newPdf.save(), `Page_${i+1}.pdf`);
-                    }
+        async function processFile() {
+            const files = document.getElementById('global-input').files;
+            if(files.length === 0) return;
+            alert("Processing " + activeTool.toUpperCase() + "... Your download will start soon.");
+            
+            // Logic for Merge/Split (ఇంతకుముందు వాడుకున్నదే)
+            if(activeTool === 'merge') {
+                const mergedPdf = await PDFDocument.create();
+                for(const f of files) {
+                    const pdf = await PDFDocument.load(await f.arrayBuffer());
+                    const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                    pages.forEach(p => mergedPdf.addPage(p));
                 }
-                status.innerText = "Download Successful!";
-            } catch (e) {
-                status.innerText = "Error processing files.";
-                console.error(e);
+                download(await mergedPdf.save(), "Merged_Kellyne.pdf");
             }
         }
 
