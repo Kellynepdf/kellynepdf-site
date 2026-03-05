@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLYNE PDF - Edit, Merge & Split PDF</title>
+    <title>KELLYNE PDF - All-in-One Professional PDF Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <style>
         .bg-red-primary { background-color: #E53E3E; }
         .text-red-primary { color: #E53E3E; }
         html { scroll-behavior: smooth; }
+        
         .mega-menu { display: none; position: absolute; left: 0; width: 100%; background: white; z-index: 1000; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2); border-top: 2px solid #E53E3E; padding: 40px 0; border-radius: 0 0 20px 20px; }
         .group:hover .mega-menu { display: block; }
+        .menu-column h4 { font-size: 11px; font-weight: 900; color: #718096; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid #edf2f7; padding-bottom: 8px; }
         .menu-link { display: block; padding: 5px 0; font-size: 13px; color: #4a5568; font-weight: 500; transition: 0.2s; cursor: pointer; }
         .menu-link:hover { color: #E53E3E; transform: translateX(5px); }
+        
         #tool-box { transition: all 0.3s ease; border: 4px dashed transparent; }
         #tool-box.drag-over { border-color: #E53E3E; background-color: #fff5f5; transform: scale(1.02); }
         input[type="file"] { display: none; }
@@ -21,30 +24,66 @@
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
 
-    <nav class="fixed w-full bg-white z-50 border-b shadow-sm h-16 flex items-center px-6">
-        <div class="max-w-7xl mx-auto w-full flex justify-between items-center">
+    <nav class="fixed w-full bg-white z-50 border-b shadow-sm h-16 flex items-center">
+        <div class="max-w-7xl mx-auto px-6 w-full flex justify-between items-center">
             <div class="flex items-center gap-8 h-16">
-                <div onclick="location.reload()" class="text-2xl font-black text-gray-900 cursor-pointer">
+                <div onclick="location.reload()" class="text-2xl font-black text-gray-900 flex items-center gap-1 cursor-pointer">
                     <span class="text-red-primary">❤</span> KELLYNE PDF
                 </div>
+                
                 <div class="hidden lg:flex items-center space-x-6 h-full font-bold text-[11px] uppercase">
                     <button onclick="triggerTool('Merge')" class="hover:text-red-primary">Merge PDF</button>
                     <button onclick="triggerTool('Split')" class="hover:text-red-primary">Split PDF</button>
                     <button onclick="triggerTool('Compress')" class="hover:text-red-primary">Compress PDF</button>
                     <button onclick="triggerTool('Edit')" class="text-red-primary">Edit PDF</button>
+                    
                     <div class="group h-full flex items-center">
-                        <button class="hover:text-red-primary">All Tools ▼</button>
+                        <button class="hover:text-red-primary">ALL PDF TOOLS ▼</button>
                         <div class="mega-menu left-0 top-16">
                             <div class="max-w-7xl mx-auto grid grid-cols-6 gap-6 px-10 text-left">
-                                <div><h4 class="text-[10px] text-gray-400 mb-4 uppercase">Organize</h4><span onclick="triggerTool('Merge')" class="menu-link">Merge PDF</span><span onclick="triggerTool('Split')" class="menu-link">Split PDF</span></div>
-                                <div><h4 class="text-[10px] text-gray-400 mb-4 uppercase">Edit</h4><span onclick="triggerTool('Edit')" class="menu-link font-bold text-red-primary">Edit PDF</span><span onclick="triggerTool('Watermark')" class="menu-link">Watermark</span></div>
-                                <div><h4 class="text-[10px] text-gray-400 mb-4 uppercase">Convert</h4><span onclick="triggerTool('JPG_to_PDF')" class="menu-link">JPG to PDF</span><span onclick="triggerTool('Word_to_PDF')" class="menu-link">Word to PDF</span></div>
+                                <div class="menu-column">
+                                    <h4>Organize PDF</h4>
+                                    <span onclick="triggerTool('Merge')" class="menu-link">Merge PDF</span>
+                                    <span onclick="triggerTool('Split')" class="menu-link">Split PDF</span>
+                                    <span onclick="triggerTool('Remove_pages')" class="menu-link">Remove pages</span>
+                                    <span onclick="triggerTool('Extract_pages')" class="menu-link">Extract pages</span>
+                                </div>
+                                <div class="menu-column">
+                                    <h4>Optimize PDF</h4>
+                                    <span onclick="triggerTool('Compress')" class="menu-link">Compress PDF</span>
+                                    <span onclick="triggerTool('Repair')" class="menu-link">Repair PDF</span>
+                                    <span onclick="triggerTool('OCR')" class="menu-link">OCR PDF</span>
+                                </div>
+                                <div class="menu-column">
+                                    <h4>Convert to PDF</h4>
+                                    <span onclick="triggerTool('JPG_to_PDF')" class="menu-link">JPG to PDF</span>
+                                    <span onclick="triggerTool('Word_to_PDF')" class="menu-link">WORD to PDF</span>
+                                    <span onclick="triggerTool('Excel_to_PDF')" class="menu-link">EXCEL to PDF</span>
+                                </div>
+                                <div class="menu-column">
+                                    <h4>Convert from PDF</h4>
+                                    <span onclick="triggerTool('PDF_to_JPG')" class="menu-link">PDF to JPG</span>
+                                    <span onclick="triggerTool('PDF_to_Word')" class="menu-link">PDF to WORD</span>
+                                    <span onclick="triggerTool('PDF_to_Excel')" class="menu-link">PDF to EXCEL</span>
+                                </div>
+                                <div class="menu-column">
+                                    <h4>Edit PDF</h4>
+                                    <span onclick="triggerTool('Edit')" class="menu-link font-bold text-red-primary">Edit PDF</span>
+                                    <span onclick="triggerTool('Rotate')" class="menu-link">Rotate PDF</span>
+                                    <span onclick="triggerTool('Watermark')" class="menu-link">Watermark</span>
+                                </div>
+                                <div class="menu-column">
+                                    <h4>Security</h4>
+                                    <span onclick="triggerTool('Unlock')" class="menu-link">Unlock PDF</span>
+                                    <span onclick="triggerTool('Protect')" class="menu-link">Protect PDF</span>
+                                    <span onclick="triggerTool('Sign')" class="menu-link">Sign PDF</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <a href="#download" class="bg-red-primary text-white px-5 py-2 rounded-lg font-bold text-xs">Download App</a>
+            <a href="#download" class="bg-red-primary text-white px-5 py-2 rounded-lg font-bold text-xs shadow-md">Download App</a>
         </div>
     </nav>
 
@@ -53,89 +92,92 @@
              ondragover="e => {e.preventDefault(); e.currentTarget.classList.add('drag-over')}"
              ondragleave="e => {e.preventDefault(); e.currentTarget.classList.remove('drag-over')}"
              ondrop="handleDrop(event)">
-            <h2 id="tool-title" class="text-4xl font-black mb-4 uppercase">Edit PDF</h2>
-            <p id="tool-desc" class="text-gray-500 mb-10">Adding Text & Highlights with Kellyne Technology. Drag & Drop here.</p>
+            <h2 id="tool-title" class="text-4xl font-black mb-4 uppercase">Kellyne PDF</h2>
+            <p id="tool-desc" class="text-gray-500 mb-10">Select a tool from the menu or Drag & Drop files here.</p>
             
-            <input type="file" id="global-input" multiple onchange="handleProcess(this.files)">
-            <button onclick="document.getElementById('global-input').click()" class="bg-red-primary text-white px-10 py-5 rounded-2xl font-black text-xl w-full shadow-2xl transition transform hover:scale-105">
-                Select PDF File
+            <input type="file" id="main-file-input" multiple onchange="processTask(this.files)">
+            <button onclick="document.getElementById('main-file-input').click()" class="bg-red-primary text-white px-10 py-5 rounded-2xl font-black text-xl hover:bg-red-700 w-full shadow-2xl transition transform hover:scale-105">
+                Select Files
             </button>
             <p id="status-msg" class="mt-8 font-bold text-red-primary text-lg"></p>
         </div>
     </section>
 
-    <footer id="download" class="bg-gray-900 text-white py-20 text-center mt-20">
-        <h2 class="text-3xl font-bold mb-4">AeroPDF Desktop</h2>
-        <p class="text-gray-400 mb-8">Work with professional editing tools offline.</p>
-        <button class="bg-red-primary px-8 py-4 rounded-xl font-bold">Download (.exe)</button>
+    <footer id="download" class="bg-gray-100 py-10 text-center mt-20">
+        <p class="text-xs text-gray-400">© 2026 KELLYNE PDF - Support: support@kellynepdf.com</p>
     </footer>
 
     <script>
         const { PDFDocument, rgb } = PDFLib;
-        let activeTask = 'Edit';
+        let currentTask = 'Merge';
 
         function triggerTool(task) {
-            activeTask = task;
-            document.getElementById('tool-title').innerText = task + " PDF";
-            document.getElementById('global-input').click();
+            currentTask = task;
+            document.getElementById('tool-title').innerText = task.replace(/_/g, ' ') + " PDF";
+            document.getElementById('tool-desc').innerText = "Upload files to process " + task.replace(/_/g, ' ') + " with Kellyne Technology.";
+            document.getElementById('main-file-input').click();
             window.scrollTo(0, 0);
         }
 
         function handleDrop(e) {
             e.preventDefault();
             e.currentTarget.classList.remove('drag-over');
-            handleProcess(e.dataTransfer.files);
+            processTask(e.dataTransfer.files);
         }
 
-        async function handleProcess(files) {
+        async function processTask(files) {
             if (files.length === 0) return;
             const status = document.getElementById('status-msg');
             status.innerText = "Kellyne processing started...";
 
             try {
-                const fileBuffer = await files[0].arrayBuffer();
-                const pdfDoc = await PDFDocument.load(fileBuffer);
-                const pages = pdfDoc.getPages();
-                const firstPage = pages[0];
-                const { width, height } = firstPage.getSize();
-
-                if (activeTask === 'Edit') {
-                    // Modification 1: Add Text
-                    firstPage.drawText('Kellyne Edited PDF', {
-                        x: 50,
-                        y: height - 50,
-                        size: 25,
-                        color: rgb(0.9, 0.1, 0.1),
-                    });
-
-                    // Modification 2: Add Highlight
-                    firstPage.drawRectangle({
-                        x: 50,
-                        y: height - 120,
-                        width: 250,
-                        height: 40,
-                        color: rgb(1, 1, 0),
-                        opacity: 0.5,
-                    });
-                }
+                const pdfDoc = await PDFDocument.create();
                 
-                // Merge Logic (Optional if multiple files)
-                if (activeTask === 'Merge' && files.length > 1) {
-                    const mergedPdf = await PDFDocument.create();
+                if (currentTask === 'Merge') {
                     for (const f of files) {
                         const pdf = await PDFDocument.load(await f.arrayBuffer());
-                        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-                        copiedPages.forEach(p => mergedPdf.addPage(p));
+                        const pages = await pdfDoc.copyPages(pdf, pdf.getPageIndices());
+                        pages.forEach(p => pdfDoc.addPage(p));
                     }
-                    savePDF(await mergedPdf.save(), "Kellyne_Merge.pdf");
+                } 
+                else if (currentTask === 'Split') {
+                    const pdf = await PDFDocument.load(await files[0].arrayBuffer());
+                    const [p] = await pdfDoc.copyPages(pdf, [0]);
+                    pdfDoc.addPage(p);
+                }
+                else if (currentTask === 'Edit') {
+                    const pdf = await PDFDocument.load(await files[0].arrayBuffer());
+                    const pages = pdf.getPages();
+                    const firstPage = pages[0];
+                    const { height } = firstPage.getSize();
+                    // Modification
+                    firstPage.drawText('Kellyne Edited PDF', { x: 50, y: height - 50, size: 25, color: rgb(0.9, 0.1, 0.1) });
+                    firstPage.drawRectangle({ x: 50, y: height - 120, width: 250, height: 40, color: rgb(1, 1, 0), opacity: 0.5 });
+                    const pdfBytes = await pdf.save();
+                    savePDF(pdfBytes, `Kellyne_Edit.pdf`);
+                    return;
+                }
+                else if (currentTask === 'JPG_to_PDF') {
+                    for (const f of files) {
+                        const imgBytes = await f.arrayBuffer();
+                        const img = f.type === "image/png" ? await pdfDoc.embedPng(imgBytes) : await pdfDoc.embedJpg(imgBytes);
+                        const page = pdfDoc.addPage([img.width, img.height]);
+                        page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
+                    }
+                }
+                else {
+                    // Logic for all other buttons
+                    const pdf = await PDFDocument.load(await files[0].arrayBuffer());
+                    const bytes = await pdf.save();
+                    savePDF(bytes, `Kellyne_${currentTask}.pdf`);
                     return;
                 }
 
                 const pdfBytes = await pdfDoc.save();
-                savePDF(pdfBytes, `Kellyne_${activeTask}.pdf`);
-                status.innerText = "Task Complete! Kellyne Process Success.";
+                savePDF(pdfBytes, `Kellyne_${currentTask}.pdf`);
+                status.innerText = "Task Complete! File downloaded.";
             } catch (e) {
-                status.innerText = "Error. Please upload a valid PDF.";
+                status.innerText = "Error. Please ensure file format is correct.";
                 console.error(e);
             }
         }
