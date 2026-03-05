@@ -12,7 +12,7 @@
         body { font-family: 'Inter', sans-serif; }
         .bg-red-primary { background-color: #E53E3E; }
         
-        /* Red Bold Logo */
+        /* Red Bold Logo Style */
         .logo-text { 
             font-weight: 900; 
             font-size: 2.2rem; 
@@ -31,7 +31,7 @@
         }
         .group:hover .mega-menu { display: grid; }
         
-        /* Vertical Column Design */
+        /* Vertical Column Design - iLovePDF Style */
         .menu-col { display: flex; flex-direction: column; border-left: 1px solid #f0f0f0; padding-left: 20px; text-align: left; }
         .menu-col h4 { 
             font-size: 11px; font-weight: 900; color: #E53E3E; 
@@ -51,45 +51,65 @@
         <div class="logo-text" onclick="location.reload()">KELLYNEPDF</div>
         
         <div class="hidden lg:flex items-center space-x-12 font-bold text-[11px] uppercase tracking-[0.2em] text-gray-500">
-            <button onclick="triggerTool('Merge')" class="hover:text-red-primary">Merge</button>
-            <button onclick="triggerTool('Edit')" class="text-red-primary border-b-4 border-red-primary pb-1">Edit Content</button>
+            <button onclick="triggerTool('Merge')" class="hover:text-red-primary transition">Merge PDF</button>
+            <button onclick="triggerTool('Split')" class="hover:text-red-primary transition">Split PDF</button>
+            <button onclick="triggerTool('Compress')" class="hover:text-red-primary transition">Compress PDF</button>
+            
             <div class="group h-full flex items-center relative">
-                <button class="hover:text-red-primary">All Tools ▼</button>
+                <button class="hover:text-red-primary uppercase font-bold text-red-primary">ALL PDF TOOLS ▼</button>
                 <div class="mega-menu">
                     <div class="menu-col">
-                        <h4>Organize</h4>
+                        <h4>Organize PDF</h4>
                         <span onclick="triggerTool('Merge')" class="menu-item">Merge PDF</span>
                         <span onclick="triggerTool('Split')" class="menu-item">Split PDF</span>
-                        <span onclick="triggerTool('Remove')" class="menu-item">Remove Pages</span>
+                        <span onclick="triggerTool('Remove')" class="menu-item">Remove pages</span>
+                        <span onclick="triggerTool('Extract')" class="menu-item">Extract pages</span>
+                        <span onclick="triggerTool('Organize')" class="menu-item">Organize PDF</span>
+                        <span onclick="triggerTool('Scan')" class="menu-item">Scan to PDF</span>
                     </div>
                     <div class="menu-col">
-                        <h4>Optimize</h4>
-                        <span onclick="triggerTool('Compress')" class="menu-item">Compress</span>
+                        <h4>Optimize PDF</h4>
+                        <span onclick="triggerTool('Compress')" class="menu-item">Compress PDF</span>
+                        <span onclick="triggerTool('Repair')" class="menu-item">Repair PDF</span>
                         <span onclick="triggerTool('OCR')" class="menu-item">OCR PDF</span>
                     </div>
                     <div class="menu-col">
-                        <h4>To PDF</h4>
-                        <span onclick="triggerTool('Word')" class="menu-item">Word to PDF</span>
+                        <h4>Convert to PDF</h4>
                         <span onclick="triggerTool('JPG')" class="menu-item">JPG to PDF</span>
+                        <span onclick="triggerTool('Word')" class="menu-item">WORD to PDF</span>
+                        <span onclick="triggerTool('PPT')" class="menu-item">POWERPOINT to PDF</span>
+                        <span onclick="triggerTool('Excel')" class="menu-item">EXCEL to PDF</span>
+                        <span onclick="triggerTool('HTML')" class="menu-item">HTML to PDF</span>
                     </div>
                     <div class="menu-col">
-                        <h4>From PDF</h4>
-                        <span onclick="triggerTool('ToWord')" class="menu-item">PDF to Word</span>
+                        <h4>Convert from PDF</h4>
                         <span onclick="triggerTool('ToJPG')" class="menu-item">PDF to JPG</span>
+                        <span onclick="triggerTool('ToWord')" class="menu-item">PDF to WORD</span>
+                        <span onclick="triggerTool('ToPPT')" class="menu-item">PDF to POWERPOINT</span>
+                        <span onclick="triggerTool('ToExcel')" class="menu-item">PDF to EXCEL</span>
+                        <span onclick="triggerTool('ToPDFA')" class="menu-item">PDF to PDF/A</span>
                     </div>
                     <div class="menu-col">
                         <h4>Edit PDF</h4>
-                        <span onclick="triggerTool('Edit')" class="menu-item font-bold text-red-primary italic underline">Content Editor</span>
-                        <span onclick="triggerTool('Watermark')" class="menu-item">Watermark</span>
+                        <span onclick="triggerTool('Rotate')" class="menu-item">Rotate PDF</span>
+                        <span onclick="triggerTool('Numbers')" class="menu-item">Add page numbers</span>
+                        <span onclick="triggerTool('Watermark')" class="menu-item">Add watermark</span>
+                        <span onclick="triggerTool('Crop')" class="menu-item">Crop PDF</span>
+                        <span onclick="triggerTool('Edit')" class="menu-item font-bold text-red-primary">Edit PDF (Pro)</span>
                     </div>
                     <div class="menu-col">
-                        <h4>Security</h4>
-                        <span onclick="triggerTool('Protect')" class="menu-item">Protect</span>
+                        <h4>PDF Security</h4>
+                        <span onclick="triggerTool('Unlock')" class="menu-item">Unlock PDF</span>
+                        <span onclick="triggerTool('Protect')" class="menu-item">Protect PDF</span>
                         <span onclick="triggerTool('Sign')" class="menu-item">Sign PDF</span>
+                        <span onclick="triggerTool('Redact')" class="menu-item">Redact PDF</span>
+                        <span onclick="triggerTool('Compare')" class="menu-item">Compare PDF</span>
                     </div>
                     <div class="menu-col">
                         <h4>AI Intelligence</h4>
-                        <span onclick="triggerTool('AI')" class="menu-item">AI Summary</span>
+                        <span onclick="triggerTool('Summarize')" class="menu-item">Summarize PDF</span>
+                        <span onclick="triggerTool('Translate')" class="menu-item">Translate PDF</span>
+                        <span onclick="triggerTool('Voiceover')" class="menu-item">AI Voiceover</span>
                     </div>
                 </div>
             </div>
@@ -100,7 +120,7 @@
     <div id="welcome-ui" class="flex flex-col items-center justify-center min-h-[80vh]">
         <div class="bg-white p-24 rounded-[60px] shadow-2xl text-center max-w-2xl border-b-[15px] border-red-primary">
             <h1 class="text-7xl font-black mb-4 text-red-primary italic tracking-tighter">KELLYNEPDF</h1>
-            <p class="text-gray-400 mb-14 text-xl font-bold tracking-[0.3em]">LOCAL CONTENT EDITOR</p>
+            <p class="text-gray-400 mb-14 text-xl font-bold tracking-[0.3em] uppercase">Pro Content Editor Toolkit</p>
             <input type="file" id="f-selector" accept="application/pdf" class="hidden" onchange="initEditor(this.files[0])">
             <button onclick="document.getElementById('f-selector').click()" class="bg-red-primary text-white px-20 py-8 rounded-[35px] text-3xl font-black shadow-2xl hover:scale-105 transition-all">Select Document</button>
         </div>
@@ -143,7 +163,7 @@
         }
 
         function addText() {
-            const t = new fabric.IText('Edit this...', { 
+            const t = new fabric.IText('Double click to edit content...', { 
                 left: 150, top: 150, fontFamily: 'Arial', fontSize: 24, fill: '#000', 
                 backgroundColor: '#fff', padding: 8, cornerColor: '#E53E3E', cornerSize: 10
             });
@@ -158,7 +178,7 @@
             const items = fabricCanvas.getObjects('i-text');
 
             for (const item of items) {
-                // Acrobat Content Edit Logic (Mask & Overlay)
+                // True Content Masking Logic
                 page.drawRectangle({
                     x: item.left / scale,
                     y: (fabricCanvas.height - item.top - (item.height * item.scaleY)) / scale,
