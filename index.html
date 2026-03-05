@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLYNE PDF - Pro Editor & AI Tools</title>
+    <title>KELLYNE PDF - Pro Editor & Master Toolkit</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <style>
         .bg-red-primary { background-color: #E53E3E; }
         .text-red-primary { color: #E53E3E; }
-        .mega-menu { display: none; position: absolute; left: 50%; transform: translateX(-50%); width: 95vw; background: white; z-index: 1000; box-shadow: 0 25px 50px rgba(0,0,0,0.2); border-top: 3px solid #E53E3E; padding: 30px; border-radius: 0 0 20px 20px; }
-        .group:hover .mega-menu { display: grid; grid-template-columns: repeat(7, 1fr); gap: 20px; }
-        .menu-column h4 { font-size: 10px; font-weight: 900; color: #a0aec0; text-transform: uppercase; border-bottom: 1px solid #edf2f7; margin-bottom: 10px; }
-        .menu-link { display: block; padding: 4px 0; font-size: 12px; color: #4a5568; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .mega-menu { display: none; position: absolute; left: 50%; transform: translateX(-50%); width: 95vw; background: white; z-index: 1000; box-shadow: 0 25px 50px rgba(0,0,0,0.25); border-top: 3px solid #E53E3E; padding: 30px; border-radius: 0 0 20px 20px; }
+        .group:hover .mega-menu { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; }
+        .menu-column h4 { font-size: 10px; font-weight: 900; color: #a0aec0; text-transform: uppercase; border-bottom: 1px solid #edf2f7; margin-bottom: 8px; }
+        .menu-link { display: block; padding: 3px 0; font-size: 12px; color: #4a5568; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .menu-link:hover { color: #E53E3E; transform: translateX(5px); }
-        #pdf-canvas { box-shadow: 0 20px 50px rgba(0,0,0,0.2); background: white; }
-        .floating-input { position: absolute; border: 1px dashed #E53E3E; background: white; outline: none; padding: 2px; z-index: 50; }
+        .editor-bg { background-color: #525659; min-height: 100vh; display: flex; justify-content: center; padding: 40px; }
+        .canvas-shadow { box-shadow: 0 0 30px rgba(0,0,0,0.5); background: white; }
     </style>
 </head>
 <body class="bg-gray-50 font-sans">
@@ -24,110 +25,155 @@
         <div class="text-2xl font-black cursor-pointer" onclick="location.reload()">
             <span class="text-red-primary">❤</span> KELLYNE PDF
         </div>
+        
         <div class="hidden lg:flex items-center space-x-6 h-full font-bold text-[10px] uppercase">
             <button onclick="triggerTool('Merge')" class="hover:text-red-primary">Merge</button>
             <button onclick="triggerTool('Edit')" class="text-red-primary">Edit PDF</button>
+            
             <div class="group h-full flex items-center relative">
                 <button class="hover:text-red-primary">ALL PDF TOOLS ▼</button>
                 <div class="mega-menu">
-                    <div class="menu-column"><h4>Organize</h4><span onclick="triggerTool('Merge')" class="menu-link">Merge</span><span onclick="triggerTool('Split')" class="menu-link">Split</span><span onclick="triggerTool('Remove')" class="menu-link">Remove Pages</span></div>
-                    <div class="menu-column"><h4>Optimize</h4><span onclick="triggerTool('Compress')" class="menu-link">Compress</span><span onclick="triggerTool('Repair')" class="menu-link">Repair</span><span onclick="triggerTool('OCR')" class="menu-link">OCR PDF</span></div>
-                    <div class="menu-column"><h4>To PDF</h4><span onclick="triggerTool('JPG_to_PDF')" class="menu-link">Images to PDF</span><span onclick="triggerTool('Word_to_PDF')" class="menu-link">Word to PDF</span></div>
-                    <div class="menu-column"><h4>From PDF</h4><span onclick="triggerTool('PDF_to_JPG')" class="menu-link">PDF to Image</span><span onclick="triggerTool('PDF_to_Word')" class="menu-link">PDF to Office</span></div>
-                    <div class="menu-column"><h4>Edit</h4><span onclick="triggerTool('Rotate')" class="menu-link">Rotate</span><span onclick="triggerTool('Watermark')" class="menu-link">Watermark</span><span onclick="triggerTool('Edit')" class="menu-link font-bold text-red-primary">Edit Content</span></div>
-                    <div class="menu-column"><h4>Security</h4><span onclick="triggerTool('Protect')" class="menu-link">Protect</span><span onclick="triggerTool('Sign')" class="menu-link">Sign PDF</span><span onclick="triggerTool('Unlock')" class="menu-link">Unlock</span></div>
-                    <div class="menu-column"><h4>AI Tools</h4><span onclick="triggerTool('Summarize')" class="menu-link">Summarize</span><span onclick="triggerTool('Translate')" class="menu-link">Translate</span></div>
+                    <div class="menu-column">
+                        <h4>Organize</h4>
+                        <span onclick="triggerTool('Merge')" class="menu-link">Merge PDF</span>
+                        <span onclick="triggerTool('Split')" class="menu-link">Split PDF</span>
+                        <span onclick="triggerTool('Remove_Pages')" class="menu-link">Remove Pages</span>
+                        <span onclick="triggerTool('Organize')" class="menu-link">Organize PDF</span>
+                        <span onclick="triggerTool('Scan')" class="menu-link">Scan to PDF</span>
+                    </div>
+                    <div class="menu-column">
+                        <h4>Optimize</h4>
+                        <span onclick="triggerTool('Compress')" class="menu-link">Compress PDF</span>
+                        <span onclick="triggerTool('Repair')" class="menu-link">Repair PDF</span>
+                        <span onclick="triggerTool('OCR')" class="menu-link">OCR PDF</span>
+                    </div>
+                    <div class="menu-column">
+                        <h4>Convert To</h4>
+                        <span onclick="triggerTool('Word_to_PDF')" class="menu-link">Office to PDF</span>
+                        <span onclick="triggerTool('JPG_to_PDF')" class="menu-link">Images to PDF</span>
+                        <span onclick="triggerTool('HTML_to_PDF')" class="menu-link">HTML to PDF</span>
+                    </div>
+                    <div class="menu-column">
+                        <h4>Convert From</h4>
+                        <span onclick="triggerTool('PDF_to_Word')" class="menu-link">PDF to Office</span>
+                        <span onclick="triggerTool('PDF_to_JPG')" class="menu-link">PDF to Image</span>
+                        <span onclick="triggerTool('PDF_to_PDFA')" class="menu-link">PDF to PDF/A</span>
+                    </div>
+                    <div class="menu-column">
+                        <h4>Edit & Annotate</h4>
+                        <span onclick="triggerTool('Edit')" class="menu-link font-bold text-red-primary">Edit PDF Content</span>
+                        <span onclick="triggerTool('Rotate')" class="menu-link">Rotate & Crop</span>
+                        <span onclick="triggerTool('Watermark')" class="menu-link">Watermark</span>
+                    </div>
+                    <div class="menu-column">
+                        <h4>Security</h4>
+                        <span onclick="triggerTool('Protect')" class="menu-link">Protect & Unlock</span>
+                        <span onclick="triggerTool('Sign')" class="menu-link">Sign PDF</span>
+                        <span onclick="triggerTool('Redact')" class="menu-link">Redact & Compare</span>
+                    </div>
+                    <div class="menu-column">
+                        <h4>AI Intelligence</h4>
+                        <span onclick="triggerTool('Summarize')" class="menu-link">Summarize PDF</span>
+                        <span onclick="triggerTool('Translate')" class="menu-link">Translate PDF</span>
+                        <span onclick="triggerTool('Voiceover')" class="menu-link">AI Voiceover</span>
+                    </div>
                 </div>
             </div>
         </div>
-        <button onclick="downloadFinal()" class="bg-red-primary text-white px-5 py-2 rounded-lg font-bold text-xs shadow-lg">Save PDF</button>
+        <button id="download-btn" onclick="exportEditedPDF()" class="bg-red-primary text-white px-5 py-2 rounded-lg font-bold text-xs shadow-lg hidden">Download Kellyne PDF</button>
     </nav>
 
-    <section class="py-10 text-center">
-        <div id="upload-box" class="max-w-2xl mx-auto bg-white p-12 rounded-[40px] shadow-2xl border-2 border-dashed border-gray-100">
-            <h2 id="tool-title" class="text-3xl font-black mb-4">Interactive PDF Editor</h2>
-            <p id="tool-desc" class="text-gray-500 mb-8">Click on existing text to modify it. Font matching is handled by AeroPDF Logic.</p>
-            <input type="file" id="pdf-input" class="hidden" onchange="initProEditor(this.files[0])">
-            <button onclick="document.getElementById('pdf-input').click()" class="bg-red-primary text-white px-12 py-5 rounded-2xl text-xl font-bold shadow-xl hover:scale-105 transition">Open File</button>
+    <div id="upload-step" class="flex flex-col items-center justify-center h-[80vh]">
+        <div class="max-w-xl bg-white p-16 rounded-[40px] shadow-2xl text-center border-2 border-gray-100">
+            <h1 class="text-4xl font-black mb-4 text-gray-900">Kellyne PDF Editor</h1>
+            <p class="text-gray-500 mb-10 text-lg">Professional tools to edit, merge, and convert your PDF documents securely.</p>
+            <input type="file" id="pdf-file" accept="application/pdf" class="hidden" onchange="loadKellyneEditor(this.files[0])">
+            <button onclick="document.getElementById('pdf-file').click()" class="bg-red-primary text-white px-12 py-5 rounded-2xl text-xl font-bold shadow-xl hover:scale-105 transition">Open PDF File</button>
         </div>
+    </div>
 
-        <div id="editor-wrapper" class="hidden mt-10 relative inline-block group">
-            <canvas id="pdf-canvas"></canvas>
-            <div id="interaction-layer" class="absolute top-0 left-0 w-full h-full cursor-text"></div>
+    <div id="editor-step" class="editor-bg hidden flex-col items-center">
+        <div class="mb-4 flex gap-4">
+            <button onclick="addTextBox()" class="bg-white text-black px-4 py-2 rounded font-bold shadow">T+ Add Text</button>
+            <button onclick="deleteObject()" class="bg-white text-red-600 px-4 py-2 rounded font-bold shadow">Delete</button>
         </div>
-    </section>
+        <div class="canvas-shadow">
+            <canvas id="main-canvas"></canvas>
+        </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script>
-        const { PDFDocument, rgb, degrees } = PDFLib;
-        let originalBytes, canvas, ctx, activeTask = 'Edit', modifications = [];
+        const { PDFDocument, rgb } = PDFLib;
+        let fabricCanvas, originalBytes, scale = 1.5;
 
-        async function initProEditor(file) {
+        async function loadKellyneEditor(file) {
             originalBytes = await file.arrayBuffer();
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
             const pdf = await pdfjsLib.getDocument({data: originalBytes}).promise;
             const page = await pdf.getPage(1);
-            canvas = document.getElementById('pdf-canvas');
-            ctx = canvas.getContext('2d');
-            const viewport = page.getViewport({scale: 1.5});
-            canvas.height = viewport.height; canvas.width = viewport.width;
-            await page.render({canvasContext: ctx, viewport: viewport}).promise;
+            const viewport = page.getViewport({scale: scale});
 
-            document.getElementById('upload-box').classList.add('hidden');
-            document.getElementById('editor-wrapper').classList.remove('hidden');
-            setupInteraction();
+            const tempCanvas = document.createElement('canvas');
+            const context = tempCanvas.getContext('2d');
+            tempCanvas.height = viewport.height; tempCanvas.width = viewport.width;
+            await page.render({canvasContext: context, viewport: viewport}).promise;
+
+            fabricCanvas = new fabric.Canvas('main-canvas', {
+                height: viewport.height,
+                width: viewport.width,
+                backgroundImage: new fabric.Image(tempCanvas)
+            });
+
+            document.getElementById('upload-step').classList.add('hidden');
+            document.getElementById('editor-step').classList.remove('hidden');
+            document.getElementById('download-btn').classList.remove('hidden');
         }
 
-        function setupInteraction() {
-            const layer = document.getElementById('interaction-layer');
-            layer.onclick = (e) => {
-                const rect = layer.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                const input = document.createElement('input');
-                input.className = 'floating-input';
-                input.style.left = x + 'px';
-                input.style.top = y + 'px';
-                input.placeholder = "Edit here...";
-                layer.appendChild(input);
-                input.focus();
-
-                input.onblur = () => {
-                    if (input.value) {
-                        modifications.push({ text: input.value, x: x/1.5, y: (canvas.height - y)/1.5 - 10 });
-                        // Font matching preview
-                        ctx.fillStyle = "white"; ctx.fillRect(x, y-15, input.value.length * 10, 20);
-                        ctx.fillStyle = "black"; ctx.font = "16px Arial"; ctx.fillText(input.value, x, y);
-                    }
-                    input.remove();
-                };
-            };
+        function addTextBox() {
+            const text = new fabric.IText('Double click to edit...', {
+                left: 100, top: 100, fontFamily: 'Arial', fontSize: 20, fill: '#000', backgroundColor: '#fff'
+            });
+            fabricCanvas.add(text);
+            fabricCanvas.setActiveObject(text);
         }
 
-        async function downloadFinal() {
+        function deleteObject() {
+            const active = fabricCanvas.getActiveObject();
+            if (active) fabricCanvas.remove(active);
+        }
+
+        async function exportEditedPDF() {
             const pdfDoc = await PDFDocument.load(originalBytes);
             const page = pdfDoc.getPages()[0];
-            
-            // Logic for different tools
-            if(activeTask === 'Rotate') page.setRotation(degrees(90));
-            if(activeTask === 'Watermark') page.drawText('KELLYNE PRO', { x: 50, y: 50, size: 50, opacity: 0.2 });
+            const textObjects = fabricCanvas.getObjects('i-text');
 
-            modifications.forEach(m => {
-                page.drawRectangle({ x: m.x, y: m.y, width: m.text.length * 8, height: 15, color: rgb(1,1,1) });
-                page.drawText(m.text, { x: m.x, y: m.y, size: 12, color: rgb(0,0,0) });
-            });
+            for (const obj of textObjects) {
+                page.drawRectangle({
+                    x: obj.left / scale,
+                    y: (fabricCanvas.height - obj.top - obj.height) / scale,
+                    width: (obj.width * obj.scaleX) / scale,
+                    height: (obj.height * obj.scaleY) / scale,
+                    color: rgb(1, 1, 1)
+                });
+                page.drawText(obj.text, {
+                    x: obj.left / scale,
+                    y: (fabricCanvas.height - obj.top - (obj.height * 0.75)) / scale,
+                    size: (obj.fontSize * obj.scaleX) / scale,
+                    color: rgb(0, 0, 0)
+                });
+            }
 
             const bytes = await pdfDoc.save();
             const link = document.createElement('a');
             link.href = URL.createObjectURL(new Blob([bytes], {type: 'application/pdf'}));
-            link.download = `Kellyne_${activeTask}.pdf`;
+            link.download = "Kellyne_Pro_Edited.pdf";
             link.click();
         }
 
-        function triggerTool(task) { activeTask = task; document.getElementById('pdf-input').click(); }
+        function triggerTool(task) { document.getElementById('pdf-file').click(); }
     </script>
 </body>
 </html>
