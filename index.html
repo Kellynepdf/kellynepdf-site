@@ -9,21 +9,24 @@
         .bg-red-primary { background-color: #E53E3E; }
         .text-red-primary { color: #E53E3E; }
         .border-red-primary { border-color: #E53E3E; }
+        html { scroll-behavior: smooth; }
+        /* మెనూ పైన ఫిక్స్ అయి ఉండటానికి */
+        .fixed-nav { position: fixed; top: 0; width: 100%; z-index: 50; }
     </style>
 </head>
 <body class="bg-white text-gray-800 font-sans">
 
-    <nav class="flex items-center justify-between px-8 py-6 border-b border-gray-100">
+    <nav class="fixed-nav flex items-center justify-between px-8 py-4 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
         <div class="text-2xl font-bold text-red-primary">KELLYNE<span class="text-gray-900">PDF</span></div>
         <div class="hidden md:flex space-x-8 font-medium">
-            <a href="#features" class="hover:text-red-primary">Features</a>
-            <a href="#pricing" class="hover:text-red-primary">Pricing</a>
-            <a href="mailto:support@kellynepdf.com" class="hover:text-red-primary">Support</a>
+            <a href="#features" class="hover:text-red-primary transition">Features</a>
+            <a href="#pricing" class="hover:text-red-primary transition">Pricing</a>
+            <a href="#support" class="hover:text-red-primary transition">Support</a>
         </div>
         <a href="#pricing" class="bg-red-primary text-white px-6 py-2 rounded-full font-semibold hover:bg-red-700 transition">Get Started</a>
     </nav>
 
-    <section class="px-8 py-20 text-center">
+    <section id="features" class="px-8 pt-32 pb-20 text-center">
         <h1 class="text-5xl md:text-6xl font-extrabold mb-6">The Fastest Way to <span class="text-red-primary">Digitally Sign</span> PDFs</h1>
         <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">Bulk processing, ePass2003 auto-detection, and 100% offline security. Made for professionals worldwide.</p>
         <div class="flex flex-col md:flex-row justify-center gap-4">
@@ -32,14 +35,13 @@
         </div>
     </section>
 
-    <section id="pricing" class="py-20 px-8 text-center bg-gray-50">
+    <section id="pricing" class="py-24 px-8 text-center bg-gray-50">
         <h2 class="text-4xl font-bold mb-4">Simple & Transparent Pricing</h2>
         <p class="text-gray-600 mb-12">Choose the plan that fits your professional needs.</p>
         
         <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
-            
             <div class="bg-white border-2 border-gray-200 rounded-2xl p-8 shadow-lg hover:border-red-primary transition">
-                <h3 class="text-2xl font-bold mb-4">Quarterly</h3>
+                <h3 class="text-2xl font-bold mb-4 text-gray-700">Quarterly</h3>
                 <div class="text-5xl font-black mb-2">$19.99</div>
                 <p class="text-gray-500 mb-6 font-medium">Billed every 3 months</p>
                 <ul class="text-left space-y-4 mb-8">
@@ -48,13 +50,13 @@
                     <li class="flex items-center">✅ ePass2003 Token Support</li>
                     <li class="flex items-center">✅ Email Support</li>
                 </ul>
-                <button class="w-full border-2 border-red-primary text-red-primary py-4 rounded-lg font-bold text-xl hover:bg-red-50">Choose Quarterly</button>
+                <button class="w-full border-2 border-red-primary text-red-primary py-4 rounded-lg font-bold text-xl hover:bg-red-50 transition">Choose Quarterly</button>
             </div>
 
-            <div class="bg-white border-4 border-red-primary rounded-2xl p-8 shadow-2xl relative">
-                <div class="bg-red-primary text-white absolute top-0 right-0 px-4 py-1 text-sm font-bold uppercase">Best Value</div>
-                <h3 class="text-2xl font-bold mb-4">Yearly</h3>
-                <div class="text-5xl font-black mb-2">$69.99</div>
+            <div class="bg-white border-4 border-red-primary rounded-2xl p-8 shadow-2xl relative scale-105 md:scale-110">
+                <div class="bg-red-primary text-white absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-sm font-bold uppercase shadow-md">Best Value</div>
+                <h3 class="text-2xl font-bold mb-4 text-gray-700">Yearly</h3>
+                <div class="text-5xl font-black mb-2 text-red-primary">$69.99</div>
                 <p class="text-gray-500 mb-6 font-medium">Billed annually</p>
                 <ul class="text-left space-y-4 mb-8">
                     <li class="flex items-center">✅ Everything in Quarterly</li>
@@ -62,17 +64,23 @@
                     <li class="flex items-center">✅ Priority Direct Support</li>
                     <li class="flex items-center">✅ Commercial Use License</li>
                 </ul>
-                <button class="w-full bg-red-primary text-white py-4 rounded-lg font-bold text-xl hover:bg-red-700">Choose Yearly</button>
+                <button class="w-full bg-red-primary text-white py-4 rounded-lg font-bold text-xl hover:bg-red-700 transition shadow-lg">Choose Yearly</button>
             </div>
-
         </div>
     </section>
 
-    <footer class="bg-gray-900 text-white py-12 px-8 text-center border-t-8 border-red-primary">
-        <p class="mb-4 font-bold text-xl">KELLYNE PDF</p>
-        <p class="text-gray-400 mb-6">Built for speed, privacy, and simplicity.</p>
-        <p class="text-gray-400">Questions? Reach out to <a href="mailto:support@kellynepdf.com" class="text-red-primary font-bold">support@kellynepdf.com</a></p>
-        <div class="mt-8 text-sm text-gray-500">© 2026 KELLYNE. All rights reserved.</div>
+    <footer id="support" class="bg-gray-900 text-white py-16 px-8 text-center border-t-8 border-red-primary">
+        <p class="mb-4 font-bold text-2xl text-red-primary">KELLYNE PDF</p>
+        <p class="text-gray-400 mb-8 max-w-lg mx-auto text-lg">Built for speed, privacy, and simplicity. We are here to help you 24/7.</p>
+        
+        <div class="inline-block bg-gray-800 p-6 rounded-xl border border-gray-700">
+            <p class="text-gray-300 mb-2">Technical Support Email</p>
+            <a href="mailto:support@kellynepdf.com" class="text-2xl md:text-3xl font-bold text-white hover:text-red-primary transition underline decoration-red-primary underline-offset-8">
+                support@kellynepdf.com
+            </a>
+        </div>
+        
+        <div class="mt-12 text-sm text-gray-500">© 2026 KELLYNE. All rights reserved.</div>
     </footer>
 
 </body>
