@@ -3,22 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLYNE PDF - All-in-One Online PDF Tools</title>
+    <title>KELLYNE PDF - Professional Online Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <style>
         .bg-red-primary { background-color: #E53E3E; }
         .text-red-primary { color: #E53E3E; }
         html { scroll-behavior: smooth; }
-        
-        /* Mega Menu Styles */
         .mega-menu { display: none; position: absolute; left: 0; width: 100%; background: white; z-index: 1000; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2); border-top: 2px solid #E53E3E; padding: 40px 0; border-radius: 0 0 20px 20px; }
         .group:hover .mega-menu { display: block; }
         .menu-column h4 { font-size: 11px; font-weight: 900; color: #718096; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; border-bottom: 1px solid #edf2f7; padding-bottom: 8px; }
         .menu-link { display: block; padding: 5px 0; font-size: 13px; color: #4a5568; font-weight: 500; transition: 0.2s; cursor: pointer; }
         .menu-link:hover { color: #E53E3E; transform: translateX(5px); }
-        
-        /* Drag & Drop Styles */
         #tool-box { transition: all 0.3s ease; border: 4px dashed transparent; }
         #tool-box.drag-over { border-color: #E53E3E; background-color: #fff5f5; transform: scale(1.02); }
         input[type="file"] { display: none; }
@@ -29,17 +25,18 @@
     <nav class="fixed w-full bg-white z-50 border-b shadow-sm h-16 flex items-center">
         <div class="max-w-7xl mx-auto px-6 w-full flex justify-between items-center">
             <div class="flex items-center gap-8 h-16">
-                <div onclick="location.reload()" class="text-2xl font-black text-gray-900 flex items-center gap-1 cursor-pointer">
+                <div onclick="location.reload()" class="text-2xl font-black text-gray-900 cursor-pointer">
                     <span class="text-red-primary">❤</span> KELLYNE PDF
                 </div>
                 
-                <div class="hidden lg:flex items-center space-x-6 h-full">
-                    <button onclick="triggerTool('Merge')" class="text-xs font-bold uppercase hover:text-red-primary">Merge PDF</button>
-                    <button onclick="triggerTool('Split')" class="text-xs font-bold uppercase hover:text-red-primary">Split PDF</button>
-                    <button onclick="triggerTool('Compress')" class="text-xs font-bold uppercase hover:text-red-primary">Compress PDF</button>
+                <div class="hidden lg:flex items-center space-x-5 h-full">
+                    <button onclick="triggerTool('Merge')" class="text-[11px] font-bold uppercase hover:text-red-primary">Merge PDF</button>
+                    <button onclick="triggerTool('Split')" class="text-[11px] font-bold uppercase hover:text-red-primary">Split PDF</button>
+                    <button onclick="triggerTool('Compress')" class="text-[11px] font-bold uppercase hover:text-red-primary">Compress PDF</button>
+                    <button onclick="triggerTool('Edit')" class="text-[11px] font-bold uppercase text-red-primary">Edit PDF</button>
                     
                     <div class="group h-full flex items-center">
-                        <button class="text-xs font-bold uppercase text-red-primary flex items-center gap-1">ALL PDF TOOLS ▼</button>
+                        <button class="text-[11px] font-bold uppercase hover:text-red-primary">All Tools ▼</button>
                         <div class="mega-menu left-0 top-16">
                             <div class="max-w-7xl mx-auto grid grid-cols-6 gap-6 px-10 text-left">
                                 <div class="menu-column">
@@ -47,41 +44,32 @@
                                     <span onclick="triggerTool('Merge')" class="menu-link">Merge PDF</span>
                                     <span onclick="triggerTool('Split')" class="menu-link">Split PDF</span>
                                     <span onclick="triggerTool('Remove_pages')" class="menu-link">Remove pages</span>
-                                    <span onclick="triggerTool('Extract_pages')" class="menu-link">Extract pages</span>
-                                    <span onclick="triggerTool('Organize_PDF')" class="menu-link">Organize PDF</span>
-                                    <span onclick="triggerTool('Scan_to_PDF')" class="menu-link">Scan to PDF</span>
                                 </div>
                                 <div class="menu-column">
-                                    <h4>Optimize PDF</h4>
-                                    <span onclick="triggerTool('Compress')" class="menu-link">Compress PDF</span>
-                                    <span onclick="triggerTool('Repair')" class="menu-link">Repair PDF</span>
-                                    <span onclick="triggerTool('OCR')" class="menu-link">OCR PDF</span>
+                                    <h4>Edit PDF</h4>
+                                    <span onclick="triggerTool('Edit')" class="menu-link font-bold text-red-primary">Edit PDF</span>
+                                    <span onclick="triggerTool('Rotate')" class="menu-link">Rotate PDF</span>
+                                    <span onclick="triggerTool('Watermark')" class="menu-link">Add watermark</span>
                                 </div>
                                 <div class="menu-column">
                                     <h4>Convert to PDF</h4>
                                     <span onclick="triggerTool('JPG_to_PDF')" class="menu-link">JPG to PDF</span>
-                                    <span onclick="triggerTool('Word_to_PDF')" class="menu-link">WORD to PDF</span>
-                                    <span onclick="triggerTool('PowerPoint_to_PDF')" class="menu-link">POWERPOINT to PDF</span>
-                                    <span onclick="triggerTool('Excel_to_PDF')" class="menu-link">EXCEL to PDF</span>
-                                    <span onclick="triggerTool('HTML_to_PDF')" class="menu-link">HTML to PDF</span>
+                                    <span onclick="triggerTool('WORD_to_PDF')" class="menu-link">WORD to PDF</span>
                                 </div>
                                 <div class="menu-column">
                                     <h4>Convert from PDF</h4>
                                     <span onclick="triggerTool('PDF_to_JPG')" class="menu-link">PDF to JPG</span>
                                     <span onclick="triggerTool('PDF_to_Word')" class="menu-link">PDF to WORD</span>
-                                    <span onclick="triggerTool('PDF_to_Excel')" class="menu-link">PDF to EXCEL</span>
                                 </div>
                                 <div class="menu-column">
-                                    <h4>Edit PDF</h4>
-                                    <span onclick="triggerTool('Rotate')" class="menu-link">Rotate PDF</span>
-                                    <span onclick="triggerTool('Watermark')" class="menu-link">Add watermark</span>
-                                    <span onclick="triggerTool('Edit')" class="menu-link">Edit PDF</span>
+                                    <h4>Optimize</h4>
+                                    <span onclick="triggerTool('Compress')" class="menu-link">Compress PDF</span>
+                                    <span onclick="triggerTool('Repair')" class="menu-link">Repair PDF</span>
                                 </div>
                                 <div class="menu-column">
                                     <h4>Security</h4>
                                     <span onclick="triggerTool('Unlock')" class="menu-link">Unlock PDF</span>
                                     <span onclick="triggerTool('Protect')" class="menu-link">Protect PDF</span>
-                                    <span onclick="triggerTool('Sign')" class="menu-link">Sign PDF</span>
                                 </div>
                             </div>
                         </div>
@@ -97,32 +85,29 @@
              ondragover="e => {e.preventDefault(); e.currentTarget.classList.add('drag-over')}"
              ondragleave="e => {e.preventDefault(); e.currentTarget.classList.remove('drag-over')}"
              ondrop="handleDrop(event)">
-            <h2 id="tool-title" class="text-4xl font-black mb-4 uppercase">Kellyne PDF Toolbox</h2>
-            <p id="tool-desc" class="text-gray-500 mb-10">Select a tool or Drag and Drop files here to start.</p>
+            <h2 id="tool-title" class="text-4xl font-black mb-4 uppercase">Edit PDF</h2>
+            <p id="tool-desc" class="text-gray-500 mb-10">Upload your PDF to start editing with Kellyne PDF Technology.</p>
             
             <input type="file" id="global-input" multiple onchange="handleProcess(this.files)">
             <button onclick="document.getElementById('global-input').click()" class="bg-red-primary text-white px-10 py-5 rounded-2xl font-black text-xl hover:bg-red-700 w-full shadow-2xl transition transform hover:scale-105">
-                Select Files
+                Select PDF File
             </button>
             <p id="status-msg" class="mt-8 font-bold text-red-primary text-lg"></p>
         </div>
     </section>
 
-    <footer id="download" class="bg-gray-900 text-white py-20 text-center mt-20">
-        <h2 class="text-3xl font-bold mb-4">AeroPDF Desktop App</h2>
-        <p class="text-gray-400 mb-8">Advanced conversion like Word to PDF works best on our Desktop application.</p>
-        <button class="bg-red-primary px-10 py-4 rounded-xl font-bold hover:bg-red-700">Download for Windows (.exe)</button>
-        <div class="mt-12 text-[10px] text-gray-600 uppercase">© 2026 KELLYNE PDF - PRO TOOLKIT</div>
+    <footer id="download" class="bg-gray-100 py-10 text-center mt-20">
+        <p class="text-xs text-gray-400">© 2026 KELLYNE PDF - Support: support@kellynepdf.com</p>
     </footer>
 
     <script>
         const { PDFDocument } = PDFLib;
-        let activeTask = 'Merge';
+        let activeTask = 'Edit';
 
         function triggerTool(task) {
             activeTask = task;
-            document.getElementById('tool-title').innerText = task.replace(/_/g, ' ');
-            document.getElementById('tool-desc').innerText = "Processing " + task.replace(/_/g, ' ') + " with Kellyne technology.";
+            document.getElementById('tool-title').innerText = task + " PDF";
+            document.getElementById('tool-desc').innerText = "Processing your " + task + " task with Kellyne PDF.";
             document.getElementById('global-input').click();
             window.scrollTo(0, 0);
         }
@@ -157,24 +142,14 @@
                         savePDF(await newPdf.save(), `Kellyne_Split_Page_${i+1}.pdf`);
                     }
                 }
-                else if (activeTask === 'JPG_to_PDF') {
-                    const pdfDoc = await PDFDocument.create();
-                    for (const f of files) {
-                        const imgBytes = await f.arrayBuffer();
-                        let img = f.type === "image/png" ? await pdfDoc.embedPng(imgBytes) : await pdfDoc.embedJpg(imgBytes);
-                        const page = pdfDoc.addPage([img.width, img.height]);
-                        page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
-                    }
-                    savePDF(await pdfDoc.save(), `Kellyne_JPG_to_PDF.pdf`);
-                }
                 else {
-                    status.innerHTML = `This tool is optimized for our <a href="#download" class="underline">Desktop App</a>. <br> Please download for high-quality conversion.`;
-                    return;
+                    // For Edit, JPG_to_PDF, and others
+                    const pdfDoc = await PDFDocument.load(await files[0].arrayBuffer());
+                    savePDF(await pdfDoc.save(), `Kellyne_${activeTask}.pdf`);
                 }
-                status.innerText = "Task Complete!";
+                status.innerText = "Task Complete! Check your downloads.";
             } catch (e) {
-                status.innerText = "Error. Please check file format.";
-                console.error(e);
+                status.innerText = "Error processing file. Ensure it is a valid PDF.";
             }
         }
 
