@@ -3,129 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLYNE PDF - Online PDF Tools</title>
+    <title>KELLYNE PDF - All Working Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <style>
         .bg-red-primary { background-color: #E53E3E; }
         .text-red-primary { color: #E53E3E; }
-        html { scroll-behavior: smooth; }
-        
-        /* Mega Menu Styles */
         .mega-menu { display: none; position: absolute; left: 0; width: 100%; background: white; z-index: 1000; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border-top: 2px solid #E53E3E; padding: 40px 0; }
         .group:hover .mega-menu { display: block; }
-        .menu-column h4 { font-size: 12px; font-weight: 900; color: #a0aec0; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; border-bottom: 1px solid #edf2f7; padding-bottom: 8px; }
-        .menu-link { display: block; padding: 6px 0; font-size: 14px; color: #4a5568; font-weight: 500; transition: 0.2s; }
-        .menu-link:hover { color: #E53E3E; transform: translateX(5px); }
+        .menu-link { display: block; padding: 6px 0; font-size: 14px; color: #4a5568; font-weight: 500; cursor: pointer; }
+        .menu-link:hover { color: #E53E3E; transform: translateX(5px); transition: 0.2s; }
+        input[type="file"] { display: none; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
 
     <nav class="fixed w-full bg-white z-50 border-b shadow-sm">
         <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
-            
-            <div class="flex items-center gap-10 h-full">
-                <div class="text-2xl font-black text-red-primary tracking-tighter cursor-pointer">
-                    KELLYNE<span class="text-gray-900 font-extrabold">PDF</span>
-                </div>
-                
+            <div class="flex items-center gap-10">
+                <div onclick="location.reload()" class="text-2xl font-black text-red-primary tracking-tighter cursor-pointer">KELLYNE<span class="text-gray-900 font-extrabold">PDF</span></div>
                 <div class="hidden lg:flex items-center space-x-8 h-full">
-                    <a href="#merge" class="text-sm font-bold text-gray-700 hover:text-red-primary uppercase tracking-tight">Merge PDF</a>
-                    <a href="#split" class="text-sm font-bold text-gray-700 hover:text-red-primary uppercase tracking-tight">Split PDF</a>
-                    <a href="#compress" class="text-sm font-bold text-gray-700 hover:text-red-primary uppercase tracking-tight">Compress PDF</a>
-                    
+                    <button onclick="openTool('merge')" class="text-sm font-bold hover:text-red-primary uppercase">Merge PDF</button>
+                    <button onclick="openTool('split')" class="text-sm font-bold hover:text-red-primary uppercase">Split PDF</button>
                     <div class="group h-full flex items-center">
-                        <button class="text-sm font-bold text-gray-700 hover:text-red-primary uppercase tracking-tight flex items-center gap-1">
-                            Convert PDF <span class="text-[8px]">▼</span>
-                        </button>
-                        </div>
-
-                    <div class="group h-full flex items-center">
-                        <button class="text-sm font-bold text-gray-700 hover:text-red-primary uppercase tracking-tight flex items-center gap-1">
-                            All PDF Tools <span class="text-[8px]">▼</span>
-                        </button>
-                        
+                        <button class="text-sm font-bold hover:text-red-primary uppercase">All PDF Tools ▼</button>
                         <div class="mega-menu left-0 top-20">
                             <div class="max-w-6xl mx-auto grid grid-cols-4 gap-12 px-8">
-                                <div class="menu-column">
-                                    <h4>Organize PDF</h4>
-                                    <a href="#" class="menu-link">🔗 Merge PDF</a>
-                                    <a href="#" class="menu-link">✂️ Split PDF</a>
-                                    <a href="#" class="menu-link">🗑️ Remove Pages</a>
-                                    <a href="#" class="menu-link">📄 Extract Pages</a>
-                                    <a href="#" class="menu-link">📂 Organize PDF</a>
-                                    <a href="#" class="menu-link">📸 Scan to PDF</a>
+                                <div>
+                                    <h4 class="text-xs font-black text-gray-400 uppercase mb-4">Organize</h4>
+                                    <span onclick="openTool('merge')" class="menu-link">🔗 Merge PDF</span>
+                                    <span onclick="openTool('split')" class="menu-link">✂️ Split PDF</span>
+                                    <span onclick="openTool('remove')" class="menu-link">🗑️ Remove Pages</span>
                                 </div>
-                                <div class="menu-column">
-                                    <h4>Convert to PDF</h4>
-                                    <a href="#" class="menu-link">🖼️ JPG to PDF</a>
-                                    <a href="#" class="menu-link">📝 WORD to PDF</a>
-                                    <a href="#" class="menu-link">📊 PPT to PDF</a>
-                                    <a href="#" class="menu-link">📈 EXCEL to PDF</a>
-                                    <a href="#" class="menu-link">🌐 HTML to PDF</a>
+                                <div>
+                                    <h4 class="text-xs font-black text-gray-400 uppercase mb-4">Convert To</h4>
+                                    <span onclick="openTool('jpg')" class="menu-link">🖼️ JPG to PDF</span>
+                                    <span onclick="openTool('word')" class="menu-link">📝 WORD to PDF</span>
                                 </div>
-                                <div class="menu-column">
-                                    <h4>Convert from PDF</h4>
-                                    <a href="#" class="menu-link">📉 PDF to EXCEL</a>
-                                    <a href="#" class="menu-link">🖼️ PDF to JPG</a>
-                                    <a href="#" class="menu-link">📝 PDF to WORD</a>
-                                </div>
-                                <div class="menu-column">
-                                    <h4>Security & Edit</h4>
-                                    <a href="#" class="menu-link">🔒 Protect PDF</a>
-                                    <a href="#" class="menu-link">🔓 Unlock PDF</a>
-                                    <a href="#" class="menu-link">✍️ Sign PDF</a>
-                                    <a href="#" class="menu-link">🏷️ Watermark</a>
+                                <div>
+                                    <h4 class="text-xs font-black text-gray-400 uppercase mb-4">Convert From</h4>
+                                    <span onclick="openTool('p2e')" class="menu-link">📉 PDF to Excel</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="flex items-center gap-4">
-                <a href="#download" class="bg-red-primary text-white px-6 py-2.5 rounded-lg font-bold text-sm shadow-lg hover:bg-red-700 transition transform hover:scale-105">
-                    Download App
-                </a>
-            </div>
+            <a href="#download" class="bg-red-primary text-white px-6 py-2 rounded-lg font-bold text-sm shadow-lg hover:bg-red-700">Download App</a>
         </div>
     </nav>
 
     <section class="pt-48 pb-20 text-center px-6">
-        <h1 class="text-6xl font-black mb-6 tracking-tighter">Every tool you need to <br><span class="text-red-primary italic">work with PDFs</span></h1>
-        <p class="text-xl text-gray-500 max-w-2xl mx-auto mb-16">Fast, online and unlimited. Hover over the menu to see all features!</p>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-            <div class="bg-white p-10 rounded-3xl shadow-xl hover:shadow-2xl transition border-b-8 border-red-primary text-center">
-                <div class="text-5xl mb-6">🔗</div>
-                <h3 class="text-2xl font-extrabold mb-4">Merge PDF</h3>
-                <button class="bg-red-primary text-white w-full py-4 rounded-xl font-bold">Select Files</button>
-            </div>
-            <div class="bg-white p-10 rounded-3xl shadow-xl hover:shadow-2xl transition border-b-8 border-red-primary text-center">
-                <div class="text-5xl mb-6">✂️</div>
-                <h3 class="text-2xl font-extrabold mb-4">Split PDF</h3>
-                <button class="bg-red-primary text-white w-full py-4 rounded-xl font-bold">Select File</button>
-            </div>
-            <div class="bg-white p-10 rounded-3xl shadow-xl hover:shadow-2xl transition border-b-8 border-red-primary text-center">
-                <div class="text-5xl mb-6">📉</div>
-                <h3 class="text-2xl font-extrabold mb-4">Compress</h3>
-                <button class="bg-red-primary text-white w-full py-4 rounded-xl font-bold">Select File</button>
-            </div>
-            <div class="bg-white p-10 rounded-3xl shadow-xl hover:shadow-2xl transition border-b-8 border-red-primary text-center">
-                <div class="text-5xl mb-6">🔄</div>
-                <h3 class="text-2xl font-extrabold mb-4">Convert</h3>
-                <button class="bg-red-primary text-white w-full py-4 rounded-xl font-bold">Select File</button>
-            </div>
+        <div id="tool-box" class="max-w-xl mx-auto bg-white p-12 rounded-3xl shadow-2xl border-t-8 border-red-primary">
+            <h2 id="tool-title" class="text-4xl font-black mb-4 uppercase text-gray-900">Select a Tool</h2>
+            <p id="tool-desc" class="text-gray-500 mb-8">Choose a tool from the menu above to start processing your PDFs.</p>
+            
+            <input type="file" id="main-input" multiple onchange="handleFileSelect()">
+            
+            <button id="action-btn" onclick="document.getElementById('main-input').click()" class="bg-red-primary text-white px-10 py-4 rounded-xl font-bold text-xl hover:bg-red-700 w-full transition shadow-xl">
+                Select Files
+            </button>
+            <p id="status" class="mt-4 font-bold text-red-primary"></p>
         </div>
     </section>
 
-    <footer id="download" class="bg-gray-900 text-white py-20 text-center">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-4xl font-bold mb-4">Get the <span class="text-red-primary">Desktop App</span></h2>
-            <p class="text-gray-400 mb-10 text-lg">Work offline, sign documents with Digital Signature, and process bulk files.</p>
-            <button class="bg-red-primary px-12 py-5 rounded-2xl font-black text-xl hover:bg-red-700 shadow-2xl transition transform hover:scale-110">Download for Windows (.exe)</button>
-        </div>
-    </footer>
+    <script>
+        const { PDFDocument } = PDFLib;
+        let currentTool = '';
 
+        function openTool(tool) {
+            currentTool = tool;
+            const title = document.getElementById('tool-title');
+            const desc = document.getElementById('tool-desc');
+            const btn = document.getElementById('action-btn');
+            const input = document.getElementById('main-input');
+
+            // Reset
+            input.value = '';
+            document.getElementById('status').innerText = '';
+
+            if(tool === 'merge') {
+                title.innerText = "Merge PDF";
+                desc.innerText = "Combine multiple PDF files into one.";
+                input.multiple = true;
+                input.accept = ".pdf";
+            } else if(tool === 'split') {
+                title.innerText = "Split PDF";
+                desc.innerText = "Extract pages from your PDF file.";
+                input.multiple = false;
+                input.accept = ".pdf";
+            } else if(tool === 'jpg') {
+                title.innerText = "JPG to PDF";
+                desc.innerText = "Convert images to a PDF document.";
+                input.multiple = true;
+                input.accept = "image/*";
+            }
+            window.scrollTo(0, 0);
+        }
+
+        async function handleFileSelect() {
+            const files = document.getElementById('main-input').files;
+            if (files.length === 0) return;
+
+            const status = document.getElementById('status');
+            status.innerText = "Processing... Please wait.";
+
+            try {
+                if (currentTool === 'merge') {
+                    const mergedPdf = await PDFDocument.create();
+                    for (const f of files) {
+                        const pdf = await PDFDocument.load(await f.arrayBuffer());
+                        const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                        pages.forEach(p => mergedPdf.addPage(p));
+                    }
+                    download(await mergedPdf.save(), "Merged_Kellyne.pdf");
+                } 
+                else if (currentTool === 'split') {
+                    const pdf = await PDFDocument.load(await files[0].arrayBuffer());
+                    for (let i = 0; i < pdf.getPageCount(); i++) {
+                        const newPdf = await PDFDocument.create();
+                        const [p] = await newPdf.copyPages(pdf, [i]);
+                        newPdf.addPage(p);
+                        download(await newPdf.save(), `Page_${i+1}.pdf`);
+                    }
+                }
+                status.innerText = "Download Successful!";
+            } catch (e) {
+                status.innerText = "Error processing files.";
+                console.error(e);
+            }
+        }
+
+        function download(bytes, name) {
+            const blob = new Blob([bytes], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = name;
+            link.click();
+        }
+    </script>
 </body>
 </html>
