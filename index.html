@@ -3,46 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLYNE PDF - Pro Editor & Master Toolkit</title>
+    <title>KELLYNE PDF - Pro Editor & Vertical Toolkit</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <style>
         .bg-red-primary { background-color: #E53E3E; }
         .text-red-primary { color: #E53E3E; }
-        .mega-menu { display: none; position: absolute; left: 50%; transform: translateX(-50%); width: 95vw; background: white; z-index: 1000; box-shadow: 0 25px 50px rgba(0,0,0,0.25); border-top: 3px solid #E53E3E; padding: 30px; border-radius: 0 0 20px 20px; }
-        .group:hover .mega-menu { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; }
-        .menu-column h4 { font-size: 10px; font-weight: 900; color: #a0aec0; text-transform: uppercase; border-bottom: 1px solid #edf2f7; margin-bottom: 8px; }
-        .menu-link { display: block; padding: 3px 0; font-size: 12px; color: #4a5568; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .menu-link:hover { color: #E53E3E; transform: translateX(5px); }
-        .editor-bg { background-color: #525659; min-height: 100vh; display: flex; justify-content: center; padding: 40px; }
-        .canvas-shadow { box-shadow: 0 0 30px rgba(0,0,0,0.5); background: white; }
+        
+        /* Vertical Mega Menu Logic */
+        .mega-menu { 
+            display: none; 
+            position: absolute; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 95vw; 
+            background: white; 
+            z-index: 1000; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25); 
+            border-top: 3px solid #E53E3E; 
+            padding: 40px 20px; 
+            border-radius: 0 0 20px 20px; 
+        }
+        .group:hover .mega-menu { 
+            display: grid; 
+            grid-template-columns: repeat(7, 1fr); 
+            gap: 30px; 
+        }
+        
+        /* Vertical Column Styling */
+        .menu-column { display: flex; flex-direction: column; text-align: left; }
+        .menu-column h4 { 
+            font-size: 11px; 
+            font-weight: 900; 
+            color: #a0aec0; 
+            text-transform: uppercase; 
+            margin-bottom: 15px; 
+            border-bottom: 1px solid #edf2f7; 
+            padding-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        .menu-link { 
+            display: block; 
+            padding: 6px 0; 
+            font-size: 13px; 
+            color: #4a5568; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+        }
+        .menu-link:hover { 
+            color: #E53E3E; 
+            padding-left: 5px;
+        }
+        
+        .editor-bg { background-color: #525659; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px; }
+        .canvas-container-shadow { box-shadow: 0 0 40px rgba(0,0,0,0.6); background: white; }
     </style>
 </head>
 <body class="bg-gray-50 font-sans">
 
-    <nav class="bg-white border-b sticky top-0 z-50 px-6 py-3 flex justify-between items-center">
-        <div class="text-2xl font-black cursor-pointer" onclick="location.reload()">
-            <span class="text-red-primary">❤</span> KELLYNE PDF
+    <nav class="bg-white border-b sticky top-0 z-50 px-8 py-4 flex justify-between items-center">
+        <div class="text-2xl font-black tracking-tighter cursor-pointer flex items-center gap-2" onclick="location.reload()">
+            <span class="text-red-primary text-3xl">❤</span> KELLYNE PDF
         </div>
         
-        <div class="hidden lg:flex items-center space-x-6 h-full font-bold text-[10px] uppercase">
+        <div class="hidden lg:flex items-center space-x-8 h-full font-bold text-[11px] uppercase tracking-widest">
             <button onclick="triggerTool('Merge')" class="hover:text-red-primary">Merge</button>
             <button onclick="triggerTool('Edit')" class="text-red-primary">Edit PDF</button>
             
             <div class="group h-full flex items-center relative">
-                <button class="hover:text-red-primary">ALL PDF TOOLS ▼</button>
+                <button class="hover:text-red-primary flex items-center gap-1">ALL PDF TOOLS <span class="text-[8px]">▼</span></button>
                 <div class="mega-menu">
                     <div class="menu-column">
-                        <h4>Organize</h4>
+                        <h4>Organize PDF</h4>
                         <span onclick="triggerTool('Merge')" class="menu-link">Merge PDF</span>
                         <span onclick="triggerTool('Split')" class="menu-link">Split PDF</span>
-                        <span onclick="triggerTool('Remove_Pages')" class="menu-link">Remove Pages</span>
+                        <span onclick="triggerTool('Remove')" class="menu-link">Remove Pages</span>
+                        <span onclick="triggerTool('Extract')" class="menu-link">Extract Pages</span>
                         <span onclick="triggerTool('Organize')" class="menu-link">Organize PDF</span>
                         <span onclick="triggerTool('Scan')" class="menu-link">Scan to PDF</span>
                     </div>
                     <div class="menu-column">
-                        <h4>Optimize</h4>
+                        <h4>Optimize PDF</h4>
                         <span onclick="triggerTool('Compress')" class="menu-link">Compress PDF</span>
                         <span onclick="triggerTool('Repair')" class="menu-link">Repair PDF</span>
                         <span onclick="triggerTool('OCR')" class="menu-link">OCR PDF</span>
@@ -50,24 +93,26 @@
                     <div class="menu-column">
                         <h4>Convert To</h4>
                         <span onclick="triggerTool('Word_to_PDF')" class="menu-link">Office to PDF</span>
-                        <span onclick="triggerTool('JPG_to_PDF')" class="menu-link">Images to PDF</span>
+                        <span onclick="triggerTool('JPG_to_PDF')" class="menu-link">JPG to PDF</span>
                         <span onclick="triggerTool('HTML_to_PDF')" class="menu-link">HTML to PDF</span>
                     </div>
                     <div class="menu-column">
                         <h4>Convert From</h4>
-                        <span onclick="triggerTool('PDF_to_Word')" class="menu-link">PDF to Office</span>
-                        <span onclick="triggerTool('PDF_to_JPG')" class="menu-link">PDF to Image</span>
+                        <span onclick="triggerTool('PDF_to_Word')" class="menu-link">PDF to Word</span>
+                        <span onclick="triggerTool('PDF_to_JPG')" class="menu-link">PDF to JPG</span>
                         <span onclick="triggerTool('PDF_to_PDFA')" class="menu-link">PDF to PDF/A</span>
                     </div>
                     <div class="menu-column">
-                        <h4>Edit & Annotate</h4>
-                        <span onclick="triggerTool('Edit')" class="menu-link font-bold text-red-primary">Edit PDF Content</span>
+                        <h4>Edit PDF</h4>
+                        <span onclick="triggerTool('Edit')" class="menu-link font-bold text-red-primary">Edit Content</span>
                         <span onclick="triggerTool('Rotate')" class="menu-link">Rotate & Crop</span>
+                        <span onclick="triggerTool('Page_Numbers')" class="menu-link">Page Numbers</span>
                         <span onclick="triggerTool('Watermark')" class="menu-link">Watermark</span>
                     </div>
                     <div class="menu-column">
                         <h4>Security</h4>
-                        <span onclick="triggerTool('Protect')" class="menu-link">Protect & Unlock</span>
+                        <span onclick="triggerTool('Protect')" class="menu-link">Protect PDF</span>
+                        <span onclick="triggerTool('Unlock')" class="menu-link">Unlock PDF</span>
                         <span onclick="triggerTool('Sign')" class="menu-link">Sign PDF</span>
                         <span onclick="triggerTool('Redact')" class="menu-link">Redact & Compare</span>
                     </div>
@@ -80,25 +125,25 @@
                 </div>
             </div>
         </div>
-        <button id="download-btn" onclick="exportEditedPDF()" class="bg-red-primary text-white px-5 py-2 rounded-lg font-bold text-xs shadow-lg hidden">Download Kellyne PDF</button>
+        <button id="main-download-btn" onclick="exportPDF()" class="bg-red-primary text-white px-6 py-2 rounded-xl font-bold text-xs shadow-xl hidden animate-pulse">Download Kellyne PDF</button>
     </nav>
 
-    <div id="upload-step" class="flex flex-col items-center justify-center h-[80vh]">
-        <div class="max-w-xl bg-white p-16 rounded-[40px] shadow-2xl text-center border-2 border-gray-100">
-            <h1 class="text-4xl font-black mb-4 text-gray-900">Kellyne PDF Editor</h1>
-            <p class="text-gray-500 mb-10 text-lg">Professional tools to edit, merge, and convert your PDF documents securely.</p>
-            <input type="file" id="pdf-file" accept="application/pdf" class="hidden" onchange="loadKellyneEditor(this.files[0])">
-            <button onclick="document.getElementById('pdf-file').click()" class="bg-red-primary text-white px-12 py-5 rounded-2xl text-xl font-bold shadow-xl hover:scale-105 transition">Open PDF File</button>
+    <div id="upload-section" class="flex flex-col items-center justify-center min-h-[85vh] px-6">
+        <div class="max-w-2xl bg-white p-16 rounded-[50px] shadow-2xl text-center border-b-8 border-red-primary">
+            <h1 class="text-5xl font-black mb-4 text-gray-900 leading-tight">Kellyne PDF Editor</h1>
+            <p class="text-gray-500 mb-12 text-lg font-medium">Professional Vertical Toolkit to Edit, Merge, and Secure Documents.</p>
+            <input type="file" id="input-file" accept="application/pdf" class="hidden" onchange="startEditor(this.files[0])">
+            <button onclick="document.getElementById('input-file').click()" class="bg-red-primary text-white px-14 py-6 rounded-[30px] text-2xl font-black shadow-2xl hover:scale-105 transition-all">Select PDF File</button>
         </div>
     </div>
 
-    <div id="editor-step" class="editor-bg hidden flex-col items-center">
-        <div class="mb-4 flex gap-4">
-            <button onclick="addTextBox()" class="bg-white text-black px-4 py-2 rounded font-bold shadow">T+ Add Text</button>
-            <button onclick="deleteObject()" class="bg-white text-red-600 px-4 py-2 rounded font-bold shadow">Delete</button>
+    <div id="editor-section" class="editor-bg hidden">
+        <div class="flex gap-4 mb-8 sticky top-20 z-50">
+            <button onclick="addText()" class="bg-white text-gray-900 px-6 py-3 rounded-xl font-bold shadow-2xl hover:bg-gray-100 flex items-center gap-2">📝 Add Text Box</button>
+            <button onclick="deleteObj()" class="bg-white text-red-600 px-6 py-3 rounded-xl font-bold shadow-2xl hover:bg-red-50 flex items-center gap-2">🗑 Delete</button>
         </div>
-        <div class="canvas-shadow">
-            <canvas id="main-canvas"></canvas>
+        <div class="canvas-container-shadow">
+            <canvas id="canvas"></canvas>
         </div>
     </div>
 
@@ -107,7 +152,7 @@
         const { PDFDocument, rgb } = PDFLib;
         let fabricCanvas, originalBytes, scale = 1.5;
 
-        async function loadKellyneEditor(file) {
+        async function startEditor(file) {
             originalBytes = await file.arrayBuffer();
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
@@ -121,47 +166,49 @@
             tempCanvas.height = viewport.height; tempCanvas.width = viewport.width;
             await page.render({canvasContext: context, viewport: viewport}).promise;
 
-            fabricCanvas = new fabric.Canvas('main-canvas', {
+            fabricCanvas = new fabric.Canvas('canvas', {
                 height: viewport.height,
                 width: viewport.width,
                 backgroundImage: new fabric.Image(tempCanvas)
             });
 
-            document.getElementById('upload-step').classList.add('hidden');
-            document.getElementById('editor-step').classList.remove('hidden');
-            document.getElementById('download-btn').classList.remove('hidden');
+            document.getElementById('upload-section').classList.add('hidden');
+            document.getElementById('editor-section').classList.remove('hidden');
+            document.getElementById('main-download-btn').classList.remove('hidden');
         }
 
-        function addTextBox() {
-            const text = new fabric.IText('Double click to edit...', {
-                left: 100, top: 100, fontFamily: 'Arial', fontSize: 20, fill: '#000', backgroundColor: '#fff'
+        function addText() {
+            const t = new fabric.IText('Double click to edit text', {
+                left: 100, top: 100, fontFamily: 'Arial', fontSize: 22, fill: '#000', backgroundColor: '#fff', padding: 5
             });
-            fabricCanvas.add(text);
-            fabricCanvas.setActiveObject(text);
+            fabricCanvas.add(t);
+            fabricCanvas.setActiveObject(t);
         }
 
-        function deleteObject() {
+        function deleteObj() {
             const active = fabricCanvas.getActiveObject();
             if (active) fabricCanvas.remove(active);
         }
 
-        async function exportEditedPDF() {
+        async function exportPDF() {
             const pdfDoc = await PDFDocument.load(originalBytes);
             const page = pdfDoc.getPages()[0];
-            const textObjects = fabricCanvas.getObjects('i-text');
+            const items = fabricCanvas.getObjects('i-text');
 
-            for (const obj of textObjects) {
+            for (const item of items) {
+                // Whiteout mask for font matching
                 page.drawRectangle({
-                    x: obj.left / scale,
-                    y: (fabricCanvas.height - obj.top - obj.height) / scale,
-                    width: (obj.width * obj.scaleX) / scale,
-                    height: (obj.height * obj.scaleY) / scale,
+                    x: item.left / scale,
+                    y: (fabricCanvas.height - item.top - item.height) / scale,
+                    width: (item.width * item.scaleX) / scale,
+                    height: (item.height * item.scaleY) / scale,
                     color: rgb(1, 1, 1)
                 });
-                page.drawText(obj.text, {
-                    x: obj.left / scale,
-                    y: (fabricCanvas.height - obj.top - (obj.height * 0.75)) / scale,
-                    size: (obj.fontSize * obj.scaleX) / scale,
+                // New Text overlay
+                page.drawText(item.text, {
+                    x: item.left / scale,
+                    y: (fabricCanvas.height - item.top - (item.height * 0.75)) / scale,
+                    size: (item.fontSize * item.scaleX) / scale,
                     color: rgb(0, 0, 0)
                 });
             }
@@ -173,7 +220,7 @@
             link.click();
         }
 
-        function triggerTool(task) { document.getElementById('pdf-file').click(); }
+        function triggerTool(task) { document.getElementById('input-file').click(); }
     </script>
 </body>
 </html>
