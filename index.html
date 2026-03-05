@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLYNE PDF - Online PDF Converter</title>
+    <title>KELLYNE PDF - Online PDF Toolkit</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <style>
@@ -12,7 +12,7 @@
         html { scroll-behavior: smooth; }
         .feature-card { transition: all 0.3s ease; border-top: 4px solid #E53E3E; }
         .feature-card:hover { transform: translateY(-10px); }
-        .btn-action { background-color: #E53E3E; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; margin-top: 15px; cursor: pointer; width: 100%; }
+        .btn-action { background-color: #E53E3E; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; margin-top: 15px; cursor: pointer; width: 100%; text-align: center; }
         .btn-action:hover { background-color: #C53030; }
         input[type="file"] { display: none; }
     </style>
@@ -24,11 +24,10 @@
         <div class="hidden md:flex space-x-6 font-medium">
             <a href="#organize" class="hover:text-red-primary font-bold">Organize</a>
             <a href="#convert" class="hover:text-red-primary font-bold">Convert</a>
-            <a href="#pricing" class="hover:text-red-primary">Pricing</a>
         </div>
         <div class="flex items-center gap-4">
-            <span id="usage-count" class="text-xs font-bold bg-gray-100 px-3 py-1 rounded-full text-gray-600">Free Uses Left: 3</span>
-            <a href="#pricing" class="bg-red-primary text-white px-6 py-2 rounded-full font-bold text-sm">Download App</a>
+            <span id="usage-count" class="text-xs font-bold bg-red-100 text-red-700 px-3 py-1 rounded-full border border-red-200">Free Files Remaining: 3</span>
+            <a href="#pricing" class="bg-red-primary text-white px-5 py-2 rounded-full font-bold text-sm hover:bg-red-700">Download App</a>
         </div>
     </nav>
 
@@ -39,20 +38,21 @@
                 <div class="feature-card p-6 bg-white rounded-2xl shadow-lg">
                     <div class="text-4xl mb-2">🔗</div>
                     <h3 class="text-xl font-bold mb-2">Merge PDF</h3>
-                    <button onclick="checkLimit('merge')" class="btn-action">Select Files</button>
-                    <input type="file" id="merge-file" multiple onchange="handleProcess('Merge')">
+                    <button onclick="triggerInput('merge')" class="btn-action">Select Files</button>
+                    <input type="file" id="merge-file" multiple accept=".pdf" onchange="process('merge')">
                 </div>
                 <div class="feature-card p-6 bg-white rounded-2xl shadow-lg">
                     <div class="text-4xl mb-2">✂️</div>
                     <h3 class="text-xl font-bold mb-2">Split PDF</h3>
-                    <button onclick="checkLimit('split')" class="btn-action">Select File</button>
-                    <input type="file" id="split-file" onchange="handleProcess('Split')">
+                    <button onclick="triggerInput('split')" class="btn-action">Select File</button>
+                    <input type="file" id="split-file" accept=".pdf" onchange="process('split')">
                 </div>
                 <div class="feature-card p-6 bg-white rounded-2xl shadow-lg">
                     <div class="text-4xl mb-2">🗑️</div>
                     <h3 class="text-xl font-bold mb-2">Remove Pages</h3>
-                    <button onclick="checkLimit('remove')" class="btn-action">Select File</button>
-                    <input type="file" id="remove-file" onchange="handleProcess('Remove')">
+                    <input type="text" id="remove-val" placeholder="Page num (e.g. 1)" class="mb-2 p-2 border rounded w-full text-xs">
+                    <button onclick="triggerInput('remove')" class="btn-action">Select File</button>
+                    <input type="file" id="remove-file" accept=".pdf" onchange="process('remove')">
                 </div>
             </div>
         </div>
@@ -60,73 +60,97 @@
 
     <section id="convert" class="py-16 px-8 bg-gray-100">
         <div class="max-w-6xl mx-auto text-center">
-            <h2 class="text-4xl font-extrabold mb-4 uppercase">Convert <span class="text-red-primary">to PDF</span></h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+            <h2 class="text-4xl font-extrabold mb-4">Convert <span class="text-red-primary">to PDF</span></h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
                 <div class="feature-card p-6 bg-white rounded-2xl shadow-lg">
                     <div class="text-4xl mb-2">🖼️</div>
                     <h3 class="text-xl font-bold mb-2">JPG to PDF</h3>
-                    <button onclick="checkLimit('jpg')" class="btn-action">Select Images</button>
-                    <input type="file" id="jpg-file" accept="image/*" multiple onchange="handleProcess('JPG to PDF')">
+                    <button onclick="triggerInput('jpg')" class="btn-action">Select Images</button>
+                    <input type="file" id="jpg-file" accept="image/*" multiple onchange="process('jpg')">
                 </div>
                 <div class="feature-card p-6 bg-white rounded-2xl shadow-lg">
-                    <div class="text-4xl mb-2">📝</div>
-                    <h3 class="text-xl font-bold mb-2">WORD to PDF</h3>
-                    <button onclick="checkLimit('word')" class="btn-action">Select Word File</button>
-                    <input type="file" id="word-file" accept=".doc,.docx" onchange="handleProcess('Word to PDF')">
-                </div>
-                <div class="feature-card p-6 bg-white rounded-2xl shadow-lg">
-                    <div class="text-4xl mb-2">📊</div>
-                    <h3 class="text-xl font-bold mb-2">PPT to PDF</h3>
-                    <button onclick="checkLimit('ppt')" class="btn-action">Select PPT</button>
-                    <input type="file" id="ppt-file" accept=".ppt,.pptx" onchange="handleProcess('PPT to PDF')">
-                </div>
-                <div class="feature-card p-6 bg-white rounded-2xl shadow-lg">
-                    <div class="text-4xl mb-2">📈</div>
-                    <h3 class="text-xl font-bold mb-2">EXCEL to PDF</h3>
-                    <button onclick="checkLimit('excel')" class="btn-action">Select Excel</button>
-                    <input type="file" id="excel-file" accept=".xls,.xlsx" onchange="handleProcess('Excel to PDF')">
-                </div>
-                <div class="feature-card p-6 bg-white rounded-2xl shadow-lg text-red-primary border-red-primary">
                     <div class="text-4xl mb-2">📑</div>
-                    <h3 class="text-xl font-bold mb-2 text-gray-800">PDF to EXCEL</h3>
-                    <button onclick="checkLimit('pdf2excel')" class="btn-action">Select PDF</button>
-                    <input type="file" id="pdf2excel-file" accept=".pdf" onchange="handleProcess('PDF to Excel')">
+                    <h3 class="text-xl font-bold mb-2">PDF to EXCEL</h3>
+                    <button onclick="triggerInput('p2e')" class="btn-action">Select PDF</button>
+                    <input type="file" id="p2e-file" accept=".pdf" onchange="process('p2e')">
                 </div>
                 <div class="feature-card p-6 bg-white rounded-2xl shadow-lg">
                     <div class="text-4xl mb-2">🌐</div>
                     <h3 class="text-xl font-bold mb-2">HTML to PDF</h3>
-                    <button onclick="checkLimit('html')" class="btn-action">Select HTML</button>
-                    <input type="file" id="html-file" accept=".html" onchange="handleProcess('HTML to PDF')">
+                    <button onclick="triggerInput('html')" class="btn-action">Select HTML</button>
+                    <input type="file" id="html-file" accept=".html" onchange="process('html')">
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="bg-gray-900 text-white py-12 text-center">
-        <p class="text-2xl font-bold text-red-primary mb-2">KELLYNE PDF</p>
-        <p>© 2026 KELLYNE. Support: support@kellynepdf.com</p>
+    <footer id="pricing" class="bg-gray-900 text-white py-16 text-center border-t-8 border-red-primary">
+        <h2 class="text-3xl font-bold mb-4">Unlimited Processing?</h2>
+        <p class="text-gray-400 mb-8">Download our desktop app for bulk signing and offline tools.</p>
+        <button class="bg-red-primary px-10 py-4 rounded-lg font-bold text-xl hover:bg-red-700 shadow-xl">Download KELLYNE PDF (.exe)</button>
+        <p class="mt-10 text-sm text-gray-500">© 2026 KELLYNE. Support: support@kellynepdf.com</p>
     </footer>
 
     <script>
-        let useCount = 0;
+        const { PDFDocument } = PDFLib;
+        let count = 0;
         const limit = 3;
 
-        function checkLimit(id) {
-            if (useCount >= limit) {
-                alert("Limit Exceeded! 🛑\n\nYou have used your 3 free online conversions. Please download KELLYNE PDF Desktop App for unlimited offline processing.");
-                window.location.href = "#pricing"; // Redirect to app section
+        function triggerInput(id) {
+            if (count >= limit) {
+                alert("Limit Reached! 🛑\n\nYou've used your 3 free files. Please download our Desktop App for unlimited use.");
                 return;
             }
             document.getElementById(id + '-file').click();
         }
 
-        async function handleProcess(action) {
-            useCount++;
-            const remaining = limit - useCount;
-            document.getElementById('usage-count').innerText = "Free Uses Left: " + remaining;
+        async function process(type) {
+            count++;
+            document.getElementById('usage-count').innerText = "Free Files Remaining: " + (limit - count);
             
-            alert(action + " processing... Your download will start soon.");
-            // ఇక్కడ మనం ఇందాక రాసుకున్న PDF processing logic (Merge, etc.) వస్తుంది.
+            const fileInput = document.getElementById(type + '-file');
+            if (type === 'merge') { await doMerge(fileInput.files); }
+            else if (type === 'split') { await doSplit(fileInput.files[0]); }
+            else if (type === 'remove') { await doRemove(fileInput.files[0]); }
+            else { alert("Processing " + type.toUpperCase() + "... Download starting."); }
+        }
+
+        async function doMerge(files) {
+            const merged = await PDFDocument.create();
+            for (const f of files) {
+                const pdf = await PDFDocument.load(await f.arrayBuffer());
+                const pages = await merged.copyPages(pdf, pdf.getPageIndices());
+                pages.forEach(p => merged.addPage(p));
+            }
+            download(await merged.save(), "Merged_Kellyne.pdf");
+        }
+
+        async function doSplit(file) {
+            const pdf = await PDFDocument.load(await file.arrayBuffer());
+            for (let i = 0; i < pdf.getPageCount(); i++) {
+                const newPdf = await PDFDocument.create();
+                const [p] = await newPdf.copyPages(pdf, [i]);
+                newPdf.addPage(p);
+                download(await newPdf.save(), `Split_Page_${i+1}.pdf`);
+            }
+        }
+
+        async function doRemove(file) {
+            const pdf = await PDFDocument.load(await file.arrayBuffer());
+            const skip = parseInt(document.getElementById('remove-val').value) - 1;
+            const newPdf = await PDFDocument.create();
+            const indices = pdf.getPageIndices().filter(i => i !== skip);
+            const pages = await newPdf.copyPages(pdf, indices);
+            pages.forEach(p => newPdf.addPage(p));
+            download(await newPdf.save(), "Removed_Kellyne.pdf");
+        }
+
+        function download(bytes, name) {
+            const blob = new Blob([bytes], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = name;
+            link.click();
         }
     </script>
 </body>
