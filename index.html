@@ -12,106 +12,119 @@
         html { scroll-behavior: smooth; }
         
         /* Mega Menu Styles */
-        .mega-menu { display: none; position: absolute; left: 0; width: 100%; background: white; z-index: 1000; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border-top: 1px solid #eee; }
+        .mega-menu { display: none; position: absolute; left: 0; width: 100%; background: white; z-index: 1000; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border-top: 2px solid #E53E3E; padding: 40px 0; }
         .group:hover .mega-menu { display: block; }
-        .menu-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 14px; color: #4a5568; transition: 0.2s; }
-        .menu-item:hover { color: #E53E3E; }
+        .menu-column h4 { font-size: 12px; font-weight: 900; color: #a0aec0; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; border-bottom: 1px solid #edf2f7; padding-bottom: 8px; }
+        .menu-link { display: block; padding: 6px 0; font-size: 14px; color: #4a5568; font-weight: 500; transition: 0.2s; }
+        .menu-link:hover { color: #E53E3E; transform: translateX(5px); }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-50 text-gray-800 font-sans">
 
-    <nav class="fixed w-full bg-white z-50 px-8 py-4 border-b flex justify-between items-center shadow-sm">
-        <div class="flex items-center gap-10">
-            <div class="text-2xl font-bold text-red-primary">KELLYNE<span class="text-gray-900">PDF</span></div>
+    <nav class="fixed w-full bg-white z-50 border-b shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
             
-            <div class="hidden md:flex space-x-6">
-                <a href="#merge" class="font-bold hover:text-red-primary">MERGE PDF</a>
-                <a href="#split" class="font-bold hover:text-red-primary">SPLIT PDF</a>
+            <div class="flex items-center gap-10 h-full">
+                <div class="text-2xl font-black text-red-primary tracking-tighter cursor-pointer">
+                    KELLYNE<span class="text-gray-900 font-extrabold">PDF</span>
+                </div>
                 
-                <div class="group">
-                    <button class="font-bold hover:text-red-primary flex items-center gap-1">
-                        ALL PDF TOOLS <span class="text-[10px]">▼</span>
-                    </button>
-                    <div class="mega-menu left-0 top-full p-10">
-                        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
-                            <div>
-                                <h4 class="font-black text-xs uppercase mb-4 text-gray-400">Organize PDF</h4>
-                                <a href="#" class="menu-item">🔗 Merge PDF</a>
-                                <a href="#" class="menu-item">✂️ Split PDF</a>
-                                <a href="#" class="menu-item">🗑️ Remove pages</a>
-                                <a href="#" class="menu-item">📄 Extract pages</a>
-                                <a href="#" class="menu-item">📂 Organize PDF</a>
-                                <a href="#" class="menu-item">📸 Scan to PDF</a>
-                            </div>
-                            <div>
-                                <h4 class="font-black text-xs uppercase mb-4 text-gray-400">Convert to PDF</h4>
-                                <a href="#" class="menu-item">🖼️ JPG to PDF</a>
-                                <a href="#" class="menu-item">📝 WORD to PDF</a>
-                                <a href="#" class="menu-item">📊 POWERPOINT to PDF</a>
-                                <a href="#" class="menu-item">📈 EXCEL to PDF</a>
-                                <a href="#" class="menu-item">🌐 HTML to PDF</a>
-                            </div>
-                            <div>
-                                <h4 class="font-black text-xs uppercase mb-4 text-gray-400">Convert from PDF</h4>
-                                <a href="#" class="menu-item">📉 PDF to EXCEL</a>
-                                <a href="#" class="menu-item">🖼️ PDF to JPG</a>
-                                <a href="#" class="menu-item">📝 PDF to WORD</a>
-                            </div>
-                            <div>
-                                <h4 class="font-black text-xs uppercase mb-4 text-gray-400">Security</h4>
-                                <a href="#" class="menu-item">🔒 Protect PDF</a>
-                                <a href="#" class="menu-item">🔓 Unlock PDF</a>
-                                <a href="#" class="menu-item">✍️ Sign PDF</a>
+                <div class="hidden lg:flex items-center space-x-8 h-full">
+                    <a href="#merge" class="text-sm font-bold text-gray-700 hover:text-red-primary uppercase tracking-tight">Merge PDF</a>
+                    <a href="#split" class="text-sm font-bold text-gray-700 hover:text-red-primary uppercase tracking-tight">Split PDF</a>
+                    <a href="#compress" class="text-sm font-bold text-gray-700 hover:text-red-primary uppercase tracking-tight">Compress PDF</a>
+                    
+                    <div class="group h-full flex items-center">
+                        <button class="text-sm font-bold text-gray-700 hover:text-red-primary uppercase tracking-tight flex items-center gap-1">
+                            Convert PDF <span class="text-[8px]">▼</span>
+                        </button>
+                        </div>
+
+                    <div class="group h-full flex items-center">
+                        <button class="text-sm font-bold text-gray-700 hover:text-red-primary uppercase tracking-tight flex items-center gap-1">
+                            All PDF Tools <span class="text-[8px]">▼</span>
+                        </button>
+                        
+                        <div class="mega-menu left-0 top-20">
+                            <div class="max-w-6xl mx-auto grid grid-cols-4 gap-12 px-8">
+                                <div class="menu-column">
+                                    <h4>Organize PDF</h4>
+                                    <a href="#" class="menu-link">🔗 Merge PDF</a>
+                                    <a href="#" class="menu-link">✂️ Split PDF</a>
+                                    <a href="#" class="menu-link">🗑️ Remove Pages</a>
+                                    <a href="#" class="menu-link">📄 Extract Pages</a>
+                                    <a href="#" class="menu-link">📂 Organize PDF</a>
+                                    <a href="#" class="menu-link">📸 Scan to PDF</a>
+                                </div>
+                                <div class="menu-column">
+                                    <h4>Convert to PDF</h4>
+                                    <a href="#" class="menu-link">🖼️ JPG to PDF</a>
+                                    <a href="#" class="menu-link">📝 WORD to PDF</a>
+                                    <a href="#" class="menu-link">📊 PPT to PDF</a>
+                                    <a href="#" class="menu-link">📈 EXCEL to PDF</a>
+                                    <a href="#" class="menu-link">🌐 HTML to PDF</a>
+                                </div>
+                                <div class="menu-column">
+                                    <h4>Convert from PDF</h4>
+                                    <a href="#" class="menu-link">📉 PDF to EXCEL</a>
+                                    <a href="#" class="menu-link">🖼️ PDF to JPG</a>
+                                    <a href="#" class="menu-link">📝 PDF to WORD</a>
+                                </div>
+                                <div class="menu-column">
+                                    <h4>Security & Edit</h4>
+                                    <a href="#" class="menu-link">🔒 Protect PDF</a>
+                                    <a href="#" class="menu-link">🔓 Unlock PDF</a>
+                                    <a href="#" class="menu-link">✍️ Sign PDF</a>
+                                    <a href="#" class="menu-link">🏷️ Watermark</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="flex items-center gap-4">
-            <a href="#pricing" class="bg-red-primary text-white px-6 py-2 rounded-lg font-bold hover:bg-red-700 shadow-md">Download App</a>
+
+            <div class="flex items-center gap-4">
+                <a href="#download" class="bg-red-primary text-white px-6 py-2.5 rounded-lg font-bold text-sm shadow-lg hover:bg-red-700 transition transform hover:scale-105">
+                    Download App
+                </a>
+            </div>
         </div>
     </nav>
 
-    <section class="pt-40 pb-20 text-center px-8">
-        <h1 class="text-5xl font-black mb-4">Unlimited <span class="text-red-primary">PDF</span> Power</h1>
-        <p class="text-xl text-gray-600">Hover over 'ALL PDF TOOLS' to see the full menu!</p>
+    <section class="pt-48 pb-20 text-center px-6">
+        <h1 class="text-6xl font-black mb-6 tracking-tighter">Every tool you need to <br><span class="text-red-primary italic">work with PDFs</span></h1>
+        <p class="text-xl text-gray-500 max-w-2xl mx-auto mb-16">Fast, online and unlimited. Hover over the menu to see all features!</p>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mt-20">
-            <div class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-red-primary text-center">
-                <div class="text-4xl mb-4">🔗</div>
-                <h3 class="text-2xl font-bold mb-2">Merge PDF</h3>
-                <p class="text-gray-500 mb-6">Combine PDFs in the order you want.</p>
-                <button class="bg-red-primary text-white px-8 py-3 rounded-xl font-bold w-full">Select PDF files</button>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            <div class="bg-white p-10 rounded-3xl shadow-xl hover:shadow-2xl transition border-b-8 border-red-primary text-center">
+                <div class="text-5xl mb-6">🔗</div>
+                <h3 class="text-2xl font-extrabold mb-4">Merge PDF</h3>
+                <button class="bg-red-primary text-white w-full py-4 rounded-xl font-bold">Select Files</button>
             </div>
-            <div class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-red-primary text-center">
-                <div class="text-4xl mb-4">✂️</div>
-                <h3 class="text-2xl font-bold mb-2">Split PDF</h3>
-                <p class="text-gray-500 mb-6">Separate one page or a whole set.</p>
-                <button class="bg-red-primary text-white px-8 py-3 rounded-xl font-bold w-full">Select PDF file</button>
+            <div class="bg-white p-10 rounded-3xl shadow-xl hover:shadow-2xl transition border-b-8 border-red-primary text-center">
+                <div class="text-5xl mb-6">✂️</div>
+                <h3 class="text-2xl font-extrabold mb-4">Split PDF</h3>
+                <button class="bg-red-primary text-white w-full py-4 rounded-xl font-bold">Select File</button>
             </div>
-            <div class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-red-primary text-center">
-                <div class="text-4xl mb-4">📊</div>
-                <h3 class="text-2xl font-bold mb-2">PDF to Excel</h3>
-                <p class="text-gray-500 mb-6">Extract data from PDF to Sheets.</p>
-                <button class="bg-red-primary text-white px-8 py-3 rounded-xl font-bold w-full">Select PDF file</button>
+            <div class="bg-white p-10 rounded-3xl shadow-xl hover:shadow-2xl transition border-b-8 border-red-primary text-center">
+                <div class="text-5xl mb-6">📉</div>
+                <h3 class="text-2xl font-extrabold mb-4">Compress</h3>
+                <button class="bg-red-primary text-white w-full py-4 rounded-xl font-bold">Select File</button>
+            </div>
+            <div class="bg-white p-10 rounded-3xl shadow-xl hover:shadow-2xl transition border-b-8 border-red-primary text-center">
+                <div class="text-5xl mb-6">🔄</div>
+                <h3 class="text-2xl font-extrabold mb-4">Convert</h3>
+                <button class="bg-red-primary text-white w-full py-4 rounded-xl font-bold">Select File</button>
             </div>
         </div>
     </section>
 
-    <footer id="pricing" class="bg-gray-900 text-white py-20 text-center">
-        <h2 class="text-3xl font-bold mb-8 text-red-primary">KELLYNE PDF DESKTOP</h2>
-        <div class="flex flex-wrap justify-center gap-8">
-            <div class="p-6 bg-white/10 rounded-xl border border-white/20 w-64">
-                <h3 class="font-bold">Quarterly</h3>
-                <p class="text-2xl font-black">$19.99</p>
-            </div>
-            <div class="p-6 bg-red-primary rounded-xl w-64 shadow-xl">
-                <h3 class="font-bold text-white">Yearly</h3>
-                <p class="text-2xl font-black text-white">$69.99</p>
-            </div>
+    <footer id="download" class="bg-gray-900 text-white py-20 text-center">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold mb-4">Get the <span class="text-red-primary">Desktop App</span></h2>
+            <p class="text-gray-400 mb-10 text-lg">Work offline, sign documents with Digital Signature, and process bulk files.</p>
+            <button class="bg-red-primary px-12 py-5 rounded-2xl font-black text-xl hover:bg-red-700 shadow-2xl transition transform hover:scale-110">Download for Windows (.exe)</button>
         </div>
-        <p class="mt-12 text-gray-500">© 2026 KELLYNE. support@kellynepdf.com</p>
     </footer>
 
 </body>
