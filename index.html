@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLYNE PDF - Organize PDF Tools</title>
+    <title>KELLYNE PDF - Online & Desktop Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <style>
         .bg-red-primary { background-color: #E53E3E; }
         .text-red-primary { color: #E53E3E; }
@@ -18,7 +19,7 @@
     <nav class="fixed w-full bg-white/95 backdrop-blur-sm z-50 px-8 py-4 border-b flex justify-between items-center shadow-sm">
         <div class="text-2xl font-bold text-red-primary">KELLYNE<span class="text-gray-900">PDF</span></div>
         <div class="hidden md:flex space-x-8 font-medium">
-            <a href="#organize" class="hover:text-red-primary">Organize PDF</a>
+            <a href="#organize" class="hover:text-red-primary">Online Tools</a>
             <a href="#pricing" class="hover:text-red-primary">Pricing</a>
             <a href="#support" class="hover:text-red-primary">Support</a>
         </div>
@@ -26,50 +27,38 @@
     </nav>
 
     <section class="pt-32 pb-10 text-center bg-gray-50">
-        <h2 class="text-5xl font-extrabold mb-4">Organize <span class="text-red-primary">PDF</span></h2>
-        <p class="text-xl text-gray-600 max-w-2xl mx-auto">The complete toolkit to manage and arrange your PDF documents with ease.</p>
+        <h2 class="text-5xl font-extrabold mb-4">Organize <span class="text-red-primary">PDF</span> Online</h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">Try our online tools or download the desktop app for advanced bulk processing.</p>
     </section>
 
     <section id="organize" class="py-16 px-8 bg-white">
         <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
-            <div class="feature-card p-8 border-t-4 border-red-primary bg-white rounded-2xl shadow-lg">
+            <div class="feature-card p-8 border-t-4 border-red-primary bg-white rounded-2xl shadow-lg text-center">
                 <div class="text-4xl mb-4">🔗</div>
                 <h3 class="text-2xl font-bold mb-2">Merge PDF</h3>
-                <p class="text-gray-600">Combine multiple PDFs into a single document.</p>
+                <p class="text-gray-600 mb-6">Combine PDFs online instantly.</p>
+                <input type="file" id="merge-input" class="hidden" multiple accept=".pdf">
+                <button onclick="document.getElementById('merge-input').click()" class="bg-red-primary text-white px-6 py-2 rounded-lg font-bold hover:bg-red-700 transition">Select Files</button>
+                <button id="merge-button" onclick="mergePDFs()" class="hidden mt-4 bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 block mx-auto">Merge & Download</button>
+                <p id="status" class="mt-2 text-sm text-gray-500"></p>
             </div>
 
             <div class="feature-card p-8 border-t-4 border-red-primary bg-white rounded-2xl shadow-lg">
                 <div class="text-4xl mb-4">✂️</div>
                 <h3 class="text-2xl font-bold mb-2">Split PDF</h3>
-                <p class="text-gray-600">Separate pages into individual PDF files.</p>
+                <p class="text-gray-600 mb-4">Separate pages easily.</p>
+                <span class="text-xs bg-gray-100 px-2 py-1 rounded">Desktop Only</span>
             </div>
 
             <div class="feature-card p-8 border-t-4 border-red-primary bg-white rounded-2xl shadow-lg">
                 <div class="text-4xl mb-4">🗑️</div>
                 <h3 class="text-2xl font-bold mb-2">Remove Pages</h3>
-                <p class="text-gray-600">Delete unwanted pages from your PDF file.</p>
+                <p class="text-gray-600 mb-4">Delete unwanted pages.</p>
+                <span class="text-xs bg-gray-100 px-2 py-1 rounded">Desktop Only</span>
             </div>
 
-            <div class="feature-card p-8 border-t-4 border-red-primary bg-white rounded-2xl shadow-lg">
-                <div class="text-4xl mb-4">📄</div>
-                <h3 class="text-2xl font-bold mb-2">Extract Pages</h3>
-                <p class="text-gray-600">Extract specific pages from any PDF document.</p>
             </div>
-
-            <div class="feature-card p-8 border-t-4 border-red-primary bg-white rounded-2xl shadow-lg">
-                <div class="text-4xl mb-4">📂</div>
-                <h3 class="text-2xl font-bold mb-2">Organize PDF</h3>
-                <p class="text-gray-600">Rearrange or rotate pages as per your need.</p>
-            </div>
-
-            <div class="feature-card p-8 border-t-4 border-red-primary bg-white rounded-2xl shadow-lg">
-                <div class="text-4xl mb-4">🖨️</div>
-                <h3 class="text-2xl font-bold mb-2">Scan to PDF</h3>
-                <p class="text-gray-600">Convert your photos or documents into PDF scans.</p>
-            </div>
-
-        </div>
     </section>
 
     <section id="pricing" class="py-20 bg-gray-50 text-center px-8">
@@ -78,21 +67,48 @@
             <div class="p-8 bg-white border rounded-2xl shadow">
                 <h3 class="text-2xl font-bold mb-2">Quarterly</h3>
                 <div class="text-4xl font-black mb-4">$19.99</div>
-                <p class="text-gray-400">Coming Soon</p>
+                <p class="text-gray-400">Full Access</p>
             </div>
             <div class="p-8 bg-white border-2 border-red-primary rounded-2xl shadow-xl">
                 <h3 class="text-2xl font-bold mb-2">Yearly</h3>
                 <div class="text-4xl font-black mb-4 text-red-primary">$69.99</div>
-                <p class="text-gray-400">Coming Soon</p>
+                <p class="text-gray-400">Best Value</p>
             </div>
         </div>
     </section>
 
     <footer id="support" class="bg-gray-900 text-white py-12 px-8 text-center border-t-8 border-red-primary">
         <p class="text-2xl font-bold text-red-primary mb-4">KELLYNE PDF</p>
-        <p class="mb-6">Contact: <a href="mailto:support@kellynepdf.com" class="underline">support@kellynepdf.com</a></p>
-        <div class="text-sm text-gray-500">© 2026 KELLYNE. All rights reserved.</div>
+        <p class="mb-6 font-bold">support@kellynepdf.com</p>
     </footer>
 
+    <script>
+        async function mergePDFs() {
+            const input = document.getElementById('merge-input');
+            const status = document.getElementById('status');
+            if (input.files.length < 2) return;
+            status.innerText = "Processing...";
+            const mergedPdf = await PDFLib.PDFDocument.create();
+            for (const file of input.files) {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                copiedPages.forEach((page) => mergedPdf.addPage(page));
+            }
+            const mergedPdfBytes = await mergedPdf.save();
+            const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'KELLYNE_Merged.pdf';
+            link.click();
+            status.innerText = "Download Complete!";
+        }
+        document.getElementById('merge-input').addEventListener('change', function() {
+            if(this.files.length >= 2) {
+                document.getElementById('merge-button').classList.remove('hidden');
+                document.getElementById('status').innerText = this.files.length + " files selected.";
+            }
+        });
+    </script>
 </body>
 </html>
