@@ -3,164 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLYNE PDF - Online PDF Toolkit</title>
+    <title>KELLYNE PDF - All-in-One PDF Toolkit</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <style>
         .bg-red-primary { background-color: #E53E3E; }
         .text-red-primary { color: #E53E3E; }
         html { scroll-behavior: smooth; }
-        .feature-card { transition: all 0.3s ease; border-top: 4px solid #E53E3E; }
+        .feature-card { transition: all 0.3s ease; border-top: 4px solid #E53E3E; background-color: white; border-radius: 1rem; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
         .feature-card:hover { transform: translateY(-10px); }
-        .btn-action { background-color: #E53E3E; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        .btn-action { background-color: #E53E3E; color: white; padding: 8px 16px; border-radius: 8px; font-weight: bold; margin-top: 15px; cursor: pointer; display: inline-block; }
         .btn-action:hover { background-color: #C53030; }
         input[type="file"] { display: none; }
+        .badge-desktop { background-color: #f3f4f6; color: #6b7280; font-size: 10px; padding: 4px 10px; border-radius: 99px; margin-top: 10px; display: inline-block; font-weight: bold; }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 text-gray-800">
 
     <nav class="fixed w-full bg-white/95 backdrop-blur-sm z-50 px-8 py-4 border-b flex justify-between items-center shadow-sm">
         <div class="text-2xl font-bold text-red-primary">KELLYNE<span class="text-gray-900">PDF</span></div>
-        <div class="hidden md:flex space-x-8 font-medium">
-            <a href="#organize" class="hover:text-red-primary">Online Tools</a>
+        <div class="hidden md:flex space-x-6 font-medium">
+            <a href="#organize" class="hover:text-red-primary">Organize</a>
+            <a href="#convert" class="hover:text-red-primary">Convert</a>
             <a href="#pricing" class="hover:text-red-primary">Pricing</a>
-            <a href="#support" class="hover:text-red-primary">Support</a>
         </div>
         <a href="#pricing" class="bg-red-primary text-white px-6 py-2 rounded-full font-bold">Get Started</a>
     </nav>
 
-    <section class="pt-32 pb-10 text-center">
-        <h2 class="text-5xl font-extrabold mb-4">Organize <span class="text-red-primary">PDF</span> Online</h2>
-        <p class="text-xl text-gray-600">Fast, secure, and 100% in your browser.</p>
-    </section>
-
-    <section id="organize" class="py-12 px-8">
-        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-center">
-            
-            <div class="feature-card p-8 bg-white rounded-2xl shadow-lg">
-                <div class="text-4xl mb-4">🔗</div>
-                <h3 class="text-2xl font-bold mb-2">Merge PDF</h3>
-                <p class="text-gray-500 mb-4">Combine multiple PDFs instantly.</p>
-                <input type="file" id="merge-input" multiple accept=".pdf" onchange="showBtn('merge')">
-                <button onclick="document.getElementById('merge-input').click()" class="btn-action">Select Files</button>
-                <button id="merge-btn" onclick="processMerge()" class="hidden btn-action bg-green-600">Merge & Download</button>
+    <section id="organize" class="pt-32 pb-16 px-8">
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-4xl font-extrabold mb-4 uppercase">Organize <span class="text-red-primary">PDF</span></h2>
+            <p class="text-gray-600 mb-12">Manage and arrange your PDF files online.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="feature-card">
+                    <div class="text-4xl mb-4">🔗</div>
+                    <h3 class="text-xl font-bold mb-2">Merge PDF</h3>
+                    <input type="file" id="merge-in" multiple accept=".pdf" onchange="showBtn('merge')">
+                    <button onclick="document.getElementById('merge-in').click()" class="btn-action">Select Files</button>
+                    <button id="merge-btn" onclick="doMerge()" class="hidden btn-action bg-green-600">Download</button>
+                </div>
+                <div class="feature-card">
+                    <div class="text-4xl mb-4">✂️</div>
+                    <h3 class="text-xl font-bold mb-2">Split PDF</h3>
+                    <input type="file" id="split-in" accept=".pdf" onchange="showBtn('split')">
+                    <button onclick="document.getElementById('split-in').click()" class="btn-action">Select File</button>
+                    <button id="split-btn" onclick="doSplit()" class="hidden btn-action bg-blue-600">Download</button>
+                </div>
+                <div class="feature-card">
+                    <div class="text-4xl mb-4">🗑️</div>
+                    <h3 class="text-xl font-bold mb-2">Remove Pages</h3>
+                    <input type="file" id="rem-in" accept=".pdf" onchange="showBtn('rem')">
+                    <button onclick="document.getElementById('rem-in').click()" class="btn-action">Select File</button>
+                    <button id="rem-btn" onclick="doRemove()" class="hidden btn-action bg-orange-600">Download</button>
+                </div>
             </div>
-
-            <div class="feature-card p-8 bg-white rounded-2xl shadow-lg">
-                <div class="text-4xl mb-4">✂️</div>
-                <h3 class="text-2xl font-bold mb-2">Split PDF</h3>
-                <p class="text-gray-500 mb-4">Separate every page of your PDF.</p>
-                <input type="file" id="split-input" accept=".pdf" onchange="showBtn('split')">
-                <button onclick="document.getElementById('split-input').click()" class="btn-action">Select File</button>
-                <button id="split-btn" onclick="processSplit()" class="hidden btn-action bg-blue-600">Split & Download</button>
-            </div>
-
-            <div class="feature-card p-8 bg-white rounded-2xl shadow-lg">
-                <div class="text-4xl mb-4">🗑️</div>
-                <h3 class="text-2xl font-bold mb-2">Remove Pages</h3>
-                <input type="text" id="remove-range" placeholder="Enter page (e.g. 1)" class="mb-2 p-2 border rounded w-full text-sm">
-                <input type="file" id="remove-input" accept=".pdf" onchange="showBtn('remove')">
-                <button onclick="document.getElementById('remove-input').click()" class="btn-action">Select File</button>
-                <button id="remove-btn" onclick="processRemove()" class="hidden btn-action bg-orange-600">Remove & Download</button>
-            </div>
-
-            <div class="feature-card p-8 bg-white rounded-2xl shadow-lg">
-                <div class="text-4xl mb-4">📄</div>
-                <h3 class="text-2xl font-bold mb-2">Extract Pages</h3>
-                <input type="text" id="extract-range" placeholder="e.g. 1-3" class="mb-2 p-2 border rounded w-full text-sm">
-                <input type="file" id="extract-input" accept=".pdf" onchange="showBtn('extract')">
-                <button onclick="document.getElementById('extract-input').click()" class="btn-action">Select File</button>
-                <button id="extract-btn" onclick="processExtract()" class="hidden btn-action bg-purple-600">Extract & Download</button>
-            </div>
-
-            <div class="feature-card p-8 bg-white rounded-2xl shadow-lg">
-                <div class="text-4xl mb-4">📂</div>
-                <h3 class="text-2xl font-bold mb-2">Organize PDF</h3>
-                <p class="text-gray-500 mb-4">Reverse page order instantly.</p>
-                <input type="file" id="org-input" accept=".pdf" onchange="showBtn('org')">
-                <button onclick="document.getElementById('org-input').click()" class="btn-action">Select File</button>
-                <button id="org-btn" onclick="processReverse()" class="hidden btn-action bg-teal-600">Reverse & Download</button>
-            </div>
-
-            <div class="feature-card p-8 bg-white rounded-2xl shadow-lg">
-                <div class="text-4xl mb-4">🖨️</div>
-                <h3 class="text-2xl font-bold mb-2">Scan to PDF</h3>
-                <p class="text-gray-500 mb-4">Coming soon to Desktop app.</p>
-                <button disabled class="btn-action opacity-50 cursor-not-allowed">Desktop Only</button>
-            </div>
-
         </div>
     </section>
 
-    <footer id="support" class="bg-gray-900 text-white py-12 text-center border-t-8 border-red-primary">
-        <p class="text-2xl font-bold text-red-primary mb-2">KELLYNE PDF</p>
-        <p>Support: support@kellynepdf.com</p>
-    </footer>
+    <section id="convert" class="py-16 px-8 bg-gray-100">
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-4xl font-extrabold mb-4 uppercase">Convert <span class="text-red-primary">to PDF</span></h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+                <div class="feature-card">
+                    <div class="text-4xl mb-4">🖼️</div>
+                    <h3 class="text-xl font-bold mb-2">JPG to PDF</h3>
+                    <button class="btn-action">Select Images</button>
+                </div>
+                <div class="feature-card">
+                    <div class="text-4xl mb-4">📝</div>
+                    <h3 class="text-xl font-bold mb-2">WORD to PDF</h3>
+                    <div class="badge-desktop">Desktop App Only</div>
+                </div>
+                <div class="feature-card">
+                    <div class="text-4xl mb-4">📊</div>
+                    <h3 class="text-xl font-bold mb-2">PPT to PDF</h3>
+                    <div class="badge-desktop">Desktop App Only</div>
+                </div>
+                <div class="feature-card">
+                    <div class="text-4xl mb-4">📈</div>
+                    <h3 class="text-xl font-bold mb-2">EXCEL to PDF</h3>
+                    <div class="badge-desktop">Desktop App Only</div>
+                </div>
+                <div class="feature-card">
+                    <div class="text-4xl mb-4">🌐</div>
+                    <h3 class="text-xl font-bold mb-2">HTML to PDF</h3>
+                    <div class="badge-desktop">Desktop App Only</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <script>
-        const { PDFDocument } = PDFLib;
-        function showBtn(type) { document.getElementById(`${type}-btn`).classList.remove('hidden'); }
-
-        async function processMerge() {
-            const input = document.getElementById('merge-input');
-            const mergedPdf = await PDFDocument.create();
-            for (const file of input.files) {
-                const pdf = await PDFDocument.load(await file.arrayBuffer());
-                const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-                pages.forEach(p => mergedPdf.addPage(p));
-            }
-            download(await mergedPdf.save(), "Merged.pdf");
-        }
-
-        async function processSplit() {
-            const file = document.getElementById('split-input').files[0];
-            const pdf = await PDFDocument.load(await file.arrayBuffer());
-            for (let i = 0; i < pdf.getPageCount(); i++) {
-                const newPdf = await PDFDocument.create();
-                const [page] = await newPdf.copyPages(pdf, [i]);
-                newPdf.addPage(page);
-                download(await newPdf.save(), `Page_${i+1}.pdf`);
-            }
-        }
-
-        async function processRemove() {
-            const file = document.getElementById('remove-input').files[0];
-            const pageNum = parseInt(document.getElementById('remove-range').value) - 1;
-            const pdf = await PDFDocument.load(await file.arrayBuffer());
-            const indices = pdf.getPageIndices().filter(i => i !== pageNum);
-            const newPdf = await PDFDocument.create();
-            const pages = await newPdf.copyPages(pdf, indices);
-            pages.forEach(p => newPdf.addPage(p));
-            download(await newPdf.save(), "Removed_Page.pdf");
-        }
-
-        async function processExtract() {
-            const file = document.getElementById('extract-input').files[0];
-            const range = document.getElementById('extract-range').value.split('-').map(n => parseInt(n) - 1);
-            const pdf = await PDFDocument.load(await file.arrayBuffer());
-            const indices = Array.from({length: range[1] - range[0] + 1}, (_, i) => range[0] + i);
-            const newPdf = await PDFDocument.create();
-            const pages = await newPdf.copyPages(pdf, indices);
-            pages.forEach(p => newPdf.addPage(p));
-            download(await newPdf.save(), "Extracted.pdf");
-        }
-
-        async function processReverse() {
-            const file = document.getElementById('org-input').files[0];
-            const pdf = await PDFDocument.load(await file.arrayBuffer());
-            const newPdf = await PDFDocument.create();
-            const pages = await newPdf.copyPages(pdf, pdf.getPageIndices().reverse());
-            pages.forEach(p => newPdf.addPage(p));
-            download(await newPdf.save(), "Reversed.pdf");
-        }
-
-        function download(bytes, name) {
-            const blob = new Blob([bytes], { type: 'application/pdf' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = name;
-            link.click();
-        }
-    </script>
-</body>
-</html>
+    <section id="pricing" class="py-20 px-8 text-center bg-white">
+        <h2 class="text-4xl font-bold mb-12">PRICING PLANS</h2>
+        <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+            <div class="p-8 border rounded-2xl shadow">
+                <h3 class="text-2xl font-bold mb-2">Quarterly</h3>
+                <div class="text-4xl font-black mb-4">$19.99</div>
+            </div>
+            <div class="p-8 border-4 border-red-primary rounded-2xl shadow-xl">
+                <h3 class="text-2xl font-bold mb-2">Yearly</h3>
