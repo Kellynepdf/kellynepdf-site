@@ -10,14 +10,14 @@
         .bg-red-primary { background-color: #E53E3E; }
         .text-red-primary { color: #E53E3E; }
         html { scroll-behavior: smooth; }
-        .feature-card { transition: all 0.3s ease; border-top: 4px solid #E53E3E; }
+        .feature-card { transition: all 0.3s ease; border-top: 4px solid #E53E3E; background-color: white; }
         .feature-card:hover { transform: translateY(-10px); }
         .btn-action { background-color: #E53E3E; color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; margin-top: 15px; cursor: pointer; width: 100%; text-align: center; }
         .btn-action:hover { background-color: #C53030; }
         input[type="file"] { display: none; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-50 text-gray-800 font-sans">
 
     <nav class="fixed w-full bg-white/95 backdrop-blur-sm z-50 px-8 py-4 border-b flex justify-between items-center shadow-sm">
         <div class="text-2xl font-bold text-red-primary">KELLYNE<span class="text-gray-900">PDF</span></div>
@@ -26,31 +26,32 @@
             <a href="#convert" class="hover:text-red-primary font-bold">Convert</a>
         </div>
         <div class="flex items-center gap-4">
-            <span id="usage-count" class="text-xs font-bold bg-red-100 text-red-700 px-3 py-1 rounded-full border border-red-200">Free Files Remaining: 3</span>
+            <span id="usage-count" class="text-xs font-bold bg-red-100 text-red-700 px-3 py-1 rounded-full border border-red-200">Free Uses Left: 3</span>
             <a href="#pricing" class="bg-red-primary text-white px-5 py-2 rounded-full font-bold text-sm hover:bg-red-700">Download App</a>
         </div>
     </nav>
 
     <section id="organize" class="pt-32 pb-10 px-8">
         <div class="max-w-6xl mx-auto text-center">
-            <h2 class="text-4xl font-extrabold mb-4">Organize <span class="text-red-primary">PDF</span></h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-                <div class="feature-card p-6 bg-white rounded-2xl shadow-lg">
+            <h2 class="text-4xl font-extrabold mb-4 uppercase">Organize <span class="text-red-primary">PDF</span></h2>
+            <p class="text-gray-500 mb-10">Merge, Split, or Remove pages from your PDF online.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="feature-card p-6 rounded-2xl shadow-lg">
                     <div class="text-4xl mb-2">🔗</div>
                     <h3 class="text-xl font-bold mb-2">Merge PDF</h3>
                     <button onclick="triggerInput('merge')" class="btn-action">Select Files</button>
                     <input type="file" id="merge-file" multiple accept=".pdf" onchange="process('merge')">
                 </div>
-                <div class="feature-card p-6 bg-white rounded-2xl shadow-lg">
+                <div class="feature-card p-6 rounded-2xl shadow-lg">
                     <div class="text-4xl mb-2">✂️</div>
                     <h3 class="text-xl font-bold mb-2">Split PDF</h3>
                     <button onclick="triggerInput('split')" class="btn-action">Select File</button>
                     <input type="file" id="split-file" accept=".pdf" onchange="process('split')">
                 </div>
-                <div class="feature-card p-6 bg-white rounded-2xl shadow-lg">
+                <div class="feature-card p-6 rounded-2xl shadow-lg">
                     <div class="text-4xl mb-2">🗑️</div>
                     <h3 class="text-xl font-bold mb-2">Remove Pages</h3>
-                    <input type="text" id="remove-val" placeholder="Page num (e.g. 1)" class="mb-2 p-2 border rounded w-full text-xs">
+                    <input type="text" id="remove-val" placeholder="Page number (e.g. 1)" class="mb-2 p-2 border rounded w-full text-xs">
                     <button onclick="triggerInput('remove')" class="btn-action">Select File</button>
                     <input type="file" id="remove-file" accept=".pdf" onchange="process('remove')">
                 </div>
@@ -58,23 +59,42 @@
         </div>
     </section>
 
-    <section id="convert" class="py-16 px-8 bg-gray-100">
+    <section id="convert" class="py-20 px-8 bg-gray-100">
         <div class="max-w-6xl mx-auto text-center">
-            <h2 class="text-4xl font-extrabold mb-4">Convert <span class="text-red-primary">to PDF</span></h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-                <div class="feature-card p-6 bg-white rounded-2xl shadow-lg">
+            <h2 class="text-4xl font-extrabold mb-4 uppercase">Convert <span class="text-red-primary">to PDF</span></h2>
+            <p class="text-gray-500 mb-10">Convert various file formats to and from PDF.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="feature-card p-6 rounded-2xl shadow-lg">
                     <div class="text-4xl mb-2">🖼️</div>
                     <h3 class="text-xl font-bold mb-2">JPG to PDF</h3>
                     <button onclick="triggerInput('jpg')" class="btn-action">Select Images</button>
                     <input type="file" id="jpg-file" accept="image/*" multiple onchange="process('jpg')">
                 </div>
-                <div class="feature-card p-6 bg-white rounded-2xl shadow-lg">
-                    <div class="text-4xl mb-2">📑</div>
+                <div class="feature-card p-6 rounded-2xl shadow-lg">
+                    <div class="text-4xl mb-2">📝</div>
+                    <h3 class="text-xl font-bold mb-2">WORD to PDF</h3>
+                    <button onclick="triggerInput('word')" class="btn-action">Select Word File</button>
+                    <input type="file" id="word-file" accept=".doc,.docx" onchange="process('word')">
+                </div>
+                <div class="feature-card p-6 rounded-2xl shadow-lg">
+                    <div class="text-4xl mb-2">📊</div>
+                    <h3 class="text-xl font-bold mb-2">POWERPOINT to PDF</h3>
+                    <button onclick="triggerInput('ppt')" class="btn-action">Select PPT</button>
+                    <input type="file" id="ppt-file" accept=".ppt,.pptx" onchange="process('ppt')">
+                </div>
+                <div class="feature-card p-6 rounded-2xl shadow-lg">
+                    <div class="text-4xl mb-2">📈</div>
+                    <h3 class="text-xl font-bold mb-2">EXCEL to PDF</h3>
+                    <button onclick="triggerInput('excel')" class="btn-action">Select Excel</button>
+                    <input type="file" id="excel-file" accept=".xls,.xlsx" onchange="process('excel')">
+                </div>
+                <div class="feature-card p-6 rounded-2xl shadow-lg">
+                    <div class="text-4xl mb-2">📂</div>
                     <h3 class="text-xl font-bold mb-2">PDF to EXCEL</h3>
                     <button onclick="triggerInput('p2e')" class="btn-action">Select PDF</button>
                     <input type="file" id="p2e-file" accept=".pdf" onchange="process('p2e')">
                 </div>
-                <div class="feature-card p-6 bg-white rounded-2xl shadow-lg">
+                <div class="feature-card p-6 rounded-2xl shadow-lg">
                     <div class="text-4xl mb-2">🌐</div>
                     <h3 class="text-xl font-bold mb-2">HTML to PDF</h3>
                     <button onclick="triggerInput('html')" class="btn-action">Select HTML</button>
@@ -84,11 +104,18 @@
         </div>
     </section>
 
-    <footer id="pricing" class="bg-gray-900 text-white py-16 text-center border-t-8 border-red-primary">
-        <h2 class="text-3xl font-bold mb-4">Unlimited Processing?</h2>
-        <p class="text-gray-400 mb-8">Download our desktop app for bulk signing and offline tools.</p>
-        <button class="bg-red-primary px-10 py-4 rounded-lg font-bold text-xl hover:bg-red-700 shadow-xl">Download KELLYNE PDF (.exe)</button>
-        <p class="mt-10 text-sm text-gray-500">© 2026 KELLYNE. Support: support@kellynepdf.com</p>
+    <section id="pricing" class="py-24 px-8 bg-white text-center">
+        <div class="max-w-3xl mx-auto bg-gray-900 text-white p-10 rounded-3xl shadow-2xl border-b-8 border-red-primary">
+            <h2 class="text-3xl font-bold mb-4">Need Unlimited Processing?</h2>
+            <p class="text-gray-400 mb-8 text-lg">Download our Desktop App to process unlimited files, use digital signatures, and work 100% offline.</p>
+            <button class="bg-red-primary px-10 py-4 rounded-xl font-bold text-xl hover:bg-red-700 transition shadow-lg">Download KELLYNE PDF (.exe)</button>
+        </div>
+    </section>
+
+    <footer class="bg-gray-100 py-10 text-center border-t">
+        <p class="text-xl font-bold text-red-primary mb-2">KELLYNE PDF</p>
+        <p class="text-sm text-gray-500">Built for speed and security. Support: support@kellynepdf.com</p>
+        <p class="text-xs text-gray-400 mt-4">© 2026 KELLYNE. All rights reserved.</p>
     </footer>
 
     <script>
@@ -98,7 +125,8 @@
 
         function triggerInput(id) {
             if (count >= limit) {
-                alert("Limit Reached! 🛑\n\nYou've used your 3 free files. Please download our Desktop App for unlimited use.");
+                alert("Daily Limit Reached! 🛑\n\nPlease download our Desktop App for unlimited conversions.");
+                window.location.href = "#pricing";
                 return;
             }
             document.getElementById(id + '-file').click();
@@ -106,13 +134,13 @@
 
         async function process(type) {
             count++;
-            document.getElementById('usage-count').innerText = "Free Files Remaining: " + (limit - count);
+            document.getElementById('usage-count').innerText = "Free Uses Left: " + (limit - count);
             
             const fileInput = document.getElementById(type + '-file');
             if (type === 'merge') { await doMerge(fileInput.files); }
             else if (type === 'split') { await doSplit(fileInput.files[0]); }
             else if (type === 'remove') { await doRemove(fileInput.files[0]); }
-            else { alert("Processing " + type.toUpperCase() + "... Download starting."); }
+            else { alert("Conversion for " + type.toUpperCase() + " started. Please wait..."); }
         }
 
         async function doMerge(files) {
@@ -122,7 +150,7 @@
                 const pages = await merged.copyPages(pdf, pdf.getPageIndices());
                 pages.forEach(p => merged.addPage(p));
             }
-            download(await merged.save(), "Merged_Kellyne.pdf");
+            download(await merged.save(), "Merged_By_Kellyne.pdf");
         }
 
         async function doSplit(file) {
@@ -131,7 +159,7 @@
                 const newPdf = await PDFDocument.create();
                 const [p] = await newPdf.copyPages(pdf, [i]);
                 newPdf.addPage(p);
-                download(await newPdf.save(), `Split_Page_${i+1}.pdf`);
+                download(await newPdf.save(), `Kellyne_Page_${i+1}.pdf`);
             }
         }
 
@@ -142,7 +170,7 @@
             const indices = pdf.getPageIndices().filter(i => i !== skip);
             const pages = await newPdf.copyPages(pdf, indices);
             pages.forEach(p => newPdf.addPage(p));
-            download(await newPdf.save(), "Removed_Kellyne.pdf");
+            download(await newPdf.save(), "Modified_By_Kellyne.pdf");
         }
 
         function download(bytes, name) {
