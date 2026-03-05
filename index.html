@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KELLYNE PDF - Online PDF Tools</title>
+    <title>KELLYNE PDF - Professional Online Tools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <style>
@@ -18,10 +18,6 @@
         .menu-link { display: block; padding: 5px 0; font-size: 13px; color: #4a5568; font-weight: 500; transition: 0.2s; cursor: pointer; }
         .menu-link:hover { color: #E53E3E; transform: translateX(5px); }
         input[type="file"] { display: none; }
-
-        /* Card Hover Effect */
-        .tool-card { transition: all 0.3s ease; }
-        .tool-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-color: #E53E3E; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
@@ -98,86 +94,89 @@
     </nav>
 
     <section class="pt-40 pb-20 text-center px-6">
-        <div id="main-box" class="max-w-2xl mx-auto bg-white p-12 rounded-3xl shadow-xl border-t-8 border-red-primary">
-            <h2 id="tool-title" class="text-4xl font-black mb-4 uppercase">Kellyne PDF Tools</h2>
-            <p id="tool-desc" class="text-gray-500 mb-10">Select a tool from the menu to start processing your document with Kellyne technology.</p>
+        <div id="tool-box" class="max-w-2xl mx-auto bg-white p-12 rounded-3xl shadow-xl border-t-8 border-red-primary">
+            <h2 id="tool-title" class="text-4xl font-black mb-4 uppercase text-gray-900">Select PDF Tool</h2>
+            <p id="tool-desc" class="text-gray-500 mb-10">Choose a tool from the menu to start processing your document with Kellyne PDF.</p>
             
-            <input type="file" id="file-input" multiple onchange="processTask()">
+            <input type="file" id="main-file-input" multiple onchange="handleTaskExecution()">
             
-            <button onclick="document.getElementById('file-input').click()" class="bg-red-primary text-white px-10 py-5 rounded-2xl font-black text-xl hover:bg-red-700 w-full shadow-2xl transition transform hover:scale-105">
+            <button onclick="document.getElementById('main-file-input').click()" class="bg-red-primary text-white px-10 py-5 rounded-2xl font-black text-xl hover:bg-red-700 w-full shadow-2xl transition transform hover:scale-105">
                 Select Files
             </button>
-            <p id="status-msg" class="mt-8 font-bold text-red-primary text-lg"></p>
+            <p id="status-display" class="mt-8 font-bold text-red-primary text-lg"></p>
         </div>
     </section>
 
-    <footer id="download" class="bg-gray-900 text-white py-20 text-center mt-20">
-        <div class="max-w-4xl mx-auto px-6">
-            <h2 class="text-3xl font-bold mb-4">KELLYNE PDF DESKTOP</h2>
-            <p class="text-gray-400 mb-8">Work offline with Digital Signature & Bulk processing.</p>
-            <button class="bg-red-primary px-8 py-4 rounded-xl font-bold hover:bg-red-700">Download for Windows (.exe)</button>
-            <div class="mt-12 text-xs text-gray-600 uppercase tracking-widest">© 2026 KELLYNE PDF - PRO TOOLKIT</div>
-        </div>
+    <footer id="download" class="bg-gray-100 py-10 text-center mt-20">
+        <p class="text-sm text-gray-400">© 2026 KELLYNE PDF - PRO TOOLKIT. Support: support@kellynepdf.com</p>
     </footer>
 
     <script>
         const { PDFDocument } = PDFLib;
-        let activeTask = '';
+        let currentActiveTask = '';
 
         function triggerTool(task) {
-            activeTask = task;
-            document.getElementById('tool-title').innerText = task.replace(/_/g, ' ');
-            document.getElementById('tool-desc').innerText = "Upload files for " + task.replace(/_/g, ' ') + ".";
-            document.getElementById('file-input').click();
+            currentActiveTask = task;
+            const taskLabel = task.replace(/_/g, ' ');
+            document.getElementById('tool-title').innerText = taskLabel;
+            document.getElementById('tool-desc').innerText = "Processing " + taskLabel + " with Kellyne PDF Technology.";
+            document.getElementById('main-file-input').click();
             window.scrollTo(0, 0);
         }
 
-        async function processTask() {
-            const files = document.getElementById('file-input').files;
+        async function handleTaskExecution() {
+            const files = document.getElementById('main-file-input').files;
             if (files.length === 0) return;
 
-            const status = document.getElementById('status-msg');
-            status.innerText = "Kellyneprocess started... Please wait.";
+            const status = document.getElementById('status-display');
+            status.innerText = "Kellyne processing started... Please wait.";
 
             try {
-                if (activeTask === 'Merge') {
+                // Task name for file naming
+                const taskFileName = currentActiveTask.replace(/_/g, '_');
+
+                if (currentActiveTask === 'Merge') {
                     const mergedPdf = await PDFDocument.create();
                     for (const f of files) {
                         const pdf = await PDFDocument.load(await f.arrayBuffer());
                         const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
                         pages.forEach(p => mergedPdf.addPage(p));
                     }
-                    savePDF(await mergedPdf.save(), `Kellyneprocess_Merged.pdf`);
+                    saveProcessedFile(await mergedPdf.save(), `Kellyne_Merge.pdf`);
                 } 
-                else if (activeTask === 'Split') {
+                else if (currentActiveTask === 'Split') {
                     const pdf = await PDFDocument.load(await files[0].arrayBuffer());
                     for (let i = 0; i < pdf.getPageCount(); i++) {
                         const newPdf = await PDFDocument.create();
                         const [p] = await newPdf.copyPages(pdf, [i]);
                         newPdf.addPage(p);
-                        savePDF(await newPdf.save(), `Kellyneprocess_Split_Page_${i+1}.pdf`);
+                        saveProcessedFile(await newPdf.save(), `Kellyne_Split_Page_${i+1}.pdf`);
                     }
                 }
                 else {
-                    // Default behavior for other labels
-                    status.innerText = "Kellyneprocess: " + activeTask + " initiated. Downloading...";
-                    // For demo, we just return a copy of the first file if not merge/split
-                    const dummyPdf = await PDFDocument.load(await files[0].arrayBuffer());
-                    savePDF(await dummyPdf.save(), `Kellyneprocess_${activeTask}.pdf`);
+                    // Default logic for other labels
+                    const doc = await PDFDocument.load(await files[0].arrayBuffer());
+                    saveProcessedFile(await doc.save(), `Kellyne_${taskFileName}.pdf`);
                 }
-                status.innerText = "Kellyneprocess Complete!";
+                status.innerText = "Task Complete! File downloaded.";
             } catch (e) {
-                status.innerText = "Error in Kellyneprocess. Check file format.";
+                status.innerText = "Error in Kellyne processing. Try another file.";
                 console.error(e);
             }
         }
 
-        function savePDF(bytes, fileName) {
+        function saveProcessedFile(bytes, fileName) {
             const blob = new Blob([bytes], { type: 'application/pdf' });
             const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
+            const url = window.URL.createObjectURL(blob);
+            link.href = url;
             link.download = fileName;
+            document.body.appendChild(link);
             link.click();
+            setTimeout(() => {
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            }, 100);
         }
     </script>
 </body>
