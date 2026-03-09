@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KellynePDF - Professional Suite</title>
+    <title>KellynePDF - Complete Suite</title>
     <style>
-        :root { --red: #e53935; --dark: #333; --light: #f8f9fa; --gray: #777; }
+        :root { --red: #e53935; --dark: #333; --light: #f8f9fa; --gray: #888; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background: var(--light); }
 
         /* --- 1. STATUS BAR --- */
@@ -20,7 +20,7 @@
         .nav-links > li { font-size: 13px; font-weight: 700; text-transform: uppercase; cursor: pointer; color: #444; height: 100%; display: flex; align-items: center; position: relative; }
         .nav-links > li:hover { color: var(--red); }
 
-        /* --- 2. ADVANCED ESIGN DROPDOWN (With Previous Subtitles) --- */
+        /* --- 2. ESIGN DROPDOWN --- */
         .esign-dropdown {
             display: none; position: absolute; top: 65px; left: 0; background: white;
             min-width: 260px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px; 
@@ -31,15 +31,12 @@
         .dropdown-item:hover { background: #fff5f5; }
         .dropdown-item b { font-size: 13px; text-transform: none; color: var(--dark); }
         .dropdown-item span { font-size: 11px; color: var(--gray); text-transform: none; margin-top: 3px; font-weight: normal; }
-        .tag { font-size: 9px; padding: 2px 5px; border-radius: 3px; margin-left: 5px; font-weight: bold; }
-        .tag-india { background: #e3f2fd; color: #1565c0; }
-        .tag-global { background: #e8f5e9; color: #2e7d32; }
 
-        /* --- 3. DEEP RESEARCH MEGA MENU (Hover Trigger) --- */
+        /* --- 3. ULTIMATE MEGA MENU (All Tools Included) --- */
         .mega-menu {
             display: none; grid-template-columns: repeat(6, 1fr); gap: 20px;
             background: #fff; padding: 40px; width: 100vw; box-sizing: border-box;
-            position: absolute; left: -300px; top: 65px; box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            position: absolute; left: -250px; top: 65px; box-shadow: 0 20px 50px rgba(0,0,0,0.1);
             border-radius: 0 0 15px 15px; border-top: 1px solid #eee;
         }
         .nav-links li:hover .mega-menu { display: grid; }
@@ -57,11 +54,9 @@
         .hero-section { text-align: center; padding: 100px 20px; display: flex; flex-direction: column; align-items: center; }
         .hero-section h1 { font-size: 45px; color: #333; margin-bottom: 10px; font-weight: 800; }
         .hero-section p { font-size: 20px; color: #666; margin-bottom: 40px; }
-        .upload-container { display: flex; align-items: center; gap: 12px; }
+        .upload-container { display: flex; align-items: center; gap: 10px; }
         .select-btn { background: var(--red); color: white; padding: 25px 60px; font-size: 26px; font-weight: bold; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 15px rgba(229, 57, 53, 0.3); }
-        .select-btn:hover { background: #d32f2f; transform: scale(1.02); }
-        .cloud-options { display: flex; flex-direction: column; gap: 8px; }
-        .cloud-btn { width: 45px; height: 45px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; font-size: 20px; }
+        .cloud-btn { width: 45px; height: 45px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; }
     </style>
 </head>
 <body>
@@ -72,25 +67,14 @@
         <li>Merge PDF</li>
         <li>Convert PDF ▼</li>
         <li>Compress PDF</li>
-        <li>
-            eSign PDF ▼
+        <li>eSign PDF ▼
             <div class="esign-dropdown">
-                <a href="#" class="dropdown-item">
-                    <b>Normal Sign</b>
-                    <span>Simple draw or type signature</span>
-                </a>
-                <a href="#" class="dropdown-item">
-                    <b>Aadhaar eSign <span class="tag tag-india">INDIA</span></b>
-                    <span>Legal OTP-based signing via UIDAI</span>
-                </a>
-                <a href="#" class="dropdown-item">
-                    <b>GlobalSign DSS <span class="tag tag-global">GLOBAL</span></b>
-                    <span>Adobe Trusted "Green Tick" signatures</span>
-                </a>
+                <a href="#" class="dropdown-item"><b>Normal Sign</b><span>Simple digital signature</span></a>
+                <a href="#" class="dropdown-item"><b>Aadhaar eSign</b><span>Legal OTP-based signing</span></a>
+                <a href="#" class="dropdown-item"><b>GlobalSign DSS</b><span>Adobe trusted international sign</span></a>
             </div>
         </li>
-        <li style="color: var(--red);">
-            All PDF Tools ▼
+        <li style="color: var(--red);">All PDF Tools ▼
             <div class="mega-menu">
                 <div class="menu-column">
                     <h4 class="column-header">Organize PDF</h4>
@@ -108,7 +92,7 @@
                     <a href="#" class="tool-link"><span class="tool-icon bg-green">O</span> OCR PDF</a>
                 </div>
                 <div class="menu-column">
-                    <h4 class="column-header">Convert To</h4>
+                    <h4 class="column-header">Convert to PDF</h4>
                     <a href="#" class="tool-link"><span class="tool-icon bg-blue">J</span> JPG to PDF</a>
                     <a href="#" class="tool-link"><span class="tool-icon bg-blue">W</span> WORD to PDF</a>
                     <a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> POWERPOINT to PDF</a>
@@ -116,7 +100,7 @@
                     <a href="#" class="tool-link"><span class="tool-icon bg-blue">H</span> HTML to PDF</a>
                 </div>
                 <div class="menu-column">
-                    <h4 class="column-header">Convert From</h4>
+                    <h4 class="column-header">Convert from PDF</h4>
                     <a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> PDF to JPG</a>
                     <a href="#" class="tool-link"><span class="tool-icon bg-blue">W</span> PDF to WORD</a>
                     <a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> PDF to POWERPOINT</a>
@@ -126,9 +110,8 @@
                 <div class="menu-column">
                     <h4 class="column-header">Edit PDF</h4>
                     <a href="#" class="tool-link"><span class="tool-icon bg-purple">R</span> Rotate PDF</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-purple">#</span> Add page numbers</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-purple">W</span> Add watermark</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-purple">C</span> Crop PDF</a>
+                    <a href="#" class="tool-link"><span class="tool-icon bg-purple">#</span> Page numbers</a>
+                    <a href="#" class="tool-link"><span class="tool-icon bg-purple">W</span> Watermark</a>
                     <a href="#" class="tool-link"><span class="tool-icon bg-purple">E</span> Edit PDF</a>
                 </div>
                 <div class="menu-column">
@@ -136,8 +119,7 @@
                     <a href="#" class="tool-link"><span class="tool-icon bg-blue">U</span> Unlock PDF</a>
                     <a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> Protect PDF</a>
                     <a href="#" class="tool-link"><span class="tool-icon bg-blue">S</span> Sign PDF</a>
-                    <a href="#" class="tool-link" style="color: #6a1b9a; font-weight: bold;"><span class="tool-icon bg-purple">AI</span> Gemini PDF Chat</a>
-                    <a href="#" class="tool-link" style="color: #6a1b9a;"><span class="tool-icon bg-purple">S</span> AI Summary</a>
+                    <a href="#" class="tool-link" style="color: #6a1b9a; font-weight: bold;"><span class="tool-icon bg-purple">AI</span> Gemini Chat</a>
                 </div>
             </div>
         </li>
@@ -149,12 +131,11 @@
     <p>Combine PDFs in the order you want with the easiest PDF merger available.</p>
     <div class="upload-container">
         <a href="#" class="select-btn">Select PDF files</a>
-        <div class="cloud-options">
+        <div style="display:flex; flex-direction:column; gap:8px;">
             <div class="cloud-btn">📁</div>
             <div class="cloud-btn">☁️</div>
         </div>
     </div>
-    <p style="font-size: 14px; margin-top: 15px; color: #999;">or drop PDFs here</p>
 </div>
 
 </body>
