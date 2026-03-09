@@ -22,7 +22,7 @@
         
         body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background: var(--cool-light); overflow-x: hidden; }
 
-        /* --- 1. STATUS BAR --- */
+        /* --- STATUS BAR --- */
         .status-bar {
             background: #fff; height: 65px; display: flex; align-items: center;
             padding: 0 40px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -37,16 +37,14 @@
             height: 100%; display: flex; align-items: center; position: relative;
         }
 
-        /* --- 2. MEGA MENU LOGIC --- */
+        /* --- MEGA MENU --- */
         .mega-menu {
             display: none; position: absolute; top: 65px; background: white;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 0 0 12px 12px;
             padding: 25px; border-top: 4px solid var(--brand-red); z-index: 2000;
         }
-
         .nav-links > li:hover { color: var(--brand-red); }
         .nav-links > li:hover .mega-menu { display: grid; }
-
         .convert-menu { left: -50px; grid-template-columns: repeat(2, 1fr); min-width: 550px; gap: 40px; border-top-color: var(--lavender); }
         .compress-menu { left: -50px; grid-template-columns: 1fr; min-width: 320px; border-top-color: var(--cool-green); }
         .esign-menu { left: -50px; grid-template-columns: 1fr; min-width: 350px; border-top-color: var(--slate); }
@@ -69,9 +67,8 @@
         .sub-text { display: block; font-size: 10px; color: #b0bec5; font-weight: 400; margin-top: -1px; }
         .region-tag { font-size: 9px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 5px; vertical-align: middle; text-transform: uppercase; }
         .tag-india { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
-        .tag-global { background: #ede9fe; color: #4c1d95; border: 1px solid #ddd6fe; }
 
-        /* --- 3. HERO & WORKSPACE --- */
+        /* --- HERO & WORKSPACE --- */
         .hero { text-align: center; padding: 100px 20px; background: white; transition: 0.3s; }
         #tool-workspace { display: none; text-align: center; padding: 80px 20px; background: #fff; }
 
@@ -115,17 +112,7 @@
                     </div>
                 </div>
             </li>
-            <li>
-                COMPRESS PDF ▼
-                <div class="mega-menu compress-menu">
-                    <div class="menu-column">
-                        <div class="menu-header">OPTIMIZE FILE SIZE</div>
-                        <a onclick="activateTool('Extreme Compression')" class="tool-item cat-optimize"><i class="fa-solid fa-compress"></i> <div>EXTREME COMPRESSION<span class="sub-text">Smallest size</span></div></a>
-                        <a onclick="activateTool('Recommended Compression')" class="tool-item cat-optimize"><i class="fa-solid fa-file-contract"></i> <div>RECOMMENDED<span class="sub-text">Good quality</span></div></a>
-                        <a onclick="activateTool('Less Compression')" class="tool-item cat-optimize"><i class="fa-solid fa-file-lines"></i> <div>LESS COMPRESSION<span class="sub-text">High quality</span></div></a>
-                    </div>
-                </div>
-            </li>
+            <li onclick="activateTool('Compress PDF')">COMPRESS PDF</li>
             <li>
                 ESIGN PDF ▼
                 <div class="mega-menu esign-menu">
@@ -133,7 +120,6 @@
                         <div class="menu-header">SECURE ELECTRONIC SIGNATURE</div>
                         <a onclick="activateTool('Sign PDF')" class="tool-item cat-organize"><i class="fa-solid fa-pen-nib"></i> <div>SIGN PDF<span class="sub-text">Digital Signature</span></div></a>
                         <a onclick="activateTool('Aadhaar eSign')" class="tool-item cat-organize"><i class="fa-solid fa-fingerprint"></i> <div>AADHAAR ESIGN<span class="region-tag tag-india">India</span><span class="sub-text">e-KYC Compliance</span></div></a>
-                        <a onclick="activateTool('GlobalSign DSS')" class="tool-item cat-organize"><i class="fa-solid fa-earth-americas"></i> <div>GLOBALSIGN DSS<span class="region-tag tag-global">Global</span><span class="sub-text">AATL Certified</span></div></a>
                     </div>
                 </div>
             </li>
@@ -155,22 +141,6 @@
                         <a onclick="activateTool('Repair PDF')" class="tool-item cat-optimize"><i class="fa-solid fa-screwdriver-wrench"></i> REPAIR PDF</a>
                         <a onclick="activateTool('OCR PDF')" class="tool-item cat-optimize"><i class="fa-solid fa-eye"></i> OCR PDF</a>
                         <a onclick="activateTool('PDF to Grayscale')" class="tool-item cat-optimize"><i class="fa-solid fa-droplet-slash"></i> PDF TO GRAYSCALE</a>
-                    </div>
-                    <div class="menu-column">
-                        <div class="menu-header">CONVERT TO PDF</div>
-                        <a onclick="activateTool('Word to PDF')" class="tool-item cat-convert"><i class="fa-regular fa-file-word"></i> WORD to PDF</a>
-                        <a onclick="activateTool('PowerPoint to PDF')" class="tool-item cat-convert"><i class="fa-regular fa-file-powerpoint"></i> PPT to PDF</a>
-                        <a onclick="activateTool('Excel to PDF')" class="tool-item cat-convert"><i class="fa-regular fa-file-excel"></i> EXCEL to PDF</a>
-                        <a onclick="activateTool('JPG to PDF')" class="tool-item cat-convert"><i class="fa-regular fa-file-image"></i> JPG to PDF</a>
-                        <a onclick="activateTool('HTML to PDF')" class="tool-item cat-convert"><i class="fa-solid fa-code"></i> HTML to PDF</a>
-                    </div>
-                    <div class="menu-column">
-                        <div class="menu-header">CONVERT FROM PDF</div>
-                        <a onclick="activateTool('PDF to Word')" class="tool-item cat-convert"><i class="fa-solid fa-file-word"></i> PDF to WORD</a>
-                        <a onclick="activateTool('PDF to PowerPoint')" class="tool-item cat-convert"><i class="fa-solid fa-file-powerpoint"></i> PDF to PPT</a>
-                        <a onclick="activateTool('PDF to Excel')" class="tool-item cat-convert"><i class="fa-solid fa-file-excel"></i> PDF to EXCEL</a>
-                        <a onclick="activateTool('PDF to JPG')" class="tool-item cat-convert"><i class="fa-solid fa-file-image"></i> PDF to JPG</a>
-                        <a onclick="activateTool('PDF to PDF/A')" class="tool-item cat-convert"><i class="fa-solid fa-file-shield"></i> PDF to PDF/A</a>
                     </div>
                     <div class="menu-column">
                         <div class="menu-header">EDIT PDF</div>
@@ -195,7 +165,7 @@
 
     <div id="home-view" class="hero">
         <div id="greeting" class="greeting"></div>
-        <h1>Every tool you need to use PDFs, at your fingertips.</h1>
+        <h1>Every tool you need to work with PDFs, at your fingertips.</h1>
         <button class="upload-btn" onclick="activateTool('Merge PDF')">Select PDF files</button>
         <p style="color:var(--cool-gray); margin-top:15px;">or drop PDFs here</p>
     </div>
@@ -203,31 +173,30 @@
     <div id="tool-workspace">
         <div class="greeting" id="tool-name-badge">TOOL NAME</div>
         <h1 id="tool-display-title">Processing Your PDF</h1>
-        <p style="color:var(--cool-gray); margin: 20px 0;">Safe, secure, and Zero-Knowledge encryption active.</p>
+        <p style="color:var(--cool-gray); margin: 20px 0;">Safe, secure, and local processing active.</p>
         
         <input type="file" id="real-file-input" hidden multiple accept=".pdf">
         <button id="action-btn" class="upload-btn" onclick="document.getElementById('real-file-input').click()">Choose Files</button>
         
-        <div id="loading-status">Processing... Please wait.</div>
+        <div id="loading-status">Merging... Please wait.</div>
         <br>
         <a class="back-link" onclick="goHome()">← Back to all PDF tools</a>
     </div>
 
     <script>
-        // Custom Greeting
         const userName = "Vamsi Krishna"; 
         const hour = new Date().getHours();
         let timeGreet = (hour < 12) ? "Good Morning" : (hour < 17) ? "Good Afternoon" : "Good Evening";
         document.getElementById("greeting").innerText = `Hello ${userName}, ${timeGreet}!`;
 
-        let currentTool = "";
+        let currentTool = "Merge PDF";
 
         function activateTool(toolName) {
             currentTool = toolName;
             document.getElementById('home-view').style.display = 'none';
             document.getElementById('tool-workspace').style.display = 'block';
             document.getElementById('tool-name-badge').innerText = toolName.toUpperCase();
-            document.getElementById('tool-display-title').innerText = "Upload files for " + toolName;
+            document.getElementById('tool-display-title').innerText = "Process files for " + toolName;
             document.getElementById('loading-status').style.display = 'none';
             window.scrollTo(0, 0);
         }
@@ -237,7 +206,7 @@
             document.getElementById('tool-workspace').style.display = 'none';
         }
 
-        // File Input Change Listener
+        // --- REAL PDF MERGE LOGIC ---
         document.getElementById('real-file-input').addEventListener('change', async function() {
             if (this.files.length === 0) return;
 
@@ -246,43 +215,45 @@
                     alert("Please select at least 2 PDF files to merge.");
                     return;
                 }
-                await mergePDFs(this.files);
+                await startMerge(this.files);
             } else {
-                alert("Selected " + this.files.length + " file(s) for " + currentTool + ". (Logic coming soon)");
+                alert("Files selected for " + currentTool + ". (Logic coming soon)");
             }
         });
 
-        // MERGE LOGIC
-        async function mergePDFs(files) {
+        async function startMerge(files) {
             const status = document.getElementById('loading-status');
             const btn = document.getElementById('action-btn');
             
             try {
                 status.style.display = 'block';
-                status.innerText = "Merging your PDFs... Please wait.";
+                status.innerText = "Processing... Enni files unna merge avthayi.";
                 btn.disabled = true;
 
+                // Create a new PDF
                 const mergedPdf = await PDFLib.PDFDocument.create();
                 
+                // Loop through all selected files
                 for (const file of files) {
                     const arrayBuffer = await file.arrayBuffer();
                     const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
-                    const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-                    copiedPages.forEach((page) => mergedPdf.addPage(page));
+                    const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                    pages.forEach((page) => mergedPdf.addPage(page));
                 }
 
+                // Save and download
                 const pdfBytes = await mergedPdf.save();
                 const blob = new Blob([pdfBytes], { type: 'application/pdf' });
                 const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `KellynePDF_Merged.pdf`;
-                link.click();
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `KellynePDF_Merged_${Date.now()}.pdf`;
+                a.click();
                 
                 status.innerText = "Success! Your merged PDF has been downloaded.";
             } catch (error) {
                 console.error(error);
-                alert("Error: One or more files may be corrupted or password protected.");
+                status.innerText = "Error: Merge chese tappudu samasya vacchindi.";
             } finally {
                 btn.disabled = false;
             }
