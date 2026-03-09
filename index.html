@@ -31,15 +31,13 @@
             padding: 25px; border-top: 3px solid var(--red);
         }
 
-        /* Hover Effect */
         .nav-links > li:hover .mega-menu { display: grid; }
 
-        /* Different Menu Widths */
-        .convert-menu { left: -20px; grid-template-columns: repeat(2, 1fr); min-width: 450px; }
-        .esign-menu { left: -50px; grid-template-columns: 1fr; min-width: 300px; }
-        .all-tools-menu { left: -600px; min-width: 1150px; grid-template-columns: repeat(6, 1fr); gap: 20px; }
+        .convert-menu { left: -50px; grid-template-columns: repeat(2, 1fr); min-width: 550px; gap: 40px; }
+        .esign-menu { left: -50px; grid-template-columns: 1fr; min-width: 320px; }
+        .all-tools-menu { left: -600px; min-width: 1200px; grid-template-columns: repeat(6, 1fr); gap: 15px; }
 
-        .menu-column { display: flex; flex-direction: column; gap: 8px; }
+        .menu-column { display: flex; flex-direction: column; gap: 6px; }
         .menu-header { 
             font-size: 11px; font-weight: 800; color: #bbb; margin-bottom: 8px; 
             border-bottom: 1px solid #eee; padding-bottom: 5px;
@@ -47,26 +45,26 @@
 
         .tool-item {
             display: flex; align-items: center; gap: 10px; text-decoration: none;
-            color: #444; font-size: 12px; font-weight: 600; padding: 6px 0;
+            color: #444; font-size: 11.5px; font-weight: 600; padding: 5px 0;
             transition: 0.2s;
         }
         .tool-item:hover { color: var(--red); transform: translateX(3px); }
 
-        /* Subtitle style for eSign */
         .sub-text { display: block; font-size: 10px; color: #999; font-weight: 400; margin-top: -2px; }
 
         .icon-box {
             width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
-            border-radius: 4px; font-size: 10px; color: white; font-weight: 900;
+            border-radius: 4px; font-size: 9px; color: white; font-weight: 900;
         }
 
         /* Hero */
         .hero { text-align: center; padding: 100px 20px; background: white; }
         .greeting { color: #2196f3; font-weight: 600; font-size: 18px; margin-bottom: 10px; }
-        .hero h1 { font-size: 42px; color: #333; max-width: 800px; margin: 0 auto; }
+        .hero h1 { font-size: 42px; color: #333; max-width: 850px; margin: 0 auto; line-height: 1.2; }
         .upload-btn {
-            background: var(--red); color: white; padding: 20px 60px; font-size: 24px;
+            background: var(--red); color: white; padding: 22px 70px; font-size: 26px;
             border-radius: 12px; border: none; cursor: pointer; margin-top: 40px; font-weight: bold;
+            box-shadow: 0 4px 15px rgba(229, 57, 53, 0.3);
         }
     </style>
 </head>
@@ -81,15 +79,17 @@
                 <div class="mega-menu convert-menu">
                     <div class="menu-column">
                         <div class="menu-header">CONVERT TO PDF</div>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#64b5f6">J</div> JPG TO PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#2196f3">W</div> WORD TO PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#1565c0">E</div> EXCEL TO PDF</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#64b5f6">W</div> WORD to PDF</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#1976d2">E</div> EXCEL to PDF</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#0288d1">J</div> JPG to PDF</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#01579b">H</div> HTML to PDF</a>
                     </div>
                     <div class="menu-column">
                         <div class="menu-header">CONVERT FROM PDF</div>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#4fc3f7">P</div> PDF TO JPG</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#03a9f4">W</div> PDF TO WORD</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#0288d1">X</div> PDF TO EXCEL</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#ef5350">W</div> PDF to WORD</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#c62828">X</div> PDF to EXCEL</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#d32f2f">J</div> PDF to JPG</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#b71c1c">A</div> PDF to PDF/A</a>
                     </div>
                 </div>
             </li>
@@ -99,18 +99,9 @@
                 <div class="mega-menu esign-menu">
                     <div class="menu-column">
                         <div class="menu-header">SECURE ELECTRONIC SIGNATURE</div>
-                        <a href="#" class="tool-item">
-                            <div class="icon-box" style="background:#3f51b5">S</div>
-                            <div>SIGN PDF<span class="sub-text">Standard Digital Signature</span></div>
-                        </a>
-                        <a href="#" class="tool-item">
-                            <div class="icon-box" style="background:#e53935">A</div>
-                            <div>AADHAAR ESIGN<span class="sub-text">Indian e-KYC Compliance</span></div>
-                        </a>
-                        <a href="#" class="tool-item">
-                            <div class="icon-box" style="background:#00bcd4">G</div>
-                            <div>GLOBALSIGN DSS<span class="sub-text">Global Adobe Approved Trust List</span></div>
-                        </a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#3f51b5">S</div><div>SIGN PDF<span class="sub-text">Standard Digital Signature</span></div></a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#e53935">A</div><div>AADHAAR ESIGN<span class="sub-text">Indian e-KYC Compliance</span></div></a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#00bcd4">G</div><div>GLOBALSIGN DSS<span class="sub-text">Global Adobe Approved Trust List</span></div></a>
                     </div>
                 </div>
             </li>
@@ -131,22 +122,23 @@
                         <a href="#" class="tool-item"><div class="icon-box" style="background:#81c784">C</div> COMPRESS PDF</a>
                         <a href="#" class="tool-item"><div class="icon-box" style="background:#4caf50">R</div> REPAIR PDF</a>
                         <a href="#" class="tool-item"><div class="icon-box" style="background:#aed581">O</div> OCR PDF</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#66bb6a">G</div> PDF TO GRAYSCALE</a>
                     </div>
                     <div class="menu-column">
                         <div class="menu-header">CONVERT TO PDF</div>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#64b5f6">J</div> JPG TO PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#2196f3">W</div> WORD TO PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#1e88e5">P</div> POWERPOINT TO PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#1565c0">E</div> EXCEL TO PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#0d47a1">H</div> HTML TO PDF</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#64b5f6">W</div> WORD to PDF</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#2196f3">P</div> POWERPOINT to PDF</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#1976d2">E</div> EXCEL to PDF</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#0288d1">J</div> JPG to PDF</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#01579b">H</div> HTML to PDF</a>
                     </div>
                     <div class="menu-column">
                         <div class="menu-header">CONVERT FROM PDF</div>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#4fc3f7">P</div> PDF TO JPG</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#03a9f4">W</div> PDF TO WORD</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#039be5">P</div> PDF TO POWERPOINT</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#0288d1">X</div> PDF TO EXCEL</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#01579b">A</div> PDF TO PDF/A</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#ef5350">W</div> PDF to WORD</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#e53935">P</div> PDF to POWERPOINT</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#c62828">X</div> PDF to EXCEL</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#d32f2f">J</div> PDF to JPG</a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#b71c1c">A</div> PDF to PDF/A</a>
                     </div>
                     <div class="menu-column">
                         <div class="menu-header">EDIT PDF</div>
