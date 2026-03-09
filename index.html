@@ -1,103 +1,136 @@
-<div class="mega-menu-container">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background-color: #f8f9fa; }
+
+        /* 1. Status Bar (Top Navigation) */
+        .status-bar {
+            background: white;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo { font-size: 24px; font-weight: bold; color: #333; text-decoration: none; margin-right: 30px; }
+        .logo span { color: #e53935; }
+        
+        .nav-links { display: flex; list-style: none; gap: 20px; padding: 0; margin: 0; }
+        .nav-links li { 
+            font-size: 13px; font-weight: bold; text-transform: uppercase; 
+            color: #444; cursor: pointer; transition: 0.2s; 
+        }
+        .nav-links li:hover { color: #e53935; }
+        .active-tool { color: #e53935 !important; }
+
+        /* 2. Mega Menu Container (6 Columns) */
+        .mega-menu-container {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            max-width: 1200px;
+            margin: 0 auto;
+            position: absolute;
+            left: 0; right: 0;
+            top: 60px; /* Status bar కింద రావడానికి */
+            display: none; /* క్లిక్ చేసినప్పుడే కనిపించడానికి */
+        }
+
+        /* 3. Column & Tool Styles */
+        .menu-column { display: flex; flex-direction: column; gap: 12px; }
+        .column-header { font-size: 11px; color: #888; font-weight: bold; margin-bottom: 10px; }
+        
+        .tool-link { display: flex; align-items: center; text-decoration: none; color: #333; font-size: 13px; font-weight: 500; }
+        .tool-link:hover { color: #e53935; }
+        
+        .tool-icon { 
+            width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; 
+            margin-right: 12px; border-radius: 4px; font-size: 10px; font-weight: bold;
+        }
+        .bg-red { background: #ffeded; color: #e53935; }
+        .bg-green { background: #e8f5e9; color: #2e7d32; }
+        .bg-blue { background: #e3f2fd; color: #1565c0; }
+        .bg-purple { background: #f3e5f5; color: #7b1fa2; }
+
+        /* Content Area (Merge PDF Title) */
+        .main-content { text-align: center; margin-top: 80px; }
+        .main-content h1 { font-size: 42px; color: #333; margin-bottom: 10px; }
+        .main-content p { color: #666; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+<nav class="status-bar">
+    <a href="#" class="logo">KELLYNE<span>PDF</span></a>
+    <ul class="nav-links">
+        <li>Merge PDF</li>
+        <li class="active-tool">Split PDF</li>
+        <li>Compress PDF</li>
+        <li>Convert PDF ▼</li>
+        <li id="all-tools-btn" style="color: #e53935;">All PDF Tools ▼</li>
+    </ul>
+</nav>
+
+<div class="mega-menu-container" id="mega-menu">
     <div class="menu-column">
         <h4 class="column-header">ORGANIZE PDF</h4>
         <a href="#" class="tool-link"><span class="tool-icon bg-red">M</span> Merge PDF</a>
-        <a href="#" class="tool-link" style="color: #e53935;"><span class="tool-icon bg-red">S</span> Split PDF</a>
+        <a href="#" class="tool-link"><span class="tool-icon bg-red">S</span> Split PDF</a>
         <a href="#" class="tool-link"><span class="tool-icon bg-red">X</span> Remove pages</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-red">E</span> Extract pages</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-red">O</span> Organize PDF</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-red">S</span> Scan to PDF</a>
     </div>
-
     <div class="menu-column">
         <h4 class="column-header">OPTIMIZE PDF</h4>
         <a href="#" class="tool-link"><span class="tool-icon bg-green">C</span> Compress PDF</a>
         <a href="#" class="tool-link"><span class="tool-icon bg-green">R</span> Repair PDF</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-green">O</span> OCR PDF</a>
     </div>
-
     <div class="menu-column">
         <h4 class="column-header">CONVERT TO PDF</h4>
         <a href="#" class="tool-link"><span class="tool-icon bg-blue">J</span> JPG to PDF</a>
         <a href="#" class="tool-link"><span class="tool-icon bg-blue">W</span> WORD to PDF</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> POWERPOINT to PDF</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-blue">E</span> EXCEL to PDF</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-blue">H</span> HTML to PDF</a>
     </div>
-
     <div class="menu-column">
         <h4 class="column-header">CONVERT FROM PDF</h4>
         <a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> PDF to JPG</a>
         <a href="#" class="tool-link"><span class="tool-icon bg-blue">W</span> PDF to WORD</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> PDF to POWERPOINT</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-blue">X</span> PDF to EXCEL</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-blue">A</span> PDF to PDF/A</a>
     </div>
-
     <div class="menu-column">
         <h4 class="column-header">EDIT PDF</h4>
         <a href="#" class="tool-link"><span class="tool-icon bg-purple">R</span> Rotate PDF</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-purple">#</span> Add page numbers</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-purple">W</span> Add watermark</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-purple">C</span> Crop PDF</a>
         <a href="#" class="tool-link"><span class="tool-icon bg-purple">E</span> Edit PDF</a>
     </div>
-
     <div class="menu-column">
-        <h4 class="column-header">PDF SECURITY</h4>
-        <a href="#" class="tool-link"><span class="tool-icon bg-blue">U</span> Unlock PDF</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> Protect PDF</a>
+        <h4 class="column-header">SECURITY & AI</h4>
         <a href="#" class="tool-link"><span class="tool-icon bg-blue">S</span> Sign PDF</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-blue">R</span> Redact PDF</a>
-        <a href="#" class="tool-link"><span class="tool-icon bg-blue">C</span> Compare PDF</a>
-        
-        <h4 class="column-header" style="margin-top: 20px;">PDF INTELLIGENCE</h4>
-        <a href="#" class="tool-link" style="color: #6a1b9a;"><span class="tool-icon bg-purple">T</span> Translate PDF</a>
-        <a href="#" class="tool-link" style="color: #6a1b9a; font-weight: bold;"><span class="tool-icon bg-purple">AI</span> Gemini PDF Chat</a>
+        <a href="#" class="tool-link" style="color: #6a1b9a;"><span class="tool-icon bg-purple">AI</span> Gemini Chat</a>
     </div>
 </div>
 
-<style>
-    .mega-menu-container {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 25px;
-        background: white;
-        padding: 40px;
-        border-radius: 15px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        max-width: 1250px;
-        margin: auto;
-    }
-    .menu-column {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-    .column-header {
-        font-size: 11px;
-        color: #888;
-        font-weight: bold;
-        text-transform: uppercase;
-        margin-bottom: 10px;
-        letter-spacing: 0.5px;
-    }
-    .tool-link {
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-        color: #333;
-        font-size: 13px;
-        font-weight: 500;
-    }
-    .tool-link:hover { color: #e53935; }
-    .tool-icon {
-        width: 22px; height: 22px;
-        display: inline-flex; align-items: center; justify-content: center;
-        margin-right: 12px; border-radius: 4px; font-size: 10px; font-weight: bold;
-    }
-    .bg-red { background: #ffeded; color: #e53935; }
-    .bg-green { background: #e8f5e9; color: #2e7d32; }
-    .bg-blue { background: #e3f2fd; color: #1565c0; }
-    .bg-purple { background: #f3e5f5; color: #7b1fa2; }
-</style>
+<div class="main-content">
+    <h1>Merge PDF files</h1>
+    <p>Combine PDFs in the order you want with the easiest PDF merger available.</p>
+</div>
+
+<script>
+    // Toggle Menu on Click
+    const btn = document.getElementById('all-tools-btn');
+    const menu = document.getElementById('mega-menu');
+    
+    btn.onclick = function() {
+        if (menu.style.display === "grid") {
+            menu.style.display = "none";
+        } else {
+            menu.style.display = "grid";
+        }
+    };
+</script>
+
+</body>
+</html>
