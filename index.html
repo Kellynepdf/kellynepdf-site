@@ -5,21 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KellynePDF - Professional Suite</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <style>
         :root { 
-            /* Primary Cool Colors */
             --sky-blue: #38bdf8;
-            --brand-red: #e53935; /* Custom Brand Red */
+            --brand-red: #e53935; 
             --cool-dark: #1e293b; 
             --cool-light: #f0f4f8; 
             --cool-gray: #94a3b8; 
-            
-            /* Category Colors (Cool Palette) */
-            --slate: #64748b;    /* Organize */
-            --cool-green: #34d399; /* Optimize */
-            --lavender: #a78bfa;   /* Convert */
-            --ocean-teal: #2dd4bf; /* Edit */
-            --deep-royal: #3f51b5; /* Security & AI */
+            --slate: #64748b; 
+            --cool-green: #34d399; 
+            --lavender: #a78bfa; 
+            --ocean-teal: #2dd4bf; 
+            --deep-royal: #3f51b5; 
         }
         
         body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background: var(--cool-light); overflow-x: hidden; }
@@ -30,7 +28,6 @@
             padding: 0 40px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             position: sticky; top: 0; z-index: 1000;
         }
-        /* Brand Name highlighting in Red */
         .logo { font-size: 24px; font-weight: 800; text-decoration: none; color: var(--brand-red); margin-right: 40px; cursor: pointer; letter-spacing: -0.5px; }
         .logo span { color: var(--cool-dark); font-weight: 400; }
 
@@ -58,33 +55,23 @@
         .menu-column { display: flex; flex-direction: column; gap: 6px; }
         .menu-header { font-size: 11px; font-weight: 800; color: #b0bec5; margin-bottom: 8px; border-bottom: 1px solid #edf2f7; padding-bottom: 5px; }
 
-        /* Tool Item Styling */
         .tool-item { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #555; font-size: 11.5px; font-weight: 600; padding: 6px 0; transition: 0.2s; cursor: pointer; }
         .tool-item i { width: 18px; text-align: center; font-size: 14px; }
         .tool-item:hover { transform: translateX(3px); }
 
-        /* Dynamic Colors for Icons & Hover */
+        /* Dynamic Colors for Icons */
         .cat-organize i { color: var(--slate); }
-        .cat-organize:hover { color: var(--slate) !important; }
-        
         .cat-optimize i { color: var(--cool-green); }
-        .cat-optimize:hover { color: var(--cool-green) !important; }
-        
         .cat-convert i { color: var(--lavender); }
-        .cat-convert:hover { color: var(--lavender) !important; }
-        
         .cat-edit i { color: var(--ocean-teal); }
-        .cat-edit:hover { color: var(--ocean-teal) !important; }
-        
         .cat-security i { color: var(--deep-royal); }
-        .cat-security:hover { color: var(--deep-royal) !important; }
 
         .sub-text { display: block; font-size: 10px; color: #b0bec5; font-weight: 400; margin-top: -1px; }
         .region-tag { font-size: 9px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 5px; vertical-align: middle; text-transform: uppercase; }
         .tag-india { background: #e0f2fe; color: #075985; border: 1px solid #bae6fd; }
         .tag-global { background: #ede9fe; color: #4c1d95; border: 1px solid #ddd6fe; }
 
-        /* --- 3. HERO & WORKSPACE SECTION --- */
+        /* --- 3. HERO & WORKSPACE --- */
         .hero { text-align: center; padding: 100px 20px; background: white; transition: 0.3s; }
         #tool-workspace { display: none; text-align: center; padding: 80px 20px; background: #fff; }
 
@@ -94,12 +81,13 @@
         .upload-btn {
             background: var(--brand-red); color: white; padding: 22px 70px; font-size: 26px;
             border-radius: 12px; border: none; cursor: pointer; margin-top: 40px; font-weight: bold;
-            box-shadow: 0 4px 15px rgba(229, 57, 53, 0.2);
-            transition: 0.2s;
+            box-shadow: 0 4px 15px rgba(229, 57, 53, 0.2); transition: 0.2s;
         }
         .upload-btn:hover { background: #d32f2f; transform: translateY(-2px); }
+        .upload-btn:disabled { background: #ccc; cursor: not-allowed; }
 
         .back-link { margin-top: 25px; display: inline-block; color: var(--cool-gray); cursor: pointer; text-decoration: underline; font-size: 14px; }
+        #loading-status { margin-top: 20px; color: var(--brand-red); font-weight: bold; display: none; }
     </style>
 </head>
 <body>
@@ -208,7 +196,7 @@
     <div id="home-view" class="hero">
         <div id="greeting" class="greeting"></div>
         <h1>Every tool you need to use PDFs, at your fingertips.</h1>
-        <button class="upload-btn" onclick="activateTool('General Upload')">Select PDF files</button>
+        <button class="upload-btn" onclick="activateTool('Merge PDF')">Select PDF files</button>
         <p style="color:var(--cool-gray); margin-top:15px;">or drop PDFs here</p>
     </div>
 
@@ -217,24 +205,30 @@
         <h1 id="tool-display-title">Processing Your PDF</h1>
         <p style="color:var(--cool-gray); margin: 20px 0;">Safe, secure, and Zero-Knowledge encryption active.</p>
         
-        <input type="file" id="real-file-input" hidden multiple>
-        <button class="upload-btn" onclick="document.getElementById('real-file-input').click()">Choose Files</button>
+        <input type="file" id="real-file-input" hidden multiple accept=".pdf">
+        <button id="action-btn" class="upload-btn" onclick="document.getElementById('real-file-input').click()">Choose Files</button>
         
+        <div id="loading-status">Processing... Please wait.</div>
         <br>
         <a class="back-link" onclick="goHome()">← Back to all PDF tools</a>
     </div>
 
     <script>
+        // Custom Greeting
         const userName = "Vamsi Krishna"; 
         const hour = new Date().getHours();
         let timeGreet = (hour < 12) ? "Good Morning" : (hour < 17) ? "Good Afternoon" : "Good Evening";
         document.getElementById("greeting").innerText = `Hello ${userName}, ${timeGreet}!`;
 
+        let currentTool = "";
+
         function activateTool(toolName) {
+            currentTool = toolName;
             document.getElementById('home-view').style.display = 'none';
             document.getElementById('tool-workspace').style.display = 'block';
             document.getElementById('tool-name-badge').innerText = toolName.toUpperCase();
             document.getElementById('tool-display-title').innerText = "Upload files for " + toolName;
+            document.getElementById('loading-status').style.display = 'none';
             window.scrollTo(0, 0);
         }
 
@@ -243,11 +237,56 @@
             document.getElementById('tool-workspace').style.display = 'none';
         }
 
-        document.getElementById('real-file-input').addEventListener('change', function() {
-            if (this.files.length > 0) {
-                alert(this.files.length + " file(s) selected for " + document.getElementById('tool-name-badge').innerText);
+        // File Input Change Listener
+        document.getElementById('real-file-input').addEventListener('change', async function() {
+            if (this.files.length === 0) return;
+
+            if (currentTool === 'Merge PDF') {
+                if (this.files.length < 2) {
+                    alert("Please select at least 2 PDF files to merge.");
+                    return;
+                }
+                await mergePDFs(this.files);
+            } else {
+                alert("Selected " + this.files.length + " file(s) for " + currentTool + ". (Logic coming soon)");
             }
         });
+
+        // MERGE LOGIC
+        async function mergePDFs(files) {
+            const status = document.getElementById('loading-status');
+            const btn = document.getElementById('action-btn');
+            
+            try {
+                status.style.display = 'block';
+                status.innerText = "Merging your PDFs... Please wait.";
+                btn.disabled = true;
+
+                const mergedPdf = await PDFLib.PDFDocument.create();
+                
+                for (const file of files) {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
+                    const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+                    copiedPages.forEach((page) => mergedPdf.addPage(page));
+                }
+
+                const pdfBytes = await mergedPdf.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `KellynePDF_Merged.pdf`;
+                link.click();
+                
+                status.innerText = "Success! Your merged PDF has been downloaded.";
+            } catch (error) {
+                console.error(error);
+                alert("Error: One or more files may be corrupted or password protected.");
+            } finally {
+                btn.disabled = false;
+            }
+        }
     </script>
 </body>
 </html>
