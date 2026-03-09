@@ -34,7 +34,7 @@
         .nav-links > li:hover .mega-menu { display: grid; }
 
         .convert-menu { left: -50px; grid-template-columns: repeat(2, 1fr); min-width: 550px; gap: 40px; }
-        .esign-menu { left: -50px; grid-template-columns: 1fr; min-width: 320px; }
+        .esign-menu { left: -50px; grid-template-columns: 1fr; min-width: 350px; }
         .all-tools-menu { left: -600px; min-width: 1200px; grid-template-columns: repeat(6, 1fr); gap: 15px; }
 
         .menu-column { display: flex; flex-direction: column; gap: 6px; }
@@ -50,7 +50,13 @@
         }
         .tool-item:hover { color: var(--red); transform: translateX(3px); }
 
-        .sub-text { display: block; font-size: 10px; color: #999; font-weight: 400; margin-top: -2px; }
+        .sub-text { display: block; font-size: 10px; color: #999; font-weight: 400; margin-top: -1px; }
+        .region-tag { 
+            font-size: 9px; font-weight: 800; padding: 1px 4px; border-radius: 3px; 
+            margin-left: 5px; vertical-align: middle; text-transform: uppercase;
+        }
+        .tag-india { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
+        .tag-global { background: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb; }
 
         .icon-box {
             width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
@@ -59,7 +65,7 @@
 
         /* Hero */
         .hero { text-align: center; padding: 100px 20px; background: white; }
-        .greeting { color: #2196f3; font-weight: 600; font-size: 18px; margin-bottom: 10px; }
+        .greeting { color: #2196f3; font-weight: 600; font-size: 20px; margin-bottom: 10px; }
         .hero h1 { font-size: 42px; color: #333; max-width: 850px; margin: 0 auto; line-height: 1.2; }
         .upload-btn {
             background: var(--red); color: white; padding: 22px 70px; font-size: 26px;
@@ -99,9 +105,18 @@
                 <div class="mega-menu esign-menu">
                     <div class="menu-column">
                         <div class="menu-header">SECURE ELECTRONIC SIGNATURE</div>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#3f51b5">S</div><div>SIGN PDF<span class="sub-text">Standard Digital Signature</span></div></a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#e53935">A</div><div>AADHAAR ESIGN<span class="sub-text">Indian e-KYC Compliance</span></div></a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#00bcd4">G</div><div>GLOBALSIGN DSS<span class="sub-text">Global Adobe Approved Trust List</span></div></a>
+                        <a href="#" class="tool-item">
+                            <div class="icon-box" style="background:#3f51b5">S</div>
+                            <div>SIGN PDF<span class="sub-text">Standard Digital Signature</span></div>
+                        </a>
+                        <a href="#" class="tool-item">
+                            <div class="icon-box" style="background:#e53935">A</div>
+                            <div>AADHAAR ESIGN<span class="region-tag tag-india">India</span><span class="sub-text">e-KYC & DSC Compliance (OTP/Biometric)</span></div>
+                        </a>
+                        <a href="#" class="tool-item">
+                            <div class="icon-box" style="background:#00bcd4">G</div>
+                            <div>GLOBALSIGN DSS<span class="region-tag tag-global">Global</span><span class="sub-text">Adobe Approved Trust List (AATL) Certified</span></div>
+                        </a>
                     </div>
                 </div>
             </li>
@@ -169,11 +184,15 @@
     </div>
 
     <script>
+        // Personalized Greeting Logic
+        const userName = "Vamsi Krishna"; 
         const hour = new Date().getHours();
-        let greetText = "Good Evening, Vamsikrishna!";
-        if (hour < 12) greetText = "Good Morning, Vamsikrishna!";
-        else if (hour < 17) greetText = "Good Afternoon, Vamsikrishna!";
-        document.getElementById("greeting").innerText = greetText;
+        let timeGreet = "Good Evening";
+
+        if (hour < 12) timeGreet = "Good Morning";
+        else if (hour < 17) timeGreet = "Good Afternoon";
+
+        document.getElementById("greeting").innerText = `Hello ${userName}, ${timeGreet}!`;
     </script>
 
 </body>
