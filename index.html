@@ -14,7 +14,7 @@
             padding: 0 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             position: sticky; top: 0; z-index: 1000;
         }
-        .logo { font-size: 24px; font-weight: bold; text-decoration: none; color: var(--dark); margin-right: 40px; }
+        .logo { font-size: 24px; font-weight: bold; text-decoration: none; color: var(--dark); margin-right: 40px; cursor: pointer; }
         .logo span { color: var(--red); }
 
         .nav-links { display: flex; list-style: none; gap: 25px; margin: 0; padding: 0; align-items: center; height: 100%; }
@@ -30,11 +30,9 @@
             padding: 25px; border-top: 3px solid var(--red); z-index: 2000;
         }
 
-        /* Hover Activation */
         .nav-links > li:hover { color: var(--red); }
         .nav-links > li:hover .mega-menu { display: grid; }
 
-        /* Menu Widths & Column Controls */
         .convert-menu { left: -50px; grid-template-columns: repeat(2, 1fr); min-width: 550px; gap: 40px; }
         .compress-menu { left: -50px; grid-template-columns: 1fr; min-width: 320px; }
         .esign-menu { left: -50px; grid-template-columns: 1fr; min-width: 350px; }
@@ -43,10 +41,9 @@
         .menu-column { display: flex; flex-direction: column; gap: 6px; }
         .menu-header { font-size: 11px; font-weight: 800; color: #bbb; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
 
-        .tool-item { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #444; font-size: 11.5px; font-weight: 600; padding: 6px 0; transition: 0.2s; }
+        .tool-item { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #444; font-size: 11.5px; font-weight: 600; padding: 6px 0; transition: 0.2s; cursor: pointer; }
         .tool-item:hover { color: var(--red); transform: translateX(3px); }
 
-        /* Subtitles & Tags */
         .sub-text { display: block; font-size: 10px; color: #999; font-weight: 400; margin-top: -1px; }
         .region-tag { font-size: 9px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 5px; vertical-align: middle; text-transform: uppercase; }
         .tag-india { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
@@ -54,39 +51,44 @@
 
         .icon-box { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 9px; color: white; font-weight: 900; }
 
-        /* --- 3. HERO SECTION --- */
-        .hero { text-align: center; padding: 100px 20px; background: white; }
+        /* --- 3. HERO & WORKSPACE SECTION --- */
+        .hero { text-align: center; padding: 100px 20px; background: white; transition: 0.3s; }
+        #tool-workspace { display: none; text-align: center; padding: 80px 20px; background: #fff; }
+
         .greeting { color: #2196f3; font-weight: 600; font-size: 20px; margin-bottom: 10px; }
-        .hero h1 { font-size: 42px; color: #333; max-width: 850px; margin: 0 auto; line-height: 1.2; }
+        h1 { font-size: 42px; color: #333; max-width: 850px; margin: 0 auto; line-height: 1.2; }
+        
         .upload-btn {
             background: var(--red); color: white; padding: 22px 70px; font-size: 26px;
             border-radius: 12px; border: none; cursor: pointer; margin-top: 40px; font-weight: bold;
             box-shadow: 0 4px 15px rgba(229, 57, 53, 0.3);
         }
+
+        .back-link { margin-top: 25px; display: inline-block; color: var(--gray); cursor: pointer; text-decoration: underline; font-size: 14px; }
     </style>
 </head>
 <body>
 
     <div class="status-bar">
-        <a href="#" class="logo">KELLYNE<span>PDF</span></a>
+        <a onclick="goHome()" class="logo">KELLYNE<span>PDF</span></a>
         <ul class="nav-links">
-            <li>MERGE PDF</li>
+            <li onclick="activateTool('Merge PDF')">MERGE PDF</li>
             <li>
                 CONVERT PDF ▼
                 <div class="mega-menu convert-menu">
                     <div class="menu-column">
                         <div class="menu-header">CONVERT TO PDF</div>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#64b5f6">W</div> WORD to PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#1976d2">E</div> EXCEL to PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#0288d1">J</div> JPG to PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#01579b">H</div> HTML to PDF</a>
+                        <a onclick="activateTool('Word to PDF')" class="tool-item"><div class="icon-box" style="background:#64b5f6">W</div> WORD to PDF</a>
+                        <a onclick="activateTool('Excel to PDF')" class="tool-item"><div class="icon-box" style="background:#1976d2">E</div> EXCEL to PDF</a>
+                        <a onclick="activateTool('JPG to PDF')" class="tool-item"><div class="icon-box" style="background:#0288d1">J</div> JPG to PDF</a>
+                        <a onclick="activateTool('HTML to PDF')" class="tool-item"><div class="icon-box" style="background:#01579b">H</div> HTML to PDF</a>
                     </div>
                     <div class="menu-column">
                         <div class="menu-header">CONVERT FROM PDF</div>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#ef5350">W</div> PDF to WORD</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#c62828">X</div> PDF to EXCEL</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#d32f2f">J</div> PDF to JPG</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#b71c1c">A</div> PDF to PDF/A</a>
+                        <a onclick="activateTool('PDF to Word')" class="tool-item"><div class="icon-box" style="background:#ef5350">W</div> PDF to WORD</a>
+                        <a onclick="activateTool('PDF to Excel')" class="tool-item"><div class="icon-box" style="background:#c62828">X</div> PDF to EXCEL</a>
+                        <a onclick="activateTool('PDF to JPG')" class="tool-item"><div class="icon-box" style="background:#d32f2f">J</div> PDF to JPG</a>
+                        <a onclick="activateTool('PDF to PDF/A')" class="tool-item"><div class="icon-box" style="background:#b71c1c">A</div> PDF to PDF/A</a>
                     </div>
                 </div>
             </li>
@@ -95,18 +97,9 @@
                 <div class="mega-menu compress-menu">
                     <div class="menu-column">
                         <div class="menu-header">OPTIMIZE FILE SIZE</div>
-                        <a href="#" class="tool-item">
-                            <div class="icon-box" style="background:#4caf50">E</div>
-                            <div>EXTREME COMPRESSION<span class="sub-text">Smallest size, lower quality</span></div>
-                        </a>
-                        <a href="#" class="tool-item">
-                            <div class="icon-box" style="background:#81c784">R</div>
-                            <div>RECOMMENDED COMPRESSION<span class="sub-text">Good quality, good size</span></div>
-                        </a>
-                        <a href="#" class="tool-item">
-                            <div class="icon-box" style="background:#aed581">L</div>
-                            <div>LESS COMPRESSION<span class="sub-text">High quality, larger size</span></div>
-                        </a>
+                        <a onclick="activateTool('Extreme Compression')" class="tool-item"><div class="icon-box" style="background:#4caf50">E</div><div>EXTREME COMPRESSION<span class="sub-text">Smallest size</span></div></a>
+                        <a onclick="activateTool('Recommended Compression')" class="tool-item"><div class="icon-box" style="background:#81c784">R</div><div>RECOMMENDED<span class="sub-text">Good quality</span></div></a>
+                        <a onclick="activateTool('Less Compression')" class="tool-item"><div class="icon-box" style="background:#aed581">L</div><div>LESS COMPRESSION<span class="sub-text">High quality</span></div></a>
                     </div>
                 </div>
             </li>
@@ -115,9 +108,9 @@
                 <div class="mega-menu esign-menu">
                     <div class="menu-column">
                         <div class="menu-header">SECURE ELECTRONIC SIGNATURE</div>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#3f51b5">S</div><div>SIGN PDF<span class="sub-text">Standard Digital Signature</span></div></a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#e53935">A</div><div>AADHAAR ESIGN<span class="region-tag tag-india">India</span><span class="sub-text">e-KYC & DSC Compliance</span></div></a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#00bcd4">G</div><div>GLOBALSIGN DSS<span class="region-tag tag-global">Global</span><span class="sub-text">AATL Certified Trusted List</span></div></a>
+                        <a onclick="activateTool('Sign PDF')" class="tool-item"><div class="icon-box" style="background:#3f51b5">S</div><div>SIGN PDF<span class="sub-text">Digital Signature</span></div></a>
+                        <a onclick="activateTool('Aadhaar eSign')" class="tool-item"><div class="icon-box" style="background:#e53935">A</div><div>AADHAAR ESIGN<span class="region-tag tag-india">India</span><span class="sub-text">e-KYC Compliance</span></div></a>
+                        <a onclick="activateTool('GlobalSign DSS')" class="tool-item"><div class="icon-box" style="background:#00bcd4">G</div><div>GLOBALSIGN DSS<span class="region-tag tag-global">Global</span><span class="sub-text">AATL Certified</span></div></a>
                     </div>
                 </div>
             </li>
@@ -126,69 +119,103 @@
                 <div class="mega-menu all-tools-menu">
                     <div class="menu-column">
                         <div class="menu-header">ORGANIZE</div>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#e57373">M</div> MERGE PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#f06292">S</div> SPLIT PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#ba68c8">X</div> REMOVE PAGES</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#ef5350">E</div> EXTRACT PAGES</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#ff8a65">O</div> ORGANIZE PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#e57373">S</div> SCAN TO PDF</a>
+                        <a onclick="activateTool('Merge PDF')" class="tool-item">MERGE PDF</a>
+                        <a onclick="activateTool('Split PDF')" class="tool-item">SPLIT PDF</a>
+                        <a onclick="activateTool('Remove Pages')" class="tool-item">REMOVE PAGES</a>
+                        <a onclick="activateTool('Extract Pages')" class="tool-item">EXTRACT PAGES</a>
+                        <a onclick="activateTool('Organize PDF')" class="tool-item">ORGANIZE PDF</a>
+                        <a onclick="activateTool('Scan to PDF')" class="tool-item">SCAN TO PDF</a>
                     </div>
                     <div class="menu-column">
                         <div class="menu-header">OPTIMIZE</div>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#81c784">C</div> COMPRESS PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#4caf50">R</div> REPAIR PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#aed581">O</div> OCR PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#66bb6a">G</div> PDF TO GRAYSCALE</a>
+                        <a onclick="activateTool('Compress PDF')" class="tool-item">COMPRESS PDF</a>
+                        <a onclick="activateTool('Repair PDF')" class="tool-item">REPAIR PDF</a>
+                        <a onclick="activateTool('OCR PDF')" class="tool-item">OCR PDF</a>
+                        <a onclick="activateTool('PDF to Grayscale')" class="tool-item">PDF TO GRAYSCALE</a>
                     </div>
                     <div class="menu-column">
                         <div class="menu-header">CONVERT TO PDF</div>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#64b5f6">W</div> WORD to PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#2196f3">P</div> POWERPOINT to PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#1976d2">E</div> EXCEL to PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#0288d1">J</div> JPG to PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#01579b">H</div> HTML to PDF</a>
+                        <a onclick="activateTool('Word to PDF')" class="tool-item">WORD to PDF</a>
+                        <a onclick="activateTool('PowerPoint to PDF')" class="tool-item">POWERPOINT to PDF</a>
+                        <a onclick="activateTool('Excel to PDF')" class="tool-item">EXCEL to PDF</a>
+                        <a onclick="activateTool('JPG to PDF')" class="tool-item">JPG to PDF</a>
+                        <a onclick="activateTool('HTML to PDF')" class="tool-item">HTML to PDF</a>
                     </div>
                     <div class="menu-column">
                         <div class="menu-header">CONVERT FROM PDF</div>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#ef5350">W</div> PDF to WORD</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#e53935">P</div> PDF to POWERPOINT</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#c62828">X</div> PDF to EXCEL</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#d32f2f">J</div> PDF to JPG</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#b71c1c">A</div> PDF to PDF/A</a>
+                        <a onclick="activateTool('PDF to Word')" class="tool-item">PDF to WORD</a>
+                        <a onclick="activateTool('PDF to PowerPoint')" class="tool-item">PDF to POWERPOINT</a>
+                        <a onclick="activateTool('PDF to Excel')" class="tool-item">PDF to EXCEL</a>
+                        <a onclick="activateTool('PDF to JPG')" class="tool-item">PDF to JPG</a>
+                        <a onclick="activateTool('PDF to PDF/A')" class="tool-item">PDF to PDF/A</a>
                     </div>
                     <div class="menu-column">
                         <div class="menu-header">EDIT PDF</div>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#f06292">R</div> ROTATE PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#ba68c8">#</div> PAGE NUMBERS</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#9575cd">W</div> WATERMARK</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#7986cb">C</div> CROP PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#64b5f6">E</div> EDIT PDF</a>
+                        <a onclick="activateTool('Rotate PDF')" class="tool-item">ROTATE PDF</a>
+                        <a onclick="activateTool('Page Numbers')" class="tool-item">PAGE NUMBERS</a>
+                        <a onclick="activateTool('Watermark')" class="tool-item">WATERMARK</a>
+                        <a onclick="activateTool('Crop PDF')" class="tool-item">CROP PDF</a>
+                        <a onclick="activateTool('Edit PDF')" class="tool-item">EDIT PDF</a>
                     </div>
                     <div class="menu-column">
                         <div class="menu-header">SECURITY & AI</div>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#7986cb">U</div> UNLOCK PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#5c6bc0">P</div> PROTECT PDF</a>
-                        <a href="#" class="tool-item"><div class="icon-box" style="background:#3f51b5">S</div> SIGN PDF</a>
-                        <a href="#" class="tool-item" style="color:var(--purple)"><div class="icon-box" style="background:var(--purple)">AI</div> GEMINI CHAT</a>
-                        <a href="#" class="tool-item" style="color:var(--purple)"><div class="icon-box" style="background:var(--purple)">S</div> AI SUMMARY</a>
+                        <a onclick="activateTool('Unlock PDF')" class="tool-item">UNLOCK PDF</a>
+                        <a onclick="activateTool('Protect PDF')" class="tool-item">PROTECT PDF</a>
+                        <a onclick="activateTool('Sign PDF')" class="tool-item">SIGN PDF</a>
+                        <a onclick="activateTool('Gemini Chat')" class="tool-item" style="color:var(--purple)">GEMINI CHAT</a>
+                        <a onclick="activateTool('AI Summary')" class="tool-item" style="color:var(--purple)">AI SUMMARY</a>
                     </div>
                 </div>
             </li>
         </ul>
     </div>
 
-    <div class="hero">
+    <div id="home-view" class="hero">
         <div id="greeting" class="greeting"></div>
         <h1>Every tool you need to use PDFs, at your fingertips.</h1>
-        <button class="upload-btn">Select PDF files</button>
+        <button class="upload-btn" onclick="activateTool('General Upload')">Select PDF files</button>
         <p style="color:gray; margin-top:15px;">or drop PDFs here</p>
     </div>
 
+    <div id="tool-workspace">
+        <div class="greeting" id="tool-name-badge">TOOL NAME</div>
+        <h1 id="tool-display-title">Processing Your PDF</h1>
+        <p style="color:gray; margin: 20px 0;">Safe, secure, and Zero-Knowledge encryption active.</p>
+        
+        <input type="file" id="real-file-input" hidden multiple>
+        <button class="upload-btn" onclick="document.getElementById('real-file-input').click()">Choose Files</button>
+        
+        <br>
+        <a class="back-link" onclick="goHome()">← Back to all PDF tools</a>
+    </div>
+
     <script>
+        // 1. Personalized Greeting Logic
         const userName = "Vamsi Krishna"; 
         const hour = new Date().getHours();
         let timeGreet = (hour < 12) ? "Good Morning" : (hour < 17) ? "Good Afternoon" : "Good Evening";
         document.getElementById("greeting").innerText = `Hello ${userName}, ${timeGreet}!`;
+
+        // 2. Tool Activation Logic
+        function activateTool(toolName) {
+            document.getElementById('home-view').style.display = 'none';
+            document.getElementById('tool-workspace').style.display = 'block';
+            document.getElementById('tool-name-badge').innerText = toolName.toUpperCase();
+            document.getElementById('tool-display-title').innerText = "Upload files for " + toolName;
+            window.scrollTo(0, 0);
+        }
+
+        function goHome() {
+            document.getElementById('home-view').style.display = 'block';
+            document.getElementById('tool-workspace').style.display = 'none';
+        }
+
+        // 3. File Selection Listener
+        document.getElementById('real-file-input').addEventListener('change', function() {
+            if (this.files.length > 0) {
+                alert(this.files.length + " file(s) selected for " + document.getElementById('tool-name-badge').innerText);
+            }
+        });
     </script>
 </body>
 </html>
