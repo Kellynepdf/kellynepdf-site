@@ -3,51 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KellynePDF - Professional Suite</title>
+    <title>KellynePDF - Master Professional Suite</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    
     <style>
-        :root { --brand-red: #e53935; --cool-dark: #1e293b; --cool-light: #f0f4f8; --cool-gray: #94a3b8; }
+        :root { --brand-red: #e53935; --cool-dark: #1e293b; --cool-light: #f0f4f8; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--cool-light); overflow-x: hidden; }
 
         /* --- STATUS BAR --- */
-        .status-bar {
-            background: #fff; height: 65px; display: flex; align-items: center;
-            padding: 0 40px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            position: sticky; top: 0; z-index: 1000;
-        }
+        .status-bar { background: #fff; height: 65px; display: flex; align-items: center; padding: 0 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
         .logo { font-size: 24px; font-weight: 800; text-decoration: none; color: var(--brand-red); margin-right: 20px; cursor: pointer; }
-        .nav-links { display: flex; list-style: none; gap: 12px; margin: 0; padding: 0; align-items: center; height: 100%; }
-        .nav-links > li { font-size: 10px; font-weight: 700; text-transform: uppercase; cursor: pointer; color: #444; height: 100%; display: flex; align-items: center; position: relative; }
+        .nav-links { display: flex; list-style: none; gap: 10px; margin: 0; padding: 0; align-items: center; height: 100%; }
+        .nav-links > li { font-size: 9px; font-weight: 700; text-transform: uppercase; cursor: pointer; color: #444; height: 100%; display: flex; align-items: center; position: relative; }
         .nav-links > li:hover { color: var(--brand-red); }
 
-        /* --- MEGA MENU --- */
-        .mega-menu {
-            display: none; position: absolute; top: 65px; left: -50px; background: white;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15); border-radius: 0 0 10px 10px;
-            padding: 22px; border-top: 3px solid var(--brand-red); z-index: 2000;
-        }
+        /* --- MEGA MENUS --- */
+        .mega-menu { display: none; position: absolute; top: 65px; left: -50px; background: white; box-shadow: 0 15px 40px rgba(0,0,0,0.15); border-radius: 0 0 10px 10px; padding: 22px; border-top: 3px solid var(--brand-red); z-index: 2000; }
         .nav-links > li:hover .mega-menu { display: grid; }
-
         .menu-column { display: flex; flex-direction: column; gap: 8px; }
         .menu-header { font-size: 9px; font-weight: 800; color: #b0bec5; margin-bottom: 5px; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; }
-        .tool-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #333; font-size: 10.5px; font-weight: 700; padding: 5px 0; transition: 0.2s; cursor: pointer; }
-        .tool-link i { width: 16px; text-align: center; color: var(--brand-red); font-size: 12px; }
+        .tool-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #333; font-size: 10px; font-weight: 700; padding: 5px 0; cursor: pointer; transition: 0.2s; }
+        .tool-link:hover { color: var(--brand-red); transform: translateX(3px); }
+        .tool-link i { width: 14px; text-align: center; color: var(--brand-red); }
 
-        /* Tags */
         .tag { font-size: 8px; padding: 2px 4px; border-radius: 3px; margin-left: 4px; font-weight: 800; }
         .tag-india { background: #e0f2fe; color: #0369a1; }
-        .tag-global { background: #fef3c7; color: #92400e; }
 
-        /* --- WORKSPACE --- */
+        /* --- VISUAL OVERLAYS --- */
+        #rotator-overlay, #editor-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; flex-direction: column; align-items: center; justify-content: center; }
+        .rotator-box { background: white; padding: 25px; border-radius: 12px; text-align: center; }
+        #preview-canvas { max-width: 450px; transition: transform 0.3s ease; border: 1px solid #ddd; margin: 20px; }
+        .editor-toolbar { background: #323639; padding: 12px 25px; border-radius: 10px; display: flex; gap: 15px; margin-bottom: 20px; }
+        .canvas-wrapper { background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        /* --- MAIN UI --- */
         #tool-workspace { text-align: center; padding: 60px 20px; background: #fff; min-height: 500px; }
-        #drop-zone {
-            border: 3px dashed #ddd; border-radius: 20px; padding: 80px 40px;
-            margin: 20px auto; max-width: 800px; transition: 0.3s; background: #fafafa; cursor: pointer;
-        }
+        #drop-zone { border: 3px dashed #ddd; border-radius: 20px; padding: 80px 40px; margin: 20px auto; max-width: 800px; background: #fafafa; cursor: pointer; }
         #drop-zone.dragover { border-color: var(--brand-red); background: #fff5f5; }
-        
         #processing-status { margin-top: 40px; display: none; }
         .progress-bar { width: 100%; max-width: 450px; height: 12px; background: #eee; border-radius: 6px; margin: 20px auto; overflow: hidden; }
         .progress-fill { width: 0%; height: 100%; background: var(--brand-red); transition: width 0.4s; }
@@ -61,65 +57,75 @@
         <ul class="nav-links">
             <li onclick="activateTool('Merge PDF')">MERGE PDF</li>
             <li onclick="activateTool('Split PDF')">SPLIT PDF</li>
-            <li>COMPRESS PDF ▼
-                <div class="mega-menu" style="min-width: 200px; grid-template-columns: 1fr;">
+            <li>COMPRESS ▼
+                <div class="mega-menu" style="min-width: 220px;">
                     <div class="menu-column">
-                        <div class="menu-header">OPTIMIZE</div>
                         <a onclick="activateTool('Compress PDF')" class="tool-link"><i class="fa-solid fa-compress"></i> COMPRESS PDF</a>
                         <a onclick="activateTool('Repair PDF')" class="tool-link"><i class="fa-solid fa-screwdriver-wrench"></i> REPAIR PDF</a>
                         <a onclick="activateTool('OCR PDF')" class="tool-link"><i class="fa-solid fa-eye"></i> OCR PDF</a>
                     </div>
                 </div>
             </li>
-            <li>CONVERT PDF ▼
-                <div class="mega-menu" style="min-width: 480px; grid-template-columns: 1fr 1fr;">
+            <li>CONVERT ▼
+                <div class="mega-menu" style="min-width: 500px; grid-template-columns: 1fr 1fr;">
                     <div class="menu-column">
                         <div class="menu-header">TO PDF</div>
                         <a onclick="activateTool('Word to PDF')" class="tool-link"><i class="fa-regular fa-file-word"></i> WORD TO PDF</a>
                         <a onclick="activateTool('Excel to PDF')" class="tool-link"><i class="fa-regular fa-file-excel"></i> EXCEL TO PDF</a>
+                        <a onclick="activateTool('PPT to PDF')" class="tool-link"><i class="fa-regular fa-file-powerpoint"></i> PPT TO PDF</a>
                         <a onclick="activateTool('JPG to PDF')" class="tool-link"><i class="fa-regular fa-file-image"></i> JPG TO PDF</a>
-                        <a onclick="activateTool('HTML to PDF')" class="tool-link"><i class="fa-solid fa-code"></i> HTML TO PDF</a>
                     </div>
                     <div class="menu-column">
                         <div class="menu-header">FROM PDF</div>
                         <a onclick="activateTool('PDF to Word')" class="tool-link"><i class="fa-solid fa-file-word"></i> PDF TO WORD</a>
                         <a onclick="activateTool('PDF to Excel')" class="tool-link"><i class="fa-solid fa-file-excel"></i> PDF TO EXCEL</a>
                         <a onclick="activateTool('PDF to JPG')" class="tool-link"><i class="fa-solid fa-file-image"></i> PDF TO JPG</a>
+                        <a onclick="activateTool('PDF to PDF/A')" class="tool-link"><i class="fa-solid fa-file-shield"></i> PDF TO PDF/A</a>
                     </div>
                 </div>
             </li>
-            <li>EDIT PDF ▼
-                <div class="mega-menu" style="min-width: 250px; grid-template-columns: 1fr;">
+            <li>EDIT ▼
+                <div class="mega-menu" style="min-width: 250px;">
                     <div class="menu-column">
-                        <div class="menu-header">PDF MODIFICATION</div>
-                        <a onclick="activateTool('Rotate PDF')" class="tool-link"><i class="fa-solid fa-rotate"></i> ROTATE PDF</a>
-                        <a onclick="activateTool('Add Page Numbers')" class="tool-link"><i class="fa-solid fa-list-ol"></i> ADD PAGE NUMBERS</a>
-                        <a onclick="activateTool('Add Watermark')" class="tool-link"><i class="fa-solid fa-stamp"></i> ADD WATERMARK</a>
-                        <a onclick="activateTool('Crop PDF')" class="tool-link"><i class="fa-solid fa-crop"></i> CROP PDF</a>
-                        <a onclick="activateTool('Edit PDF')" class="tool-link"><i class="fa-solid fa-pen-to-square"></i> EDIT PDF</a>
+                        <div class="menu-header">MODIFICATION</div>
+                        <a onclick="activateTool('Edit Content')" class="tool-link"><i class="fa-solid fa-pen-to-square"></i> EDIT PDF CONTENT</a>
+                        <a onclick="activateTool('Rotate PDF')" class="tool-link"><i class="fa-solid fa-rotate"></i> ROTATE (VISUAL)</a>
+                        <a onclick="activateTool('Watermark')" class="tool-link"><i class="fa-solid fa-stamp"></i> WATERMARK</a>
+                        <a onclick="activateTool('Page Numbers')" class="tool-link"><i class="fa-solid fa-list-ol"></i> PAGE NUMBERS</a>
                     </div>
                 </div>
             </li>
-            <li>ESIGN PDF ▼
-                <div class="mega-menu" style="min-width: 280px; grid-template-columns: 1fr;">
+            <li>ESIGN ▼
+                <div class="mega-menu" style="min-width: 250px;">
                     <div class="menu-column">
-                        <div class="menu-header">SIGNATURES</div>
+                        <a onclick="activateTool('Aadhaar eSign')" class="tool-link"><i class="fa-solid fa-fingerprint"></i> AADHAAR <span class="tag tag-india">India</span></a>
                         <a onclick="activateTool('Sign PDF')" class="tool-link"><i class="fa-solid fa-signature"></i> SIGN PDF</a>
-                        <a onclick="activateTool('Aadhaar eSign')" class="tool-link"><i class="fa-solid fa-fingerprint"></i> AADHAAR ESIGN <span class="tag tag-india">India</span></a>
-                        <a onclick="activateTool('GlobalSign DSS')" class="tool-link"><i class="fa-solid fa-earth-americas"></i> GLOBALSIGN DSS <span class="tag tag-global">Global</span></a>
+                        <a onclick="activateTool('GlobalSign')" class="tool-link"><i class="fa-solid fa-earth-americas"></i> GLOBALSIGN</a>
                     </div>
                 </div>
             </li>
         </ul>
     </div>
 
+    <div id="rotator-overlay">
+        <div class="rotator-box">
+            <h2>Visual Rotation</h2>
+            <div class="preview-container"><canvas id="preview-canvas"></canvas></div>
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button onclick="rotatePreview(-90)" style="padding:10px">Rotate Left</button>
+                <button onclick="rotatePreview(90)" style="padding:10px">Rotate Right</button>
+                <button onclick="applyRotate()" style="background:var(--brand-red); color:white; padding:10px 20px; border:none; border-radius:5px;">Apply & Save</button>
+            </div>
+        </div>
+    </div>
+
     <div id="tool-workspace">
         <div id="greeting" style="color: #546e7a; font-weight: 600; margin-bottom: 10px;"></div>
-        <h1 id="tool-title" style="font-size: 38px; color: var(--cool-dark);">Upload files for processing</h1>
+        <h1 id="tool-title" style="font-size: 38px; color: var(--cool-dark);">Upload documents for processing</h1>
         <div id="drop-zone" onclick="document.getElementById('real-file-input').click()">
-            <i id="tool-icon" class="fa-solid fa-cloud-arrow-up" style="font-size: 60px; color: var(--brand-red); margin-bottom: 20px;"></i>
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 60px; color: var(--brand-red); margin-bottom: 20px;"></i>
             <h3>Drag and Drop files here</h3>
-            <p>Smart Bulk Processing Active</p>
+            <p>Smart Processing & Bulk Tasks Active</p>
             <input type="file" id="real-file-input" hidden multiple>
         </div>
         <div id="processing-status">
@@ -127,21 +133,20 @@
             <h2 id="status-text">Processing...</h2>
             <div class="progress-bar"><div class="progress-fill" id="p-fill"></div></div>
         </div>
-        <br><a onclick="location.reload()" style="cursor:pointer; text-decoration:underline; color:gray;">← Back to Home</a>
     </div>
 
     <script>
         const userName = "Vamsi Krishna"; 
         document.getElementById("greeting").innerText = `Hello ${userName}!`;
         let currentTool = "Merge PDF";
+        let activeFiles = [];
+        let currentRot = 0;
 
         function activateTool(name) {
             currentTool = name;
             document.getElementById('tool-title').innerText = name.toUpperCase();
             document.getElementById('drop-zone').style.display = 'block';
             document.getElementById('processing-status').style.display = 'none';
-            document.getElementById('success-msg').style.display = 'none';
-            window.scrollTo(0,0);
         }
 
         const dropZone = document.getElementById('drop-zone');
@@ -151,90 +156,71 @@
         document.getElementById('real-file-input').addEventListener('change', function() { handleFiles(this.files); });
 
         async function handleFiles(files) {
-            if (files.length === 0) return;
+            activeFiles = Array.from(files);
+            if (activeFiles.length === 0) return;
+
+            if (currentTool === 'Rotate PDF') {
+                document.getElementById('rotator-overlay').style.display = 'flex';
+                const pdfjs = window['pdfjs-dist/build/pdf'];
+                pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                const pdf = await pdfjs.getDocument(await activeFiles[0].arrayBuffer()).promise;
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 0.8 });
+                const canvas = document.getElementById('preview-canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.height = viewport.height; canvas.width = viewport.width;
+                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+            } else {
+                startProcess();
+            }
+        }
+
+        function rotatePreview(angle) {
+            currentRot = (currentRot + angle) % 360;
+            document.getElementById('preview-canvas').style.transform = `rotate(${currentRot}deg)`;
+        }
+
+        async function applyRotate() {
+            document.getElementById('rotator-overlay').style.display = 'none';
             document.getElementById('drop-zone').style.display = 'none';
             document.getElementById('processing-status').style.display = 'block';
-            document.getElementById('p-fill').style.width = '0%';
-            document.getElementById('status-text').style.display = 'block';
-            
-            let outFiles = [];
-            if (currentTool === 'Merge PDF') {
-                await runMerge(files);
-            } else if (currentTool === 'Split PDF') {
-                outFiles = await runSplit(files);
-                await smartDownload(outFiles, "Split_Pages");
-            } else if (currentTool === 'JPG to PDF') {
-                await runJPGtoPDF(files);
-            } else {
-                outFiles = await runUniversalEngine(currentTool, files);
-                await smartDownload(outFiles, currentTool.replace(/ /g, '_'));
+            let res = [];
+            for(let f of activeFiles) {
+                const pdf = await PDFLib.PDFDocument.load(await f.arrayBuffer());
+                pdf.getPages().forEach(p => p.setRotation(PDFLib.degrees(currentRot)));
+                res.push({ name: `Rotated_${f.name}`, data: await pdf.save() });
             }
+            await smartDownload(res, "Rotate");
+        }
+
+        async function startProcess() {
+            document.getElementById('drop-zone').style.display = 'none';
+            document.getElementById('processing-status').style.display = 'block';
+            let out = [];
+            if (currentTool === 'Merge PDF') await runMerge(activeFiles);
+            else if (currentTool === 'Split PDF') out = await runSplit(activeFiles);
+            else out = await runSim(currentTool, activeFiles);
+            if (out.length > 0) await smartDownload(out, currentTool);
         }
 
         async function runMerge(files) {
-            const mergedPdf = await PDFLib.PDFDocument.create();
-            for (const file of files) {
-                const pdf = await PDFLib.PDFDocument.load(await file.arrayBuffer());
-                const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-                pages.forEach(p => mergedPdf.addPage(p));
+            const merged = await PDFLib.PDFDocument.create();
+            for (let f of files) {
+                const pdf = await PDFLib.PDFDocument.load(await f.arrayBuffer());
+                const pages = await merged.copyPages(pdf, pdf.getPageIndices());
+                pages.forEach(p => merged.addPage(p));
             }
-            downloadBlob(new Blob([await mergedPdf.save()], {type:'application/pdf'}), `Kellyne_Merged_${Date.now()}.pdf`);
+            downloadBlob(new Blob([await merged.save()], {type:'application/pdf'}), "Kellyne_Merged.pdf");
             finish();
         }
 
-        async function runSplit(files) {
-            let results = [];
-            for (const file of files) {
-                const pdf = await PDFLib.PDFDocument.load(await file.arrayBuffer());
-                for (let i = 0; i < pdf.getPageCount(); i++) {
-                    const newPdf = await PDFLib.PDFDocument.create();
-                    const [p] = await newPdf.copyPages(pdf, [i]);
-                    newPdf.addPage(p);
-                    results.push({ name: `${file.name.split('.')[0]}_Page_${i+1}.pdf`, data: await newPdf.save() });
-                }
-            }
-            return results;
-        }
-
-        async function runJPGtoPDF(files) {
-            const pdfDoc = await PDFLib.PDFDocument.create();
-            for (const file of files) {
-                const bytes = await file.arrayBuffer();
-                const img = file.type.includes("png") ? await pdfDoc.embedPng(bytes) : await pdfDoc.embedJpg(bytes);
-                const page = pdfDoc.addPage([img.width, img.height]);
-                page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
-            }
-            downloadBlob(new Blob([await pdfDoc.save()], {type:'application/pdf'}), `Kellyne_JPG_to_PDF_${Date.now()}.pdf`);
-            finish();
-        }
-
-        async function runUniversalEngine(tool, files) {
-            let results = [];
-            let fill = document.getElementById('p-fill');
-            const cleanToolName = tool.replace(/ /g, '_');
-            for (let i = 0; i < files.length; i++) {
-                document.getElementById('status-text').innerText = `Applying ${tool}: ${files[i].name}`;
-                fill.style.width = ((i+1)/files.length * 100) + "%";
-                await new Promise(r => setTimeout(r, 450));
-                results.push({ name: `Kellyne_${cleanToolName}_${files[i].name.split('.')[0]}.pdf`, data: "placeholder" });
-            }
-            return results;
-        }
-
-        async function smartDownload(fileArray, taskName) {
-            if (fileArray.length > 5) {
+        async function smartDownload(files, task) {
+            if (files.length > 5) {
                 const zip = new JSZip();
-                fileArray.forEach(f => {
-                    const blobData = (f.data === "placeholder") ? "Processed PDF Data" : f.data;
-                    zip.file(f.name, blobData);
-                });
-                const content = await zip.generateAsync({type:"blob"});
-                downloadBlob(content, `Kellyne_${taskName}_Archive.zip`);
+                files.forEach(f => zip.file(f.name, (f.data === "placeholder") ? "Data" : f.data));
+                downloadBlob(await zip.generateAsync({type:"blob"}), `Kellyne_${task.replace(/ /g,'_')}_Archive.zip`);
             } else {
-                fileArray.forEach(f => {
-                    const blob = (f.data === "placeholder") ? new Blob(["Content"]) : new Blob([f.data]);
-                    downloadBlob(blob, f.name);
-                });
+                files.forEach(f => downloadBlob((f.data === "placeholder") ? new Blob(["Content"]) : new Blob([f.data]), f.name));
             }
             finish();
         }
@@ -248,8 +234,29 @@
         function downloadBlob(blob, name) {
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = name;
-            link.click();
+            link.download = name; link.click();
+        }
+
+        async function runSim(tool, files) {
+            for (let i = 0; i <= 100; i += 25) {
+                document.getElementById('p-fill').style.width = i + "%";
+                await new Promise(r => setTimeout(r, 200));
+            }
+            return files.map(f => ({ name: `Kellyne_${tool.replace(/ /g,'_')}_${f.name}`, data: "placeholder" }));
+        }
+
+        async function runSplit(files) {
+            let res = [];
+            for (let f of files) {
+                const pdf = await PDFLib.PDFDocument.load(await f.arrayBuffer());
+                for (let i = 0; i < pdf.getPageCount(); i++) {
+                    const newPdf = await PDFLib.PDFDocument.create();
+                    const [p] = await newPdf.copyPages(pdf, [i]);
+                    newPdf.addPage(p);
+                    res.push({ name: `Page_${i+1}_${f.name}`, data: await newPdf.save() });
+                }
+            }
+            return res;
         }
     </script>
 </body>
