@@ -13,41 +13,50 @@
         :root { --brand-red: #e53935; --cool-dark: #1e293b; --cool-light: #f8fafc; --ai-purple: #7c3aed; }
         body { font-family: 'Inter', sans-serif; margin: 0; background: var(--cool-light); overflow-x: hidden; }
 
-        /* --- STATUS BAR --- */
-        .status-bar { background: #fff; height: 70px; display: flex; align-items: center; padding: 0 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 24px; font-weight: 900; text-decoration: none; color: var(--brand-red); margin-right: 15px; cursor: pointer; }
-        .logo span { color: var(--cool-dark); font-weight: 300; }
-
-        .nav-links { display: flex; list-style: none; gap: 8px; margin: 0; padding: 0; align-items: center; height: 100%; }
-        .nav-links > li { font-size: 8.5px; font-weight: 700; text-transform: uppercase; cursor: pointer; color: #334155; height: 100%; display: flex; align-items: center; position: relative; }
+        /* --- OFFICIAL STATUS BAR (11.5px Font) --- */
+        .status-bar { background: #fff; height: 75px; display: flex; align-items: center; padding: 0 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 24px; font-weight: 900; text-decoration: none; color: var(--brand-red); margin-right: 20px; cursor: pointer; }
+        
+        .nav-links { display: flex; list-style: none; gap: 15px; margin: 0; padding: 0; align-items: center; height: 100%; }
+        .nav-links > li { font-size: 11.5px; font-weight: 700; text-transform: uppercase; cursor: pointer; color: #334155; height: 100%; display: flex; align-items: center; position: relative; transition: 0.2s; }
         .nav-links > li:hover { color: var(--brand-red); }
 
-        /* --- MEGA MENUS --- */
-        .mega-menu { display: none; position: absolute; top: 70px; left: -50px; background: white; box-shadow: 0 20px 50px rgba(0,0,0,0.12); border-radius: 0 0 12px 12px; padding: 22px; border-top: 3px solid var(--brand-red); z-index: 2000; }
+        /* --- FIXED MEGA MENU (Center Aligned) --- */
+        .mega-menu { 
+            display: none; position: absolute; top: 75px; 
+            left: 50%; transform: translateX(-50%); /* Deeni valla screen madhyalo untundi */
+            background: white; box-shadow: 0 30px 70px rgba(0,0,0,0.15); 
+            border-radius: 12px; padding: 30px; 
+            border-top: 4px solid var(--brand-red); z-index: 2000;
+            grid-template-columns: repeat(5, 190px); gap: 20px;
+            width: max-content;
+        }
         .nav-links > li:hover .mega-menu { display: grid; }
-        .menu-column { display: flex; flex-direction: column; gap: 8px; }
-        .menu-header { font-size: 8.5px; font-weight: 800; color: #94a3b8; margin-bottom: 5px; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; }
+
+        .menu-column { display: flex; flex-direction: column; gap: 6px; }
+        .menu-header { font-size: 9px; font-weight: 800; color: #94a3b8; margin-bottom: 8px; border-bottom: 2px solid #f1f5f9; padding-bottom: 6px; letter-spacing: 0.8px; }
         
-        .tool-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #1e293b; font-size: 10px; font-weight: 600; padding: 6px 10px; border-radius: 6px; transition: 0.2s; cursor: pointer; }
-        .tool-link:hover { background: #fdf2f2; color: var(--brand-red); transform: translateX(3px); }
-        .tool-link i { width: 14px; text-align: center; color: var(--brand-red); }
+        .tool-link { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #1e293b; font-size: 10.5px; font-weight: 600; padding: 8px 12px; border-radius: 8px; transition: 0.2s; cursor: pointer; }
+        .tool-link:hover { background: #fff1f2; color: var(--brand-red); transform: translateX(5px); }
+        .tool-link i { width: 18px; text-align: center; color: var(--brand-red); font-size: 14px; }
 
-        .tag { font-size: 7px; padding: 1px 4px; border-radius: 3px; margin-left: auto; font-weight: 800; text-transform: uppercase; }
+        .tag { font-size: 8px; padding: 2px 5px; border-radius: 4px; margin-left: auto; font-weight: 800; text-transform: uppercase; }
         .tag-india { background: #f0fdf4; color: #166534; }
-        .tag-ai { background: #f5f3ff; color: var(--ai-purple); border: 1px solid #ddd6fe; }
+        .tag-ai { background: #f5f3ff; color: var(--ai-purple); }
 
-        /* --- OVERLAYS --- */
-        #rotator-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; flex-direction: column; align-items: center; justify-content: center; }
-        .rotator-box { background: white; padding: 25px; border-radius: 12px; text-align: center; }
-        #preview-canvas { max-width: 350px; transition: transform 0.3s ease; border: 1px solid #ddd; margin: 20px; }
-
-        /* --- UI --- */
-        #tool-workspace { text-align: center; padding: 60px 20px; background: #fff; min-height: 500px; }
-        #drop-zone { border: 2px dashed #cbd5e1; border-radius: 20px; padding: 80px 40px; margin: 0 auto; max-width: 800px; background: #fafafa; cursor: pointer; }
+        /* --- UI COMPONENTS --- */
+        #tool-workspace { text-align: center; padding: 80px 20px; background: #fff; min-height: 550px; }
+        #drop-zone { border: 2px dashed #cbd5e1; border-radius: 24px; padding: 100px 50px; margin: 0 auto; max-width: 850px; cursor: pointer; transition: 0.3s; }
+        #drop-zone:hover { border-color: var(--brand-red); background: #fffafa; }
         #processing-status { margin-top: 40px; display: none; }
-        .progress-bar { width: 100%; max-width: 450px; height: 10px; background: #eee; border-radius: 10px; margin: 20px auto; overflow: hidden; }
+        .progress-bar { width: 100%; max-width: 500px; height: 10px; background: #eee; border-radius: 10px; margin: 25px auto; overflow: hidden; }
         .progress-fill { width: 0%; height: 100%; background: var(--brand-red); transition: width 0.5s; }
-        #success-msg { color: #15803d; font-size: 26px; font-weight: 800; margin-bottom: 10px; display: none; }
+        #success-msg { color: #15803d; font-size: 28px; font-weight: 800; margin-bottom: 10px; display: none; }
+
+        /* Rotator */
+        #rotator-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; flex-direction: column; align-items: center; justify-content: center; }
+        .rotator-box { background: white; padding: 30px; border-radius: 15px; text-align: center; }
+        #preview-canvas { max-width: 350px; border: 1px solid #000; margin: 20px; transition: transform 0.3s; }
     </style>
 </head>
 <body>
@@ -57,72 +66,76 @@
         <ul class="nav-links">
             <li onclick="activateTool('Merge PDF')">MERGE PDF</li>
             <li onclick="activateTool('Split PDF')">SPLIT PDF</li>
+            <li onclick="activateTool('Compress PDF')">COMPRESS PDF</li>
             
-            <li>COMPRESS ▼
-                <div class="mega-menu" style="min-width: 200px;">
-                    <div class="menu-column">
-                        <a onclick="activateTool('Compress PDF')" class="tool-link"><i class="fa-solid fa-compress"></i> COMPRESS PDF</a>
-                        <a onclick="activateTool('Repair PDF')" class="tool-link"><i class="fa-solid fa-screwdriver-wrench"></i> REPAIR PDF</a>
-                        <a onclick="activateTool('OCR PDF')" class="tool-link"><i class="fa-solid fa-eye"></i> OCR PDF</a>
-                    </div>
-                </div>
-            </li>
-
-            <li>CONVERT ▼
-                <div class="mega-menu" style="min-width: 500px; grid-template-columns: 1fr 1fr;">
+            <li>CONVERT PDF ▼
+                <div class="mega-menu" style="grid-template-columns: 1fr 1fr; min-width: 400px;">
                     <div class="menu-column">
                         <div class="menu-header">TO PDF</div>
-                        <a onclick="activateTool('Word to PDF')" class="tool-link"><i class="fa-regular fa-file-word"></i> WORD TO PDF</a>
-                        <a onclick="activateTool('Excel to PDF')" class="tool-link"><i class="fa-regular fa-file-excel"></i> EXCEL TO PDF</a>
-                        <a onclick="activateTool('PPT to PDF')" class="tool-link"><i class="fa-regular fa-file-powerpoint"></i> PPT TO PDF</a>
-                        <a onclick="activateTool('JPG to PDF')" class="tool-link"><i class="fa-regular fa-file-image"></i> JPG TO PDF</a>
+                        <a onclick="activateTool('Word to PDF')" class="tool-link">WORD TO PDF</a>
+                        <a onclick="activateTool('Excel to PDF')" class="tool-link">EXCEL TO PDF</a>
+                        <a onclick="activateTool('JPG to PDF')" class="tool-link">JPG TO PDF</a>
                     </div>
                     <div class="menu-column">
                         <div class="menu-header">FROM PDF</div>
-                        <a onclick="activateTool('PDF to Word')" class="tool-link"><i class="fa-solid fa-file-word"></i> PDF TO WORD</a>
-                        <a onclick="activateTool('PDF to Excel')" class="tool-link"><i class="fa-solid fa-file-excel"></i> PDF TO EXCEL</a>
-                        <a onclick="activateTool('PDF to JPG')" class="tool-link"><i class="fa-solid fa-file-image"></i> PDF TO JPG</a>
+                        <a onclick="activateTool('PDF to Word')" class="tool-link">PDF TO WORD</a>
+                        <a onclick="activateTool('PDF to Excel')" class="tool-link">PDF TO EXCEL</a>
+                        <a onclick="activateTool('PDF to JPG')" class="tool-link">PDF TO JPG</a>
                     </div>
                 </div>
             </li>
 
-            <li>EDIT PDF ▼
-                <div class="mega-menu" style="min-width: 250px;">
+            <li>ESIGN ▼
+                <div class="mega-menu" style="grid-template-columns: 1fr; min-width: 250px;">
                     <div class="menu-column">
-                        <div class="menu-header">MODIFICATION</div>
-                        <a onclick="activateTool('Rotate PDF')" class="tool-link"><i class="fa-solid fa-rotate"></i> ROTATE VISUALLY</a>
-                        <a onclick="activateTool('Page Numbers')" class="tool-link"><i class="fa-solid fa-list-ol"></i> PAGE NUMBERS</a>
-                        <a onclick="activateTool('Watermark')" class="tool-link"><i class="fa-solid fa-stamp"></i> WATERMARK</a>
-                        <a onclick="activateTool('Crop PDF')" class="tool-link"><i class="fa-solid fa-crop"></i> CROP PDF</a>
-                        <a onclick="activateTool('Edit Content')" class="tool-link"><i class="fa-solid fa-pen-to-square"></i> EDIT CONTENT</a>
-                    </div>
-                </div>
-            </li>
-
-            <li>ESIGN PDF ▼
-                <div class="mega-menu" style="min-width: 280px;">
-                    <div class="menu-column">
-                        <a onclick="activateTool('Aadhaar eSign')" class="tool-link"><i class="fa-solid fa-fingerprint"></i> AADHAAR <span class="tag tag-india">India</span></a>
-                        <a onclick="activateTool('GlobalSign DSS')" class="tool-link"><i class="fa-solid fa-globe"></i> GLOBALSIGN</a>
-                        <a onclick="activateTool('Sign PDF')" class="tool-link"><i class="fa-solid fa-signature"></i> SIGN PDF</a>
-                    </div>
-                </div>
-            </li>
-
-            <li>SECURITY ▼
-                <div class="mega-menu" style="min-width: 200px;">
-                    <div class="menu-column">
-                        <a onclick="activateTool('Unlock PDF')" class="tool-link"><i class="fa-solid fa-lock-open"></i> UNLOCK PDF</a>
-                        <a onclick="activateTool('Protect PDF')" class="tool-link"><i class="fa-solid fa-lock"></i> PROTECT PDF</a>
+                        <a onclick="activateTool('Aadhaar eSign')" class="tool-link">AADHAAR ESIGN <span class="tag tag-india">India</span></a>
+                        <a onclick="activateTool('Sign PDF')" class="tool-link">DIGITAL SIGN PDF</a>
                     </div>
                 </div>
             </li>
 
             <li>AI INTELLIGENCE ▼
-                <div class="mega-menu" style="min-width: 250px; border-top-color: var(--ai-purple);">
+                <div class="mega-menu" style="grid-template-columns: 1fr; min-width: 250px; border-top-color: var(--ai-purple);">
                     <div class="menu-column">
-                        <a onclick="activateTool('Translation PDF')" class="tool-link"><i class="fa-solid fa-language" style="color:var(--ai-purple)"></i> TRANSLATION <span class="tag tag-ai">AI</span></a>
-                        <a onclick="activateTool('PDF Summarizer')" class="tool-link"><i class="fa-solid fa-robot" style="color:var(--ai-purple)"></i> SUMMARIZER <span class="tag tag-ai">AI</span></a>
+                        <a onclick="activateTool('Translation PDF')" class="tool-link">AI TRANSLATION <span class="tag tag-ai">AI</span></a>
+                        <a onclick="activateTool('PDF Summarizer')" class="tool-link">AI SUMMARIZER <span class="tag tag-ai">AI</span></a>
+                    </div>
+                </div>
+            </li>
+
+            <li>ALL PDF TOOLS ▼
+                <div class="mega-menu">
+                    <div class="menu-column">
+                        <div class="menu-header">ORGANIZE</div>
+                        <a onclick="activateTool('Merge PDF')" class="tool-link"><i class="fa-solid fa-layer-group"></i> MERGE</a>
+                        <a onclick="activateTool('Split PDF')" class="tool-link"><i class="fa-solid fa-scissors"></i> SPLIT</a>
+                        <a onclick="activateTool('Compress PDF')" class="tool-link"><i class="fa-solid fa-file-contract"></i> COMPRESS</a>
+                        <a onclick="activateTool('Repair PDF')" class="tool-link"><i class="fa-solid fa-wrench"></i> REPAIR</a>
+                    </div>
+                    <div class="menu-column">
+                        <div class="menu-header">EDIT</div>
+                        <a onclick="activateTool('Rotate PDF')" class="tool-link"><i class="fa-solid fa-rotate"></i> ROTATE</a>
+                        <a onclick="activateTool('Watermark')" class="tool-link"><i class="fa-solid fa-stamp"></i> WATERMARK</a>
+                        <a onclick="activateTool('Page Numbers')" class="tool-link"><i class="fa-solid fa-list-ol"></i> PAGES</a>
+                        <a onclick="activateTool('Edit Content')" class="tool-link"><i class="fa-solid fa-pen-nib"></i> EDIT PDF</a>
+                    </div>
+                    <div class="menu-column">
+                        <div class="menu-header">CONVERT</div>
+                        <a onclick="activateTool('Word to PDF')" class="tool-link">WORD TO PDF</a>
+                        <a onclick="activateTool('Excel to PDF')" class="tool-link">EXCEL TO PDF</a>
+                        <a onclick="activateTool('JPG to PDF')" class="tool-link">JPG TO PDF</a>
+                        <a onclick="activateTool('PDF to Word')" class="tool-link">PDF TO WORD</a>
+                    </div>
+                    <div class="menu-column">
+                        <div class="menu-header">SECURITY</div>
+                        <a onclick="activateTool('Unlock PDF')" class="tool-link"><i class="fa-solid fa-lock-open"></i> UNLOCK</a>
+                        <a onclick="activateTool('Protect PDF')" class="tool-link"><i class="fa-solid fa-lock"></i> PROTECT</a>
+                    </div>
+                    <div class="menu-column">
+                        <div class="menu-header">AI TOOLS</div>
+                        <a onclick="activateTool('Translation PDF')" class="tool-link">AI TRANSLATE</a>
+                        <a onclick="activateTool('PDF Summarizer')" class="tool-link">AI SUMMARY</a>
+                        <a onclick="activateTool('OCR PDF')" class="tool-link">OCR PDF</a>
                     </div>
                 </div>
             </li>
@@ -131,7 +144,7 @@
 
     <div id="tool-workspace">
         <div id="greeting" style="color: #64748b; font-weight: 600; margin-bottom: 12px; font-size: 13px;"></div>
-        <h1 id="tool-title" style="font-size: 38px; color: #0f172a; font-weight: 800;">Professional Master Suite</h1>
+        <h1 id="tool-title" style="font-size: 38px; color: #0f172a; font-weight: 800;">Secure Document Engine</h1>
         <div id="drop-zone" onclick="document.getElementById('real-file-input').click()">
             <i class="fa-solid fa-file-shield" style="font-size: 60px; color: var(--brand-red); margin-bottom: 20px;"></i>
             <h3>Drag and Drop files here</h3>
@@ -140,7 +153,7 @@
         </div>
         <div id="processing-status">
             <div id="success-msg">Successful! Your task completed. ✅</div>
-            <h2 id="status-text">Processing...</h2>
+            <h2 id="status-text">Processing Document...</h2>
             <div class="progress-bar"><div class="progress-fill" id="p-fill"></div></div>
         </div>
     </div>
@@ -150,9 +163,9 @@
             <h2>Visual Rotation</h2>
             <div style="background:#f1f5f9; padding:10px; border-radius:10px;"><canvas id="preview-canvas"></canvas></div>
             <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
-                <button onclick="rotatePreview(-90)" style="padding:10px 20px; cursor:pointer;">Left</button>
-                <button onclick="rotatePreview(90)" style="padding:10px 20px; cursor:pointer;">Right</button>
-                <button onclick="applyRotate()" style="background:var(--brand-red); color:white; padding:10px 25px; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Apply</button>
+                <button onclick="rotatePreview(-90)" style="padding:10px 20px; cursor:pointer; font-weight:bold;">Left</button>
+                <button onclick="rotatePreview(90)" style="padding:10px 20px; cursor:pointer; font-weight:bold;">Right</button>
+                <button onclick="applyRotate()" style="background:var(--brand-red); color:white; padding:10px 25px; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Apply & Save</button>
                 <button onclick="location.reload()" style="padding:10px">Cancel</button>
             </div>
         </div>
@@ -170,6 +183,7 @@
             document.getElementById('tool-title').innerText = name.toUpperCase();
             document.getElementById('drop-zone').style.display = 'block';
             document.getElementById('processing-status').style.display = 'none';
+            document.getElementById('success-msg').style.display = 'none';
         }
 
         const dropZone = document.getElementById('drop-zone');
