@@ -43,30 +43,18 @@
         .tag-india { background: #e3f2fd; color: #1565c0; }
         .tag-global { background: #e8f5e9; color: #2e7d32; }
 
-        /* --- 4. ALL TOOLS MEGA MENU (Visibility Fixed) --- */
+        /* --- 4. ALL TOOLS MEGA MENU (Fixed Visibility) --- */
         .mega-menu {
-            display: none; 
-            grid-template-columns: repeat(6, 1fr); 
-            gap: 20px;
-            background: #fff; 
-            padding: 40px 60px; 
-            width: 100vw; 
-            box-sizing: border-box;
-            position: fixed; /* Changed to fixed to cover full screen width */
-            left: 0;
-            top: 65px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            border-radius: 0 0 15px 15px; 
-            border-top: 1px solid #eee;
+            display: none; grid-template-columns: repeat(6, 1fr); gap: 20px;
+            background: #fff; padding: 40px 60px; width: 100vw; box-sizing: border-box;
+            position: fixed; left: 0; top: 65px; box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            border-radius: 0 0 15px 15px; border-top: 1px solid #eee;
         }
         .nav-links li:hover .mega-menu { display: grid; }
-        
         .menu-column { display: flex; flex-direction: column; gap: 10px; }
         .column-header { font-size: 11px; color: #aaa; font-weight: bold; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 5px; text-transform: uppercase; }
-        
         .tool-link { display: flex; align-items: center; text-decoration: none; color: #333; font-size: 13px; font-weight: 500; }
         .tool-link:hover { color: var(--red); transform: translateX(3px); transition: 0.2s; }
-        
         .tool-icon { width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; border-radius: 4px; font-size: 10px; font-weight: bold; }
         .bg-red { background: #ffeded; color: #e53935; }
         .bg-green { background: #e8f5e9; color: #2e7d32; }
@@ -74,14 +62,17 @@
         .bg-purple { background: #f3e5f5; color: #7b1fa2; }
 
         /* --- 5. CENTER HERO SECTION --- */
-        .hero-section { text-align: center; padding: 120px 20px; display: flex; flex-direction: column; align-items: center; }
-        .hero-section h1 { font-size: 45px; color: #333; margin-bottom: 10px; font-weight: 800; }
+        .hero-section { text-align: center; padding: 100px 20px; display: flex; flex-direction: column; align-items: center; }
+        
+        /* GREETING STYLE */
+        .greeting { font-size: 16px; font-weight: 600; color: var(--red); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
+        
+        .hero-section h1 { font-size: 45px; color: #333; margin: 0 0 10px 0; font-weight: 800; }
         .hero-section p { font-size: 20px; color: #666; margin-bottom: 40px; }
-        .upload-container { display: flex; align-items: center; gap: 15px; }
-        .select-btn { background: var(--red); color: white; padding: 25px 65px; font-size: 26px; font-weight: bold; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 15px rgba(229, 57, 53, 0.3); }
+        
+        .upload-container { display: flex; align-items: center; justify-content: center; }
+        .select-btn { background: var(--red); color: white; padding: 25px 80px; font-size: 26px; font-weight: bold; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 15px rgba(229, 57, 53, 0.3); transition: 0.2s; }
         .select-btn:hover { background: #d32f2f; transform: scale(1.02); }
-        .cloud-options { display: flex; flex-direction: column; gap: 10px; }
-        .cloud-btn { width: 48px; height: 48px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; font-size: 22px; }
     </style>
 </head>
 <body>
@@ -119,69 +110,47 @@
         <li style="color: var(--red);">
             All PDF Tools ▼
             <div class="mega-menu">
-                <div class="menu-column">
-                    <h4 class="column-header">Organize</h4>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-red">M</span> Merge PDF</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-red">S</span> Split PDF</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-red">X</span> Remove pages</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-red">E</span> Extract pages</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-red">O</span> Organize PDF</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-red">S</span> Scan to PDF</a>
-                </div>
-                <div class="menu-column">
-                    <h4 class="column-header">Optimize</h4>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-green">C</span> Compress PDF</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-green">R</span> Repair PDF</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-green">O</span> OCR PDF</a>
-                </div>
-                <div class="menu-column">
-                    <h4 class="column-header">Convert To</h4>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-blue">J</span> JPG to PDF</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-blue">W</span> WORD to PDF</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> POWERPOINT to PDF</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-blue">E</span> EXCEL to PDF</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-blue">H</span> HTML to PDF</a>
-                </div>
-                <div class="menu-column">
-                    <h4 class="column-header">Convert From</h4>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> PDF to JPG</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-blue">W</span> PDF to WORD</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> PDF to POWERPOINT</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-blue">X</span> PDF to EXCEL</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-blue">A</span> PDF to PDF/A</a>
-                </div>
-                <div class="menu-column">
-                    <h4 class="column-header">Edit PDF</h4>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-purple">R</span> Rotate PDF</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-purple">#</span> Page numbers</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-purple">W</span> Watermark</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-purple">C</span> Crop PDF</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-purple">E</span> Edit PDF</a>
-                </div>
-                <div class="menu-column">
-                    <h4 class="column-header">Security & AI</h4>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-blue">U</span> Unlock PDF</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> Protect PDF</a>
-                    <a href="#" class="tool-link"><span class="tool-icon bg-blue">S</span> Sign PDF</a>
-                    <a href="#" class="tool-link" style="color: #6a1b9a; font-weight: bold;"><span class="tool-icon bg-purple">AI</span> Gemini PDF Chat</a>
-                    <a href="#" class="tool-link" style="color: #6a1b9a;"><span class="tool-icon bg-purple">S</span> AI Summary</a>
-                </div>
+                <div class="menu-column"><h4 class="column-header">Organize</h4><a href="#" class="tool-link"><span class="tool-icon bg-red">M</span> Merge PDF</a><a href="#" class="tool-link"><span class="tool-icon bg-red">S</span> Split PDF</a><a href="#" class="tool-link"><span class="tool-icon bg-red">X</span> Remove pages</a><a href="#" class="tool-link"><span class="tool-icon bg-red">E</span> Extract pages</a><a href="#" class="tool-link"><span class="tool-icon bg-red">O</span> Organize PDF</a><a href="#" class="tool-link"><span class="tool-icon bg-red">S</span> Scan to PDF</a></div>
+                <div class="menu-column"><h4 class="column-header">Optimize</h4><a href="#" class="tool-link"><span class="tool-icon bg-green">C</span> Compress PDF</a><a href="#" class="tool-link"><span class="tool-icon bg-green">R</span> Repair PDF</a><a href="#" class="tool-link"><span class="tool-icon bg-green">O</span> OCR PDF</a></div>
+                <div class="menu-column"><h4 class="column-header">Convert To</h4><a href="#" class="tool-link"><span class="tool-icon bg-blue">J</span> JPG to PDF</a><a href="#" class="tool-link"><span class="tool-icon bg-blue">W</span> WORD to PDF</a><a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> POWERPOINT to PDF</a><a href="#" class="tool-link"><span class="tool-icon bg-blue">E</span> EXCEL to PDF</a><a href="#" class="tool-link"><span class="tool-icon bg-blue">H</span> HTML to PDF</a></div>
+                <div class="menu-column"><h4 class="column-header">Convert From</h4><a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> PDF to JPG</a><a href="#" class="tool-link"><span class="tool-icon bg-blue">W</span> PDF to WORD</a><a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> PDF to POWERPOINT</a><a href="#" class="tool-link"><span class="tool-icon bg-blue">X</span> PDF to EXCEL</a><a href="#" class="tool-link"><span class="tool-icon bg-blue">A</span> PDF to PDF/A</a></div>
+                <div class="menu-column"><h4 class="column-header">Edit PDF</h4><a href="#" class="tool-link"><span class="tool-icon bg-purple">R</span> Rotate PDF</a><a href="#" class="tool-link"><span class="tool-icon bg-purple">#</span> Page numbers</a><a href="#" class="tool-link"><span class="tool-icon bg-purple">W</span> Watermark</a><a href="#" class="tool-link"><span class="tool-icon bg-purple">C</span> Crop PDF</a><a href="#" class="tool-link"><span class="tool-icon bg-purple">E</span> Edit PDF</a></div>
+                <div class="menu-column"><h4 class="column-header">Security & AI</h4><a href="#" class="tool-link"><span class="tool-icon bg-blue">U</span> Unlock PDF</a><a href="#" class="tool-link"><span class="tool-icon bg-blue">P</span> Protect PDF</a><a href="#" class="tool-link"><span class="tool-icon bg-blue">S</span> Sign PDF</a><a href="#" class="tool-link" style="color: #6a1b9a; font-weight: bold;"><span class="tool-icon bg-purple">AI</span> Gemini PDF Chat</a><a href="#" class="tool-link" style="color: #6a1b9a;"><span class="tool-icon bg-purple">S</span> AI Summary</a></div>
             </div>
         </li>
     </ul>
 </nav>
 
 <div class="hero-section">
+    <div id="greeting" class="greeting">Hello!</div>
+    
     <h1>Merge PDF files</h1>
     <p>Combine PDFs in the order you want with the easiest PDF merger available.</p>
+    
     <div class="upload-container">
         <a href="#" class="select-btn">Select PDF files</a>
-        <div class="cloud-options">
-            <div class="cloud-btn">📁</div>
-            <div class="cloud-btn">☁️</div>
-        </div>
     </div>
+    
+    <p style="font-size: 14px; margin-top: 15px; color: #999;">or drop PDFs here</p>
 </div>
+
+<script>
+    function setGreeting() {
+        const now = new Date();
+        const hour = now.getHours();
+        const greetingElement = document.getElementById('greeting');
+        
+        let message = "";
+        if (hour < 12) message = "Good Morning!";
+        else if (hour < 17) message = "Good Afternoon!";
+        else if (hour < 21) message = "Good Evening!";
+        else message = "Good Night!";
+        
+        greetingElement.innerText = message;
+    }
+    // Set greeting on load
+    setGreeting();
+</script>
 
 </body>
 </html>
