@@ -22,48 +22,39 @@
             font-size: 13px; font-weight: 700; text-transform: uppercase; cursor: pointer; color: #444; 
             height: 100%; display: flex; align-items: center; position: relative;
         }
-        .nav-links > li:hover { color: var(--red); }
 
         /* --- 2. MEGA MENU LOGIC --- */
         .mega-menu {
             display: none; position: absolute; top: 65px; background: white;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px;
-            padding: 25px; border-top: 3px solid var(--red);
+            padding: 25px; border-top: 3px solid var(--red); z-index: 2000;
         }
 
+        /* Hover Activation */
+        .nav-links > li:hover { color: var(--red); }
         .nav-links > li:hover .mega-menu { display: grid; }
 
+        /* Menu Widths & Column Controls */
         .convert-menu { left: -50px; grid-template-columns: repeat(2, 1fr); min-width: 550px; gap: 40px; }
+        .compress-menu { left: -50px; grid-template-columns: 1fr; min-width: 320px; }
         .esign-menu { left: -50px; grid-template-columns: 1fr; min-width: 350px; }
         .all-tools-menu { left: -600px; min-width: 1200px; grid-template-columns: repeat(6, 1fr); gap: 15px; }
 
         .menu-column { display: flex; flex-direction: column; gap: 6px; }
-        .menu-header { 
-            font-size: 11px; font-weight: 800; color: #bbb; margin-bottom: 8px; 
-            border-bottom: 1px solid #eee; padding-bottom: 5px;
-        }
+        .menu-header { font-size: 11px; font-weight: 800; color: #bbb; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
 
-        .tool-item {
-            display: flex; align-items: center; gap: 10px; text-decoration: none;
-            color: #444; font-size: 11.5px; font-weight: 600; padding: 5px 0;
-            transition: 0.2s;
-        }
+        .tool-item { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #444; font-size: 11.5px; font-weight: 600; padding: 6px 0; transition: 0.2s; }
         .tool-item:hover { color: var(--red); transform: translateX(3px); }
 
+        /* Subtitles & Tags */
         .sub-text { display: block; font-size: 10px; color: #999; font-weight: 400; margin-top: -1px; }
-        .region-tag { 
-            font-size: 9px; font-weight: 800; padding: 1px 4px; border-radius: 3px; 
-            margin-left: 5px; vertical-align: middle; text-transform: uppercase;
-        }
+        .region-tag { font-size: 9px; font-weight: 800; padding: 1px 4px; border-radius: 3px; margin-left: 5px; vertical-align: middle; text-transform: uppercase; }
         .tag-india { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
         .tag-global { background: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb; }
 
-        .icon-box {
-            width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
-            border-radius: 4px; font-size: 9px; color: white; font-weight: 900;
-        }
+        .icon-box { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 9px; color: white; font-weight: 900; }
 
-        /* Hero */
+        /* --- 3. HERO SECTION --- */
         .hero { text-align: center; padding: 100px 20px; background: white; }
         .greeting { color: #2196f3; font-weight: 600; font-size: 20px; margin-bottom: 10px; }
         .hero h1 { font-size: 42px; color: #333; max-width: 850px; margin: 0 auto; line-height: 1.2; }
@@ -99,24 +90,34 @@
                     </div>
                 </div>
             </li>
-            <li>COMPRESS PDF</li>
+            <li>
+                COMPRESS PDF ▼
+                <div class="mega-menu compress-menu">
+                    <div class="menu-column">
+                        <div class="menu-header">OPTIMIZE FILE SIZE</div>
+                        <a href="#" class="tool-item">
+                            <div class="icon-box" style="background:#4caf50">E</div>
+                            <div>EXTREME COMPRESSION<span class="sub-text">Smallest size, lower quality</span></div>
+                        </a>
+                        <a href="#" class="tool-item">
+                            <div class="icon-box" style="background:#81c784">R</div>
+                            <div>RECOMMENDED COMPRESSION<span class="sub-text">Good quality, good size</span></div>
+                        </a>
+                        <a href="#" class="tool-item">
+                            <div class="icon-box" style="background:#aed581">L</div>
+                            <div>LESS COMPRESSION<span class="sub-text">High quality, larger size</span></div>
+                        </a>
+                    </div>
+                </div>
+            </li>
             <li>
                 ESIGN PDF ▼
                 <div class="mega-menu esign-menu">
                     <div class="menu-column">
                         <div class="menu-header">SECURE ELECTRONIC SIGNATURE</div>
-                        <a href="#" class="tool-item">
-                            <div class="icon-box" style="background:#3f51b5">S</div>
-                            <div>SIGN PDF<span class="sub-text">Standard Digital Signature</span></div>
-                        </a>
-                        <a href="#" class="tool-item">
-                            <div class="icon-box" style="background:#e53935">A</div>
-                            <div>AADHAAR ESIGN<span class="region-tag tag-india">India</span><span class="sub-text">e-KYC & DSC Compliance (OTP/Biometric)</span></div>
-                        </a>
-                        <a href="#" class="tool-item">
-                            <div class="icon-box" style="background:#00bcd4">G</div>
-                            <div>GLOBALSIGN DSS<span class="region-tag tag-global">Global</span><span class="sub-text">Adobe Approved Trust List (AATL) Certified</span></div>
-                        </a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#3f51b5">S</div><div>SIGN PDF<span class="sub-text">Standard Digital Signature</span></div></a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#e53935">A</div><div>AADHAAR ESIGN<span class="region-tag tag-india">India</span><span class="sub-text">e-KYC & DSC Compliance</span></div></a>
+                        <a href="#" class="tool-item"><div class="icon-box" style="background:#00bcd4">G</div><div>GLOBALSIGN DSS<span class="region-tag tag-global">Global</span><span class="sub-text">AATL Certified Trusted List</span></div></a>
                     </div>
                 </div>
             </li>
@@ -184,16 +185,10 @@
     </div>
 
     <script>
-        // Personalized Greeting Logic
         const userName = "Vamsi Krishna"; 
         const hour = new Date().getHours();
-        let timeGreet = "Good Evening";
-
-        if (hour < 12) timeGreet = "Good Morning";
-        else if (hour < 17) timeGreet = "Good Afternoon";
-
+        let timeGreet = (hour < 12) ? "Good Morning" : (hour < 17) ? "Good Afternoon" : "Good Evening";
         document.getElementById("greeting").innerText = `Hello ${userName}, ${timeGreet}!`;
     </script>
-
 </body>
 </html>
