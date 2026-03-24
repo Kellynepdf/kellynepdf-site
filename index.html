@@ -4,315 +4,282 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KellynePDF - Professional Suite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+
     <style>
-        :root { --brand-red: #e53935; --cool-dark: #1e293b; --cool-light: #f8fafc; --ai-purple: #7c3aed; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--cool-light); overflow-x: hidden; }
-
-        /* --- OFFICIAL STATUS BAR (11.5px) --- */
-        .status-bar { background: #fff; height: 75px; display: flex; align-items: center; padding: 0 30px; box-shadow: 0 2px 15px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 24px; font-weight: 900; text-decoration: none; color: var(--brand-red); margin-right: 20px; cursor: pointer; }
+        :root { --red: #e53935; --dark: #0f172a; --grey: #475569; }
+        body { font-family: 'Poppins', sans-serif; margin: 0; background: #ffffff; display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: relative; }
         
-        .nav-links { display: flex; list-style: none; gap: 12px; margin: 0; padding: 0; align-items: center; height: 100%; }
-        .nav-links > li { font-size: 11.5px; font-weight: 700; text-transform: uppercase; cursor: pointer; color: #334155; height: 100%; display: flex; align-items: center; position: relative; transition: 0.2s; }
-        .nav-links > li:hover { color: var(--brand-red); }
+        #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-        /* --- MEGA MENU DESIGN (Synced with PDF) --- */
-        .mega-menu { 
-            display: none; position: absolute; top: 75px; 
-            left: 50%; transform: translateX(-50%);
-            background: white; box-shadow: 0 30px 70px rgba(0,0,0,0.15); 
-            border-radius: 12px; padding: 30px; 
-            border-top: 4px solid var(--brand-red); z-index: 2000;
-            grid-template-columns: repeat(5, 200px); gap: 20px;
-            width: max-content;
+        header { height: 90px; display: flex; align-items: center; padding: 0 40px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid #eee; flex-shrink: 0; z-index: 2000; position: relative; }
+        
+        .logo-box { display: flex; align-items: center; gap: 12px; text-decoration: none; margin-right: 30px; z-index: 3000; }
+        .logo-img { height: 55px; width: auto; object-fit: contain; }
+        .logo-text { font-weight: 900; font-size: 24px; color: var(--red); text-transform: uppercase; }
+
+        /* --- NAVIGATION FONT SIZE INCREASED --- */
+        .nav { display: flex; align-items: center; gap: 20px; height: 100%; flex-grow: 1; }
+        .nav-item { 
+            cursor: pointer; 
+            color: var(--grey); 
+            font-size: 15px; /* Increased from 13px */
+            font-weight: 800; /* Bolder font */
+            text-transform: uppercase; 
+            border: none; 
+            background: none; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            height: 100%; 
+            transition: 0.2s; 
         }
-        .nav-links > li:hover .mega-menu { display: grid; }
+        .nav-item:hover { color: var(--red); }
 
-        .menu-column { display: flex; flex-direction: column; gap: 6px; }
-        .menu-header { font-size: 9px; font-weight: 800; color: #94a3b8; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; letter-spacing: 0.8px; text-transform: uppercase; }
+        .auth-btns { margin-left: auto; display: flex; align-items: center; gap: 25px; }
+        .login-btn { text-decoration: none; color: var(--dark); font-size: 16px; font-weight: 800; text-transform: uppercase; cursor: pointer; border: none; background: none; }
+        .signup-btn { text-decoration: none; background: var(--red); color: #fff; padding: 12px 25px; border-radius: 8px; font-size: 14px; font-weight: 800; text-transform: uppercase; }
+
+        /* DROP-DOWNS */
+        .dropdown { position: relative; height: 100%; }
+        .dropdown-content { 
+            display: grid; position: absolute; background: #fff; min-width: 550px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); 
+            border-radius: 15px; padding: 25px; top: 90px; left: 50%; transform: translateX(-50%) translateY(10px); 
+            z-index: 1000; opacity: 0; visibility: hidden; transition: 0.3s; grid-template-columns: 1fr 1fr; gap: 15px; border: 1px solid #f1f5f9;
+        }
+        .dropdown:hover .dropdown-content { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+        .mega-dropdown .dropdown-content { min-width: 1100px; grid-template-columns: repeat(5, 1fr); padding: 30px; }
         
-        .tool-link { display: flex; align-items: center; gap: 10px; text-decoration: none; color: #1e293b; font-size: 10.2px; font-weight: 600; padding: 8px 12px; border-radius: 8px; transition: 0.2s; cursor: pointer; }
-        .tool-link:hover { background: #fff1f2; color: var(--brand-red); transform: translateX(5px); }
-        .tool-link i { width: 18px; text-align: center; color: var(--brand-red); font-size: 14px; }
+        .dropdown-col h3 { font-size: 11px; color: #94a3b8; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; margin-bottom: 10px; }
+        .tool-link, .dropdown-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; color: #334155; text-decoration: none; font-size: 14px; font-weight: 700; cursor: pointer; }
+        
+        /* ESIGN TAGS */
+        .tag-info { font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: 800; text-transform: capitalize; }
+        .tag-anyone { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+        .tag-indians { background: #fef3c7; color: #d97706; border: 1px solid #fcd34d; }
+        .tag-global { background: #dbeafe; color: #2563eb; border: 1px solid #93c5fd; }
 
-        .tag { font-size: 8px; padding: 2px 5px; border-radius: 4px; margin-left: auto; font-weight: 800; }
-        .tag-india { background: #f0fdf4; color: #166534; }
-        .tag-ai { background: #f5f3ff; color: var(--ai-purple); }
+        /* WORKSPACE PASTEL FLOATING */
+        #workspace { flex-grow: 1; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; z-index: 10; position: relative; overflow-y: auto; }
+        #tool-container { 
+            width: 100%; max-width: 850px; height: 380px; border-radius: 50px; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.06); border: 1px solid #f1f5f9;
+            background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 25%, #fecaca 50%, #fdf2f8 75%, #f5f3ff 100%);
+            background-size: 400% 400%; animation: colorFlow 12s ease infinite, floatAnim 6s ease-in-out infinite;
+        }
+        @keyframes colorFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes floatAnim { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        /* --- WORKSPACE --- */
-        #tool-workspace { text-align: center; padding: 80px 20px; background: #fff; min-height: 550px; }
-        #drop-zone { border: 2px dashed #cbd5e1; border-radius: 24px; padding: 100px 50px; margin: 0 auto; max-width: 850px; cursor: pointer; transition: 0.3s; }
-        #drop-zone:hover { border-color: var(--brand-red); background: #fffafa; }
-        #processing-status { margin-top: 40px; display: none; }
-        .progress-bar { width: 100%; max-width: 500px; height: 10px; background: #eee; border-radius: 10px; margin: 25px auto; overflow: hidden; }
-        .progress-fill { width: 0%; height: 100%; background: var(--brand-red); transition: width 0.5s; }
-        #success-msg { color: #15803d; font-size: 28px; font-weight: 800; margin-bottom: 10px; display: none; }
+        #tool-icon { font-size: 80px; color: var(--red); margin-bottom: 15px; }
+        #tool-title { color: var(--dark); font-size: 32px; font-weight: 900; margin: 0; }
+        .btn-action { background: var(--red); color: #fff; padding: 20px 70px; border-radius: 14px; border: none; font-weight: 800; cursor: pointer; text-transform: uppercase; margin-top: 35px; font-size: 16px; }
 
-        /* Overlay */
-        #rotator-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; flex-direction: column; align-items: center; justify-content: center; }
-        .rotator-box { background: white; padding: 30px; border-radius: 15px; text-align: center; }
-        #preview-canvas { max-width: 350px; border: 1px solid #000; margin: 20px; }
+        .task-info-floating { margin-top: 50px; text-align: center; animation: floatAnim 6s ease-in-out infinite 1s; pointer-events: none; }
+        .floating-title { color: var(--dark); font-weight: 900; font-size: 26px; display: block; margin-bottom: 12px; }
+        .floating-text { color: #475569; font-size: 16px; line-height: 1.8; white-space: pre-line; }
     </style>
 </head>
-<body>
+<body onload="initApp()">
 
-    <div class="status-bar">
-        <div onclick="location.reload()" class="logo">KELLYNE<span>PDF</span></div>
-        <ul class="nav-links">
-            <li onclick="activateTool('Merge PDF')">MERGE PDF</li>
-            <li onclick="activateTool('Split PDF')">SPLIT PDF</li>
-            
-            <li>COMPRESS PDF ▼
-                <div class="mega-menu" style="grid-template-columns: 1fr; min-width: 200px;">
-                    <div class="menu-column">
-                        <a onclick="activateTool('Compress PDF')" class="tool-link">COMPRESS PDF</a>
-                        <a onclick="activateTool('Repair PDF')" class="tool-link">REPAIR PDF</a>
-                        <a onclick="activateTool('OCR PDF')" class="tool-link">OCR PDF</a>
-                    </div>
+<canvas id="canvas"></canvas>
+
+<header>
+    <a href="#" class="logo-box">
+        <img src="logo.png" alt="PDF" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/337/337946.png'">
+        <span class="logo-text">KELLYNE PDF</span>
+    </a>
+    <nav class="nav">
+        <button class="nav-item" onclick="setMode('Merge PDF')">Merge PDF</button>
+        <button class="nav-item" onclick="setMode('Split PDF')">Split PDF</button>
+        <button class="nav-item" onclick="setMode('Compress PDF')">Compress PDF</button>
+        
+        <div class="dropdown">
+            <button class="nav-item">Convert PDF <i class="fa-solid fa-chevron-down" style="font-size:12px;"></i></button>
+            <div class="dropdown-content">
+                <div class="dropdown-col">
+                    <h3>To PDF</h3>
+                    <a class="dropdown-item" onclick="setMode('JPG to PDF')"><div><i class="fa-solid fa-image" style="color:#f59e0b;"></i> JPG to PDF</div></a>
+                    <a class="dropdown-item" onclick="setMode('Word to PDF')"><div><i class="fa-solid fa-file-word" style="color:#2563eb;"></i> Word to PDF</div></a>
+                    <a class="dropdown-item" onclick="setMode('Excel to PDF')"><div><i class="fa-solid fa-file-excel" style="color:#16a34a;"></i> Excel to PDF</div></a>
+                    <a class="dropdown-item" onclick="setMode('PPT to PDF')"><div><i class="fa-solid fa-file-powerpoint" style="color:#d32f2f;"></i> PPT to PDF</div></a>
+                    <a class="dropdown-item" onclick="setMode('HTML to PDF')"><div><i class="fa-solid fa-code" style="color:#f59e0b;"></i> HTML to PDF</div></a>
                 </div>
-            </li>
-
-            <li>CONVERT PDF ▼
-                <div class="mega-menu" style="grid-template-columns: 1fr 1fr; min-width: 450px;">
-                    <div class="menu-column">
-                        <div class="menu-header">TO PDF</div>
-                        <a onclick="activateTool('Word to PDF')" class="tool-link">WORD TO PDF</a>
-                        <a onclick="activateTool('PowerPoint to PDF')" class="tool-link">POWERPOINT TO PDF</a>
-                        <a onclick="activateTool('Excel to PDF')" class="tool-link">EXCEL TO PDF</a>
-                        <a onclick="activateTool('JPG to PDF')" class="tool-link">JPG TO PDF</a>
-                        <a onclick="activateTool('HTML to PDF')" class="tool-link">HTML TO PDF</a>
-                    </div>
-                    <div class="menu-column">
-                        <div class="menu-header">FROM PDF</div>
-                        <a onclick="activateTool('PDF to Word')" class="tool-link">PDF TO WORD</a>
-                        <a onclick="activateTool('PDF to PowerPoint')" class="tool-link">PDF TO POWERPOINT</a>
-                        <a onclick="activateTool('PDF to Excel')" class="tool-link">PDF TO EXCEL</a>
-                        <a onclick="activateTool('PDF to JPG')" class="tool-link">PDF TO JPG</a>
-                        <a onclick="activateTool('PDF to PDF/A')" class="tool-link">PDF TO PDF/A</a>
-                    </div>
+                <div class="dropdown-col">
+                    <h3>From PDF</h3>
+                    <a class="dropdown-item" onclick="setMode('PDF to JPG')"><div><i class="fa-solid fa-file-image" style="color:#f59e0b;"></i> PDF to JPG</div></a>
+                    <a class="dropdown-item" onclick="setMode('PDF to Word')"><div><i class="fa-solid fa-file-word" style="color:#2563eb;"></i> PDF to Word</div></a>
+                    <a class="dropdown-item" onclick="setMode('PDF to Excel')"><div><i class="fa-solid fa-file-excel" style="color:#16a34a;"></i> PDF to Excel</div></a>
+                    <a class="dropdown-item" onclick="setMode('PDF to PPT')"><div><i class="fa-solid fa-file-powerpoint" style="color:#d32f2f;"></i> PDF to PPT</div></a>
+                    <a class="dropdown-item" onclick="setMode('PDF to PDF/A')"><div><i class="fa-solid fa-file-shield" style="color:#475569;"></i> PDF to PDF/A</div></a>
                 </div>
-            </li>
-
-            <li>ESIGN ▼
-                <div class="mega-menu" style="grid-template-columns: 1fr; min-width: 220px;">
-                    <div class="menu-column">
-                        <a onclick="activateTool('Sign PDF')" class="tool-link">SIGN PDF</a>
-                        <a onclick="activateTool('Aadhaar eSign')" class="tool-link">AADHAAR ESIGN <span class="tag tag-india">India</span></a>
-                    </div>
-                </div>
-            </li>
-
-            <li>AI INTELLIGENCE ▼
-                <div class="mega-menu" style="grid-template-columns: 1fr; min-width: 220px; border-top-color: var(--ai-purple);">
-                    <div class="menu-column">
-                        <a onclick="activateTool('Translate PDF')" class="tool-link">TRANSLATE PDF</a>
-                        <a onclick="activateTool('AI Summarizer')" class="tool-link">AI SUMMARIZER</a>
-                    </div>
-                </div>
-            </li>
-
-            <li>ALL PDF TOOLS ▼
-                <div class="mega-menu">
-                    <div class="menu-column">
-                        <div class="menu-header">ORGANIZE PDF</div>
-                        <a onclick="activateTool('Merge PDF')" class="tool-link"><i class="fa-solid fa-layer-group"></i> Merge PDF</a>
-                        <a onclick="activateTool('Split PDF')" class="tool-link"><i class="fa-solid fa-scissors"></i> Split PDF</a>
-                        <a onclick="activateTool('Remove pages')" class="tool-link"><i class="fa-solid fa-trash-can"></i> Remove pages</a>
-                        <a onclick="activateTool('Extract pages')" class="tool-link"><i class="fa-solid fa-file-export"></i> Extract pages</a>
-                        <a onclick="activateTool('Scan to PDF')" class="tool-link"><i class="fa-solid fa-scanner"></i> Scan to PDF</a>
-                    </div>
-                    <div class="menu-column">
-                        <div class="menu-header">EDIT PDF</div>
-                        <a onclick="activateTool('Rotate PDF')" class="tool-link"><i class="fa-solid fa-rotate"></i> Rotate PDF</a>
-                        <a onclick="activateTool('Add page numbers')" class="tool-link"><i class="fa-solid fa-list-ol"></i> Add page numbers</a>
-                        <a onclick="activateTool('Add watermark')" class="tool-link"><i class="fa-solid fa-stamp"></i> Add watermark</a>
-                        <a onclick="activateTool('Crop PDF')" class="tool-link"><i class="fa-solid fa-crop"></i> Crop PDF</a>
-                        <a onclick="activateTool('Edit PDF')" class="tool-link"><i class="fa-solid fa-pen-to-square"></i> Edit PDF</a>
-                    </div>
-                    <div class="menu-column">
-                        <div class="menu-header">OPTIMIZE & SECURE</div>
-                        <a onclick="activateTool('Compress PDF')" class="tool-link"><i class="fa-solid fa-minimize"></i> Compress PDF</a>
-                        <a onclick="activateTool('Repair PDF')" class="tool-link"><i class="fa-solid fa-wrench"></i> Repair PDF</a>
-                        <a onclick="activateTool('Unlock PDF')" class="tool-link"><i class="fa-solid fa-lock-open"></i> Unlock PDF</a>
-                        <a onclick="activateTool('Protect PDF')" class="tool-link"><i class="fa-solid fa-lock"></i> Protect PDF</a>
-                        <a onclick="activateTool('Redact PDF')" class="tool-link"><i class="fa-solid fa-eraser"></i> Redact PDF</a>
-                    </div>
-                    <div class="menu-column">
-                        <div class="menu-header">CONVERT</div>
-                        <a onclick="activateTool('Word to PDF')" class="tool-link">Word to PDF</a>
-                        <a onclick="activateTool('PDF to Word')" class="tool-link">PDF to Word</a>
-                        <a onclick="activateTool('Excel to PDF')" class="tool-link">Excel to PDF</a>
-                        <a onclick="activateTool('PDF to Excel')" class="tool-link">PDF to Excel</a>
-                        <a onclick="activateTool('JPG to PDF')" class="tool-link">JPG to PDF</a>
-                    </div>
-                    <div class="menu-column">
-                        <div class="menu-header">ADVANCED</div>
-                        <a onclick="activateTool('Compare PDF')" class="tool-link"><i class="fa-solid fa-not-equal"></i> Compare PDF</a>
-                        <a onclick="activateTool('OCR PDF')" class="tool-link"><i class="fa-solid fa-eye"></i> OCR PDF</a>
-                        <a onclick="activateTool('Translate PDF')" class="tool-link"><i class="fa-solid fa-language"></i> Translate PDF</a>
-                        <a onclick="activateTool('Sort pages')" class="tool-link"><i class="fa-solid fa-sort"></i> Sort Pages</a>
-                        <a onclick="activateTool('Scan to PDF')" class="tool-link"><i class="fa-solid fa-camera"></i> Camera Scan</a>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div>
-
-    <div id="tool-workspace">
-        <div id="greeting" style="color: #64748b; font-weight: 600; margin-bottom: 12px; font-size: 13px;"></div>
-        <h1 id="tool-title" style="font-size: 38px; color: #0f172a; font-weight: 800;">Enterprise Document Suite</h1>
-        <div id="drop-zone" onclick="document.getElementById('real-file-input').click()">
-            <i class="fa-solid fa-file-pdf" style="font-size: 60px; color: var(--brand-red); margin-bottom: 20px;"></i>
-            <h3>Drag and Drop files here</h3>
-            <p>Ready to process your PDF documents</p>
-            <input type="file" id="real-file-input" hidden multiple>
-        </div>
-        <div id="processing-status">
-            <div id="success-msg">Successful! Your task completed. ✅</div>
-            <h2 id="status-text">Processing Document...</h2>
-            <div class="progress-bar"><div class="progress-fill" id="p-fill"></div></div>
-        </div>
-    </div>
-
-    <div id="rotator-overlay">
-        <div class="rotator-box">
-            <h2>Visual Rotation</h2>
-            <div style="background:#f1f5f9; padding:10px; border-radius:10px;"><canvas id="preview-canvas"></canvas></div>
-            <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
-                <button onclick="rotatePreview(-90)" style="padding:10px 20px; cursor:pointer;">Left</button>
-                <button onclick="rotatePreview(90)" style="padding:10px 20px; cursor:pointer;">Right</button>
-                <button onclick="applyRotate()" style="background:var(--brand-red); color:white; padding:10px 25px; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">Apply</button>
-                <button onclick="location.reload()" style="padding:10px">Cancel</button>
             </div>
         </div>
+
+        <div class="dropdown">
+            <button class="nav-item">eSign <i class="fa-solid fa-chevron-down" style="font-size:12px;"></i></button>
+            <div class="dropdown-content" style="min-width:380px; grid-template-columns:1fr;">
+                <div class="dropdown-col">
+                    <h3>Sign Document</h3>
+                    <a class="dropdown-item" onclick="setMode('Digital Sign')"><div><i class="fa-solid fa-pen-nib" style="color:#e53935;"></i> Digital Sign</div> <span class="tag-info tag-anyone">Anyone</span></a>
+                    <a class="dropdown-item" onclick="setMode('Aadhar Sign')"><div><i class="fa-solid fa-id-card" style="color:#f59e0b;"></i> Aadhar Sign</div> <span class="tag-info tag-indians">Indians</span></a>
+                    <a class="dropdown-item" onclick="setMode('Global Sign')"><div><i class="fa-solid fa-globe" style="color:#2563eb;"></i> Global Sign</div> <span class="tag-info tag-global">Global Users</span></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="dropdown mega-dropdown">
+            <button class="nav-item">All PDF Tools <i class="fa-solid fa-chevron-down" style="font-size:12px;"></i></button>
+            <div class="dropdown-content">
+                <div class="dropdown-col"><h3>Organize</h3>
+                    <a class="tool-link" onclick="setMode('Merge PDF')"><div><i class="fa-solid fa-layer-group" style="color:#e53935;"></i> Merge</div></a>
+                    <a class="tool-link" onclick="setMode('Split PDF')"><div><i class="fa-solid fa-scissors" style="color:#e53935;"></i> Split</div></a>
+                    <a class="tool-link" onclick="setMode('Remove Pages')"><div><i class="fa-solid fa-trash-can" style="color:#e53935;"></i> Remove</div></a>
+                    <a class="tool-link" onclick="setMode('Extract Pages')"><div><i class="fa-solid fa-file-export" style="color:#e53935;"></i> Extract</div></a>
+                    <a class="tool-link" onclick="setMode('Organize PDF')"><div><i class="fa-solid fa-sort" style="color:#e53935;"></i> Organize</div></a>
+                </div>
+                <div class="dropdown-col"><h3>Optimize</h3>
+                    <a class="tool-link" onclick="setMode('Compress PDF')"><div><i class="fa-solid fa-file-zipper" style="color:#16a34a;"></i> Compress</div></a>
+                    <a class="tool-link" onclick="setMode('Repair PDF')"><div><i class="fa-solid fa-wrench" style="color:#16a34a;"></i> Repair</div></a>
+                    <a class="tool-link" onclick="setMode('OCR PDF')"><div><i class="fa-solid fa-eye" style="color:#16a34a;"></i> OCR</div></a>
+                </div>
+                <div class="dropdown-col"><h3>Edit</h3>
+                    <a class="tool-link" onclick="setMode('Rotate PDF')"><div><i class="fa-solid fa-rotate" style="color:#9c27b0;"></i> Rotate</div></a>
+                    <a class="tool-link" onclick="setMode('Add Numbers')"><div><i class="fa-solid fa-list-ol" style="color:#9c27b0;"></i> Numbers</div></a>
+                    <a class="tool-link" onclick="setMode('Watermark')"><div><i class="fa-solid fa-stamp" style="color:#9c27b0;"></i> Watermark</div></a>
+                    <a class="tool-link" onclick="setMode('Crop PDF')"><div><i class="fa-solid fa-crop" style="color:#9c27b0;"></i> Crop</div></a>
+                    <a class="tool-link" onclick="setMode('Edit PDF')"><div><i class="fa-solid fa-pen" style="color:#9c27b0;"></i> Edit</div></a>
+                </div>
+                <div class="dropdown-col"><h3>Security</h3>
+                    <a class="tool-link" onclick="setMode('Protect PDF')"><div><i class="fa-solid fa-lock" style="color:#2563eb;"></i> Protect</div></a>
+                    <a class="tool-link" onclick="setMode('Unlock PDF')"><div><i class="fa-solid fa-unlock-keyhole" style="color:#2563eb;"></i> Unlock</div></a>
+                    <a class="tool-link" onclick="setMode('Redact PDF')"><div><i class="fa-solid fa-eraser" style="color:#2563eb;"></i> Redact</div></a>
+                    <a class="tool-link" onclick="setMode('Compare PDF')"><div><i class="fa-solid fa-columns" style="color:#2563eb;"></i> Compare</div></a>
+                </div>
+                <div class="dropdown-col"><h3>AI Tools</h3>
+                    <a class="tool-link" onclick="setMode('AI Summary')"><div><i class="fa-solid fa-robot" style="color:#673ab7;"></i> Summary</div></a>
+                    <a class="tool-link" onclick="setMode('Translate')"><div><i class="fa-solid fa-language" style="color:#673ab7;"></i> Translate</div></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="auth-btns"><button class="login-btn" onclick="simulateLogin()">LOGIN</button><a href="#" class="signup-btn">SIGN UP</a></div>
+</header>
+
+<div id="workspace">
+    <div style="text-align: center; margin-bottom: 25px;"><h2 id="greeting-display" style="color:var(--dark); font-weight:900; font-size:28px; margin:0;"></h2></div>
+    <div id="tool-container">
+        <div id="tool-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+        <h2 id="tool-title">Merge PDF</h2>
+        <p id="tool-desc-main" style="color:var(--grey); font-weight:700;">Drag & Drop files here or click to upload</p>
+        <input type="file" id="pdf-input" style="display: none;" multiple accept="application/pdf">
+        <button class="btn-action" id="main-btn" onclick="document.getElementById('pdf-input').click()">SELECT FILES</button>
     </div>
+    <div class="task-info-floating">
+        <strong id="task-name-title" class="floating-title">Merge PDF</strong>
+        <p id="task-desc-text" class="floating-text"></p>
+    </div>
+</div>
 
-    <script>
-        const userName = "Vamsi Krishna"; 
-        document.getElementById("greeting").innerText = `AUTHENTICATED: ${userName.toUpperCase()}`;
-        let currentTool = "Merge PDF";
-        let activeFiles = [];
-        let currentRot = 0;
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let points = [];
+    const mouse = { x: -1000, y: -1000 };
 
-        function activateTool(name) {
-            currentTool = name;
-            document.getElementById('tool-title').innerText = name.toUpperCase();
-            document.getElementById('drop-zone').style.display = 'block';
-            document.getElementById('processing-status').style.display = 'none';
-            document.getElementById('success-msg').style.display = 'none';
+    window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+    window.addEventListener('resize', () => initCanvas());
+
+    class JellyPoint {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.baseX = this.x; this.baseY = this.y;
+            this.size = Math.random() * 2 + 1;
+            const rand = Math.random();
+            if(rand < 0.05) this.color = '#000000';
+            else if(rand < 0.55) this.color = '#bae6fd';
+            else this.color = '#fecaca';
+            this.angle = Math.random() * Math.PI * 2;
         }
-
-        const dropZone = document.getElementById('drop-zone');
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = "var(--brand-red)"; });
-        dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = "#cbd5e1"; });
-        dropZone.addEventListener('drop', (e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); });
-        document.getElementById('real-file-input').addEventListener('change', function() { handleFiles(this.files); });
-
-        async function handleFiles(files) {
-            activeFiles = Array.from(files);
-            if (activeFiles.length === 0) return;
-            if (currentTool === 'Rotate PDF') {
-                document.getElementById('rotator-overlay').style.display = 'flex';
-                const pdfjs = window['pdfjs-dist/build/pdf'];
-                pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-                const pdf = await pdfjs.getDocument(await activeFiles[0].arrayBuffer()).promise;
-                const page = await pdf.getPage(1);
-                const viewport = page.getViewport({ scale: 0.6 });
-                const canvas = document.getElementById('preview-canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.height = viewport.height; canvas.width = viewport.width;
-                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-            } else { startProcess(); }
-        }
-
-        function rotatePreview(angle) {
-            currentRot = (currentRot + angle) % 360;
-            document.getElementById('preview-canvas').style.transform = `rotate(${currentRot}deg)`;
-        }
-
-        async function applyRotate() {
-            document.getElementById('rotator-overlay').style.display = 'none';
-            document.getElementById('drop-zone').style.display = 'none';
-            document.getElementById('processing-status').style.display = 'block';
-            let res = [];
-            for(let f of activeFiles) {
-                const pdfDoc = await PDFLib.PDFDocument.load(await f.arrayBuffer());
-                pdfDoc.getPages().forEach(p => p.setRotation(PDFLib.degrees(currentRot)));
-                res.push({ name: `Rotated_${f.name}`, data: await pdfDoc.save() });
-            }
-            await smartDownload(res, "Rotate");
-        }
-
-        async function startProcess() {
-            document.getElementById('drop-zone').style.display = 'none';
-            document.getElementById('processing-status').style.display = 'block';
-            let out = [];
-            if (currentTool === 'Merge PDF') await runMerge(activeFiles);
-            else if (currentTool === 'Split PDF') out = await runSplit(activeFiles);
-            else out = await runSim(currentTool, activeFiles);
-            if (out.length > 0) await smartDownload(out, currentTool);
-        }
-
-        async function runMerge(files) {
-            const merged = await PDFLib.PDFDocument.create();
-            for (let f of files) {
-                const pdf = await PDFLib.PDFDocument.load(await f.arrayBuffer());
-                const pages = await merged.copyPages(pdf, pdf.getPageIndices());
-                pages.forEach(p => merged.addPage(p));
-            }
-            downloadBlob(new Blob([await merged.save()], {type:'application/pdf'}), "Kellyne_Merge.pdf");
-            finish();
-        }
-
-        async function smartDownload(files, task) {
-            if (files.length > 5) {
-                const zip = new JSZip();
-                files.forEach(f => zip.file(f.name, (f.data === "sim") ? "Data Stream" : f.data));
-                downloadBlob(await zip.generateAsync({type:"blob"}), `Kellyne_${task.replace(/ /g,'_')}_Archive.zip`);
+        update() {
+            this.angle += 0.007;
+            let swirlX = Math.cos(this.angle) * 55;
+            let swirlY = Math.sin(this.angle) * 55;
+            let dx = mouse.x - this.x; let dy = mouse.y - this.y;
+            let dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 320) {
+                this.x += dx * 0.035; this.y += dy * 0.035;
             } else {
-                files.forEach(f => downloadBlob((f.data === "sim") ? new Blob(["Content"]) : new Blob([f.data]), f.name));
+                this.x += (this.baseX + swirlX - this.x) * 0.04;
+                this.y += (this.baseY + swirlY - this.y) * 0.04;
             }
-            finish();
         }
+        draw() { ctx.fillStyle = this.color; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+    }
 
-        function finish() {
-            document.getElementById('p-fill').style.width = "100%";
-            document.getElementById('status-text').style.display = 'none';
-            document.getElementById('success-msg').style.display = 'block';
-        }
+    function initCanvas() {
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        points = []; for (let i = 0; i < 790; i++) points.push(new JellyPoint()); 
+    }
 
-        function downloadBlob(blob, name) {
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = name; link.click();
-        }
+    function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); points.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
 
-        async function runSim(tool, files) {
-            for (let i = 0; i <= 100; i += 25) {
-                document.getElementById('p-fill').style.width = i + "%";
-                await new Promise(r => setTimeout(r, 200));
-            }
-            return files.map(f => ({ name: `Kellyne_${tool.replace(/ /g,'_')}_${f.name}`, data: "sim" }));
-        }
+    const toolData = {
+        'Merge PDF': 'What: Combine many PDF files into one single document.\nHow: Select files and click Merge Now.',
+        'Split PDF': 'What: Separate one PDF into multiple files or extract pages.\nHow: Upload file and select page ranges.',
+        'Compress PDF': 'What: Reduce the file size while maintaining quality.',
+        'JPG to PDF': 'What: Convert images like JPG into a clean PDF.\nHow: Select images and download.',
+        'Word to PDF': 'What: Convert Word .docx documents into PDF.',
+        'Excel to PDF': 'What: Turn spreadsheets into professional PDF tables.',
+        'PPT to PDF': 'What: Turn PowerPoint slides into PDF documents.',
+        'HTML to PDF': 'What: Convert web pages or HTML into PDF.',
+        'PDF to JPG': 'What: Extract every page of a PDF as separate JPG images.',
+        'PDF to Word': 'What: Convert PDF text back into an editable Word doc.',
+        'PDF to Excel': 'What: Extract PDF tables into Excel spreadsheets.',
+        'PDF to PPT': 'What: Convert PDF documents into PowerPoint slides.',
+        'PDF to PDF/A': 'What: Convert PDF to archival standard standard.',
+        'Digital Sign': 'What: Add your own digital signature anyone can verify.',
+        'Aadhar Sign': 'What: Legally sign documents using Indian Aadhar OTP.',
+        'Global Sign': 'What: Secure global digital sign for international documents.',
+        'Remove Pages': 'What: Delete unwanted pages from PDF.',
+        'Extract Pages': 'What: Take specific pages as a new PDF.',
+        'Organize PDF': 'What: Sort or reorder PDF pages.',
+        'Scan to PDF': 'What: Convert scanned images to PDF.',
+        'Repair PDF': 'What: Fix corrupted or broken PDF documents.',
+        'OCR PDF': 'What: Scanned image to searchable text.',
+        'Rotate PDF': 'What: Change orientation permanently.',
+        'Add Numbers': 'What: Put page numbers on your PDF document.',
+        'Watermark': 'What: Add security stamp on pages.',
+        'Crop PDF': 'What: Trim page margins or cut areas.',
+        'Edit PDF': 'What: Write, draw, or add text directly to your PDF.',
+        'Protect PDF': 'What: Lock your PDF with a strong password.',
+        'Unlock PDF': 'What: Remove password protection from a PDF.',
+        'Redact PDF': 'What: Permanently black out sensitive information.',
+        'Compare PDF': 'What: Find differences between two PDFs.',
+        'AI Summary': 'What: AI reads and summarizes PDF.',
+        'Translate': 'What: Translate PDF to other languages.'
+    };
 
-        async function runSplit(files) {
-            let res = [];
-            for (let f of files) {
-                const pdf = await PDFLib.PDFDocument.load(await f.arrayBuffer());
-                for (let i = 0; i < pdf.getPageCount(); i++) {
-                    const newPdf = await PDFLib.PDFDocument.create();
-                    const [p] = await newPdf.copyPages(pdf, [i]);
-                    newPdf.addPage(p);
-                    res.push({ name: `Page_${i+1}_${f.name}`, data: await newPdf.save() });
-                }
-            }
-            return res;
-        }
-    </script>
+    function initApp() { 
+        initCanvas(); animate(); updateGreeting(); setMode('Merge PDF'); 
+    }
+
+    function updateGreeting() {
+        const hour = new Date().getHours();
+        let wish = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
+        document.getElementById('greeting-display').innerText = `Hello, ${wish} Guest!`;
+    }
+
+    function setMode(n) {
+        document.getElementById('tool-title').innerText = n;
+        document.getElementById('task-name-title').innerText = n;
+        document.getElementById('task-desc-text').innerText = toolData[n] || "Professional PDF Processing Tool.";
+    }
+
+    function simulateLogin() { let n = prompt("Enter Name:"); if(n) alert("Welcome " + n); }
+</script>
 </body>
 </html>
