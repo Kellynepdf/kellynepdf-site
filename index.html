@@ -6,7 +6,9 @@
     <title>KellynePDF - Professional Suite</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
     <style>
         :root { --red: #e53935; --dark: #0f172a; --grey: #475569; }
@@ -20,13 +22,12 @@
         .logo-img { height: 55px; width: auto; object-fit: contain; }
         .logo-text { font-weight: 900; font-size: 24px; color: var(--red); text-transform: uppercase; }
 
-        /* --- NAVIGATION FONT SIZE INCREASED --- */
         .nav { display: flex; align-items: center; gap: 20px; height: 100%; flex-grow: 1; }
         .nav-item { 
             cursor: pointer; 
             color: var(--grey); 
-            font-size: 15px; /* Increased from 13px */
-            font-weight: 800; /* Bolder font */
+            font-size: 15px; 
+            font-weight: 800; 
             text-transform: uppercase; 
             border: none; 
             background: none; 
@@ -42,7 +43,6 @@
         .login-btn { text-decoration: none; color: var(--dark); font-size: 16px; font-weight: 800; text-transform: uppercase; cursor: pointer; border: none; background: none; }
         .signup-btn { text-decoration: none; background: var(--red); color: #fff; padding: 12px 25px; border-radius: 8px; font-size: 14px; font-weight: 800; text-transform: uppercase; }
 
-        /* DROP-DOWNS */
         .dropdown { position: relative; height: 100%; }
         .dropdown-content { 
             display: grid; position: absolute; background: #fff; min-width: 550px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); 
@@ -55,13 +55,11 @@
         .dropdown-col h3 { font-size: 11px; color: #94a3b8; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; margin-bottom: 10px; }
         .tool-link, .dropdown-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; color: #334155; text-decoration: none; font-size: 14px; font-weight: 700; cursor: pointer; }
         
-        /* ESIGN TAGS */
         .tag-info { font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: 800; text-transform: capitalize; }
         .tag-anyone { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
         .tag-indians { background: #fef3c7; color: #d97706; border: 1px solid #fcd34d; }
         .tag-global { background: #dbeafe; color: #2563eb; border: 1px solid #93c5fd; }
 
-        /* WORKSPACE PASTEL FLOATING */
         #workspace { flex-grow: 1; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; z-index: 10; position: relative; overflow-y: auto; }
         #tool-container { 
             width: 100%; max-width: 850px; height: 380px; border-radius: 50px; position: relative; overflow: hidden;
@@ -69,7 +67,10 @@
             box-shadow: 0 25px 70px rgba(0,0,0,0.06); border: 1px solid #f1f5f9;
             background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 25%, #fecaca 50%, #fdf2f8 75%, #f5f3ff 100%);
             background-size: 400% 400%; animation: colorFlow 12s ease infinite, floatAnim 6s ease-in-out infinite;
+            transition: all 0.3s ease;
         }
+        #tool-container.dragover { border: 2px dashed var(--red); background: #fff5f5; transform: scale(1.02); }
+
         @keyframes colorFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         @keyframes floatAnim { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
@@ -272,6 +273,7 @@
 
     function initApp() { 
         initCanvas(); animate(); updateGreeting(); setMode('Merge PDF'); 
+        setupDragAndDrop(); 
     }
 
     function updateGreeting() {
@@ -281,16 +283,39 @@
     }
 
     function setMode(n) {
-        // Trigger external controller logic if available
-        if (typeof handleToolSelection === "function") {
-            handleToolSelection(n); 
-        }
+        if (typeof handleToolSelection === "function") handleToolSelection(n);
         document.getElementById('tool-title').innerText = n;
         document.getElementById('task-name-title').innerText = n;
         document.getElementById('task-desc-text').innerText = toolData[n] || "Professional PDF Processing Tool.";
     }
 
     function simulateLogin() { let n = prompt("Enter Name:"); if(n) alert("Welcome " + n); }
+
+    function setupDragAndDrop() {
+        const dropZone = document.getElementById('tool-container');
+        const fileInput = document.getElementById('pdf-input');
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                // Trigger merge.js logic via change event
+                const event = new Event('change', { bubbles: true });
+                fileInput.dispatchEvent(event);
+            }
+        }, false);
+    }
 </script>
 </body>
 </html>
