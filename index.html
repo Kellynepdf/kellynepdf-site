@@ -183,6 +183,13 @@
     </div>
 </div>
 
+<script src="js/merge.js"></script>
+<script src="js/split.js"></script>
+<script src="js/compress.js"></script>
+<script src="js/convert.js"></script>
+<script src="js/esign.js"></script>
+<script src="js/allpdftools.js"></script>
+
 <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
@@ -274,6 +281,10 @@
     }
 
     function setMode(n) {
+        // Trigger external controller logic if available
+        if (typeof handleToolSelection === "function") {
+            handleToolSelection(n); 
+        }
         document.getElementById('tool-title').innerText = n;
         document.getElementById('task-name-title').innerText = n;
         document.getElementById('task-desc-text').innerText = toolData[n] || "Professional PDF Processing Tool.";
