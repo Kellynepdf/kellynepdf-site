@@ -34,7 +34,6 @@
         .login-btn { text-decoration: none; color: var(--dark); font-size: 16px; font-weight: 800; text-transform: uppercase; cursor: pointer; border: none; background: none; }
         .signup-btn { text-decoration: none; background: var(--red); color: #fff; padding: 12px 25px; border-radius: 8px; font-size: 14px; font-weight: 800; text-transform: uppercase; }
 
-        /* Dropdown CSS */
         .dropdown { position: relative; height: 100%; }
         .dropdown-content { 
             display: grid; position: absolute; background: #fff; min-width: 550px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); 
@@ -269,10 +268,24 @@
     }
 
     function setMode(n) {
+        // Reset Tool Container to original Upload UI (Important!)
+        const container = document.getElementById('tool-container');
+        container.innerHTML = `
+            <div id="tool-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+            <h2 id="tool-title">${n}</h2>
+            <p id="tool-desc-main" style="color:var(--grey); font-weight:700;">Drag & Drop files here or click to upload</p>
+            <input type="file" id="pdf-input" style="display: none;" multiple accept="application/pdf">
+            <button class="btn-action" id="main-btn" onclick="document.getElementById('pdf-input').click()">SELECT FILES</button>
+        `;
+
         if (typeof handleToolSelection === "function") handleToolSelection(n);
+        
         document.getElementById('tool-title').innerText = n;
         document.getElementById('task-name-title').innerText = n;
         document.getElementById('task-desc-text').innerText = toolData[n] || "Professional PDF Processing Tool.";
+        
+        // Re-setup listener for newly created elements
+        setupDragAndDrop();
     }
 
     function simulateLogin() { let n = prompt("Enter Name:"); if(n) alert("Welcome " + n); }
@@ -280,6 +293,7 @@
     function setupDragAndDrop() {
         const dropZone = document.getElementById('tool-container');
         const fileInput = document.getElementById('pdf-input');
+        if (!dropZone || !fileInput) return;
 
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropZone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
