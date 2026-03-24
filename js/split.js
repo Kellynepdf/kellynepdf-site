@@ -1,40 +1,82 @@
-/**
- * KellynePDF - Split Logic
- * This function separates each page of a PDF into individual files.
- * The output is always provided as a ZIP file.
- */
-async function runSplit(file) {
-    try {
-        const fileBytes = await file.arrayBuffer();
-        const pdfDoc = await PDFLib.PDFDocument.load(fileBytes);
-        const totalPages = pdfDoc.getPageCount();
-        const zip = new JSZip();
+/* KellynePDF - Professional Split Logic */
+let selectedSplitFile = null;
 
-        // Loop through each page of the uploaded PDF
-        for (let i = 0; i < totalPages; i++) {
-            // Create a new PDF for each individual page
-            const newPdf = await PDFLib.PDFDocument.create();
-            const [copiedPage] = await newPdf.copyPages(pdfDoc, [i]);
-            newPdf.addPage(copiedPage);
+// 1. This function is called when user clicks 'Split PDF'
+function handleSplitSelection() {
+    const descMain = document.getElementById('tool-desc-main');
+    const mainBtn = document.getElementById('main-btn');
+    const fileInput = document.getElementById('pdf-input');
 
-            // Save the single-page PDF
-            const pdfBytes = await newPdf.save();
+    // Resetting UI for Split Mode
+    fileInput.multiple = false; // Split only needs one file
+    descMain.innerText = "Upload a PDF to split every page.";
+    descMain.style.color = "#475569";
+    
+    mainBtn.innerText = "SELECT FILE"; // Initial Button Text
+    mainBtn.style.background = "#e53935"; // Reset to Red
+
+    // Handle File Selection
+    fileInput.onchange = (e) => {
+        selectedSplitFile = e.target.files[0];
+        if (selectedSplitFile) {
+            descMain.innerText = `File Loaded: ${selectedSplitFile.name}`;
+            descMain.style.color = "#16a34a"; // Green
             
-            // Add the page to the ZIP folder
-            zip.file(`Kellyne_Page_${i + 1}.pdf`, pdfBytes);
+            // --- UPDATED BUTTON TEXT FOR SPLIT ---
+            mainBtn.innerText = "START SPLIT PDF"; 
+            mainBtn.style.background = "#16a34a";
+            mainBtn.onclick = executeSplitTask;
+        }
+    };
+}
+
+// 2. Main Execution Logic
+async function executeSplitTask() {
+    if (!selectedSplitFile) return alert("Please select a PDF file!");
+    
+    document.getElementById('tool-title').innerText = "Splitting Pages...";
+    
+    try {
+        const { PDFDocument } = PDFLib;
+        const arrayBuffer = await selectedSplitFile.arrayBuffer();
+        const mainPdf = await PDFDocument.load(arrayBuffer);
+        const pageCount = mainPdf.getPageCount();
+        
+        const zip = new JSZip();
+        const folder = zip.folder("Kellyne_Split_Pages");
+
+        for (let i = 0; i < pageCount; i++) {
+            const newPdf = await PDFDocument.create();
+            const [copiedPage] = await newPdf.copyPages(mainPdf, [i]);
+            newPdf.addPage(copiedPage);
+            const pdfBytes = await newPdf.save();
+            folder.file(`Kellyne_Split_Page_${i + 1}.pdf`, pdfBytes);
         }
 
-        // Generate the ZIP file and trigger download
-        zip.generateAsync({ type: "blob" }).then(function (content) {
-            saveBlob(content, "Kellyne_Split_Pages.zip");
-            
-            // Update UI to show success
-            if (typeof finish === "function") finish();
-        });
+        const zipContent = await zip.generateAsync({ type: "blob" });
+        const url = URL.createObjectURL(zipContent);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "Kellyne_Split_PDF.zip";
+        a.click();
 
-    } catch (error) {
-        console.error("Splitting Error:", error);
-        alert("An error occurred while splitting the PDF. Please try again.");
-        if (typeof resetUI === "function") resetUI();
+        showSplitSuccessUI();
+    } catch (err) {
+        alert("Split failed. Ensure it's a valid PDF.");
     }
+}
+
+function showSplitSuccessUI() {
+    const container = document.getElementById('tool-container');
+    container.innerHTML = `
+        <div id="tool-icon" style="color:#16a34a; font-size:90px;"><i class="fa-solid fa-scissors"></i></div>
+        <h2 style="color:#16a34a;">SUCCESSFUL SPLIT COMPLETED!</h2>
+        <p style="font-weight:bold;">All pages extracted into "Kellyne Split PDF" ZIP.</p>
+        <button class="btn-action" onclick="window.location.reload()" style="background:#0f172a; margin-top:20px; padding:15px 50px;">BACK TO HOME</button>
+    `;
+}
+
+// Auto-trigger if mode is already Split PDF
+if (document.getElementById('tool-title').innerText === "Split PDF") {
+    handleSplitSelection();
 }

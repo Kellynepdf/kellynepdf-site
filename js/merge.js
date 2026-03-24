@@ -1,4 +1,7 @@
-/* KellynePDF - Professional Merge & ZIP Logic */
+/* KellynePDF - Professional Merge Logic 
+   Features: Drag & Drop, 10+ Files ZIP, Custom Naming, Success UI 
+*/
+
 let selectedMergeFiles = [];
 
 const dropZone = document.getElementById('tool-container');
@@ -7,38 +10,47 @@ const fileInput = document.getElementById('pdf-input');
 // 1. --- DRAG AND DROP LOGIC ---
 if (dropZone) {
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
+        dropZone.addEventListener(eventName, e => { 
+            e.preventDefault(); 
+            e.stopPropagation(); 
+        }, false);
     });
 
     ['dragenter', 'dragover'].forEach(eventName => {
         dropZone.addEventListener(eventName, () => {
-            dropZone.classList.add('dragover');
-            dropZone.style.border = '2px dashed #e53935';
+            if (document.getElementById('tool-title').innerText === "Merge PDF") {
+                dropZone.style.border = '2px dashed #e53935';
+                dropZone.style.background = '#fff5f5';
+            }
         }, false);
     });
 
     ['dragleave', 'drop'].forEach(eventName => {
         dropZone.addEventListener(eventName, () => {
-            dropZone.classList.remove('dragover');
             dropZone.style.border = '1px solid #f1f5f9';
+            dropZone.style.background = 'linear-gradient(135deg, #ffffff 0%, #e0f2fe 25%, #fecaca 50%, #fdf2f8 75%, #f5f3ff 100%)';
         }, false);
     });
 
     dropZone.addEventListener('drop', (e) => {
-        const files = Array.from(e.dataTransfer.files).filter(f => f.type === "application/pdf");
-        if (files.length > 0) handleFiles(files);
+        if (document.getElementById('tool-title').innerText === "Merge PDF") {
+            const files = Array.from(e.dataTransfer.files).filter(f => f.type === "application/pdf");
+            if (files.length > 0) handleMergeFiles(files);
+        }
     }, false);
 }
 
 // 2. --- FILE INPUT LOGIC ---
 if (fileInput) {
     fileInput.addEventListener('change', (e) => {
-        const files = Array.from(e.target.files);
-        handleFiles(files);
+        if (document.getElementById('tool-title').innerText === "Merge PDF") {
+            const files = Array.from(e.target.files);
+            handleMergeFiles(files);
+        }
     });
 }
 
-function handleFiles(files) {
+function handleMergeFiles(files) {
     selectedMergeFiles = files;
     const descMain = document.getElementById('tool-desc-main');
     const mainBtn = document.getElementById('main-btn');
@@ -46,13 +58,14 @@ function handleFiles(files) {
     if (descMain && mainBtn) {
         descMain.innerText = `${selectedMergeFiles.length} PDF Files Loaded! Ready to Merge.`;
         descMain.style.color = "#16a34a";
+        
         mainBtn.innerText = "START MERGE PDF";
         mainBtn.style.background = "#16a34a";
         mainBtn.onclick = executeMergeTask;
     }
 }
 
-// 3. --- MAIN MERGE & ZIP EXECUTION ---
+// 3. --- MAIN EXECUTION (MERGE OR ZIP) ---
 async function executeMergeTask() {
     if (selectedMergeFiles.length === 0) return;
     document.getElementById('tool-title').innerText = "Merging... Please Wait";
@@ -60,21 +73,21 @@ async function executeMergeTask() {
     try {
         const { PDFDocument } = PDFLib;
         
-        // CASE A: More than 10 files -> Download as ZIP
+        // CASE A: More than 10 files -> ZIP Download
         if (selectedMergeFiles.length > 10) {
             if (typeof JSZip === "undefined") {
-                alert("JSZip library is missing in index.html!");
+                alert("JSZip library is missing!");
                 return;
             }
             const zip = new JSZip();
             for (let i = 0; i < selectedMergeFiles.length; i++) {
-                const fileBuffer = await selectedMergeFiles[i].arrayBuffer();
-                zip.file(`Kellyne_Merge_Part_${i + 1}.pdf`, fileBuffer);
+                const fileData = await selectedMergeFiles[i].arrayBuffer();
+                zip.file(`Kellyne_Merge_Part_${i + 1}.pdf`, fileData);
             }
             const content = await zip.generateAsync({ type: "blob" });
-            downloadFile(content, "Kellyne_Merge_PDF_Bundle.zip");
+            saveFile(content, "Kellyne_Merge_PDF_Bundle.zip");
         } 
-        // CASE B: 10 or fewer files -> Merge into single PDF
+        // CASE B: 10 or fewer files -> Single PDF
         else {
             const mergedPdf = await PDFDocument.create();
             for (const file of selectedMergeFiles) {
@@ -85,28 +98,26 @@ async function executeMergeTask() {
             }
             const pdfBytes = await mergedPdf.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-            downloadFile(blob, "Kellyne_Merge_PDF.pdf");
+            saveFile(blob, "Kellyne_Merge_PDF.pdf");
         }
 
-        showSuccessUI();
+        showMergeSuccessUI();
     } catch (err) {
         console.error(err);
-        alert("Merging Failed. Ensure files are valid PDFs.");
+        alert("Merge failed. Check console for details.");
     }
 }
 
-function downloadFile(blob, filename) {
+function saveFile(blob, filename) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = filename;
-    document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
 }
 
 // 4. --- SUCCESS UI ---
-function showSuccessUI() {
+function showMergeSuccessUI() {
     const container = document.getElementById('tool-container');
     container.innerHTML = `
         <div id="tool-icon" style="color:#16a34a; font-size:90px;"><i class="fa-solid fa-circle-check"></i></div>
