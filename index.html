@@ -24,18 +24,9 @@
 
         .nav { display: flex; align-items: center; gap: 20px; height: 100%; flex-grow: 1; }
         .nav-item { 
-            cursor: pointer; 
-            color: var(--grey); 
-            font-size: 15px; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            border: none; 
-            background: none; 
-            display: flex; 
-            align-items: center; 
-            gap: 6px; 
-            height: 100%; 
-            transition: 0.2s; 
+            cursor: pointer; color: var(--grey); font-size: 15px; font-weight: 800; 
+            text-transform: uppercase; border: none; background: none; 
+            display: flex; align-items: center; gap: 6px; height: 100%; transition: 0.2s; 
         }
         .nav-item:hover { color: var(--red); }
 
@@ -43,6 +34,7 @@
         .login-btn { text-decoration: none; color: var(--dark); font-size: 16px; font-weight: 800; text-transform: uppercase; cursor: pointer; border: none; background: none; }
         .signup-btn { text-decoration: none; background: var(--red); color: #fff; padding: 12px 25px; border-radius: 8px; font-size: 14px; font-weight: 800; text-transform: uppercase; }
 
+        /* Dropdown CSS */
         .dropdown { position: relative; height: 100%; }
         .dropdown-content { 
             display: grid; position: absolute; background: #fff; min-width: 550px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); 
@@ -207,9 +199,7 @@
             this.baseX = this.x; this.baseY = this.y;
             this.size = Math.random() * 2 + 1;
             const rand = Math.random();
-            if(rand < 0.05) this.color = '#000000';
-            else if(rand < 0.55) this.color = '#bae6fd';
-            else this.color = '#fecaca';
+            this.color = rand < 0.05 ? '#000000' : rand < 0.55 ? '#bae6fd' : '#fecaca';
             this.angle = Math.random() * Math.PI * 2;
         }
         update() {
@@ -218,12 +208,8 @@
             let swirlY = Math.sin(this.angle) * 55;
             let dx = mouse.x - this.x; let dy = mouse.y - this.y;
             let dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 320) {
-                this.x += dx * 0.035; this.y += dy * 0.035;
-            } else {
-                this.x += (this.baseX + swirlX - this.x) * 0.04;
-                this.y += (this.baseY + swirlY - this.y) * 0.04;
-            }
+            if (dist < 320) { this.x += dx * 0.035; this.y += dy * 0.035; } 
+            else { this.x += (this.baseX + swirlX - this.x) * 0.04; this.y += (this.baseY + swirlY - this.y) * 0.04; }
         }
         draw() { ctx.fillStyle = this.color; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
     }
@@ -310,7 +296,6 @@
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 fileInput.files = files;
-                // Trigger merge.js logic via change event
                 const event = new Event('change', { bubbles: true });
                 fileInput.dispatchEvent(event);
             }
