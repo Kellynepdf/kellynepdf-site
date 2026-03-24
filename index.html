@@ -19,23 +19,23 @@
         :root { --red: #e53935; --dark: #0f172a; --grey: #475569; }
         body { font-family: 'Poppins', sans-serif; margin: 0; background: #ffffff; display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: relative; }
         
-        /* Premium Background: 20% Dark Blue Stars */
+        /* Premium Canvas: 20% Dark Blue Stars */
         #canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-        header { height: 90px; display: flex; align-items: center; padding: 0 40px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid #eee; flex-shrink: 0; z-index: 2000; position: relative; }
+        header { height: 90px; display: flex; align-items: center; padding: 0 40px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); border-bottom: 1px solid #eee; flex-shrink: 0; z-index: 2000; position: relative; }
         .logo-box { display: flex; align-items: center; gap: 12px; text-decoration: none; margin-right: 30px; }
-        .logo-img { height: 50px; width: auto; object-fit: contain; }
         .logo-text { font-weight: 900; font-size: 22px; color: var(--red); text-transform: uppercase; letter-spacing: -1px; }
 
         .nav { display: flex; align-items: center; gap: 18px; height: 100%; flex-grow: 1; }
         .nav-item { cursor: pointer; color: var(--dark); font-size: 13px; font-weight: 800; text-transform: uppercase; border: none; background: none; transition: 0.2s; white-space: nowrap; }
         .nav-item:hover { color: var(--red); }
 
-        .auth-btns { margin-left: auto; display: flex; align-items: center; gap: 20px; }
+        /* Auth Section */
+        .auth-btns { margin-left: auto; display: flex; align-items: center; gap: 15px; }
         .login-btn { color: var(--dark); font-size: 14px; font-weight: 800; text-transform: uppercase; cursor: pointer; border: none; background: none; }
-        .signup-btn { background: var(--red); color: #fff; padding: 10px 22px; border-radius: 6px; font-size: 13px; font-weight: 800; text-transform: uppercase; text-decoration: none; }
+        .signup-btn { background: var(--red); color: #fff; padding: 10px 22px; border-radius: 30px; font-size: 13px; font-weight: 800; text-transform: uppercase; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(229, 57, 53, 0.2); }
 
-        /* Mega Dropdown - Professional 6 Columns Layout */
+        /* Mega Dropdown Grid - Full 6 Columns */
         .dropdown { position: relative; height: 100%; display: flex; align-items: center; }
         .dropdown-content { 
             display: grid; position: absolute; background: #fff; min-width: 1200px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
@@ -44,35 +44,35 @@
         }
         .dropdown:hover .dropdown-content { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
         .dropdown-col h3 { font-size: 11px; color: #94a3b8; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; margin-bottom: 12px; padding-bottom: 5px; }
-        .tool-link, .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; color: #334155; text-decoration: none; font-size: 13px; font-weight: 700; cursor: pointer; }
+        .tool-link, .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; color: #334155; text-decoration: none; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .tool-link:hover { color: var(--red); transform: translateX(3px); }
         .tool-link i { width: 22px; text-align: center; font-size: 17px; }
 
-        /* eSign Tags */
-        .tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; margin-left: auto; }
-        .tag-any { background: #fee2e2; color: #dc2626; } 
-        .tag-ind { background: #fef3c7; color: #d97706; } 
-        .tag-glo { background: #dbeafe; color: #2563eb; } 
+        /* Pill-Shaped Tags */
+        .tag { font-size: 9px; padding: 4px 12px; border-radius: 20px; font-weight: 800; margin-left: auto; text-transform: uppercase; }
+        .tag-any { background: #000000; color: #ffffff; } 
+        .tag-ind { background: #16a34a; color: #ffffff; } 
+        .tag-glo { background: #2563eb; color: #ffffff; } 
 
-        /* Workspace & Tasks - Air Flow & Color Shift */
-        #workspace { flex-grow: 1; display: flex; flex-direction: column; align-items: center; padding: 60px 20px; z-index: 10; position: relative; }
+        /* Floating Workspace & Tool Descriptions */
+        #workspace { flex-grow: 1; display: flex; flex-direction: column; align-items: center; padding: 60px 20px; z-index: 10; position: relative; overflow-y: auto; }
         #tool-container { 
-            width: 100%; max-width: 850px; height: 350px; border-radius: 30px; position: relative;
+            width: 100%; max-width: 850px; height: 350px; border-radius: 40px; position: relative;
             display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.05); border: 2px solid rgba(255,255,255,0.8);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.08); border: 2px solid rgba(255,255,255,0.8);
             background: linear-gradient(-45deg, #dbeafe, #fee2e2, #f5f3ff, #bae6fd);
             background-size: 400% 400%;
             animation: colorShift 10s ease infinite, airFlow 6s ease-in-out infinite;
         }
 
-        .task-info-floating { margin-top: 50px; text-align: center; max-width: 800px; animation: airFlow 6s ease-in-out infinite 1s; }
+        .task-info-floating { margin-top: 50px; text-align: center; max-width: 800px; animation: airFlow 6s ease-in-out infinite 1.5s; }
         @keyframes colorShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         @keyframes airFlow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
-        #tool-icon { font-size: 70px; color: var(--red); margin-bottom: 15px; }
-        #tool-title { color: var(--dark); font-size: 30px; font-weight: 900; margin: 0; text-transform: uppercase; }
-        .btn-action { background: var(--red); color: #fff; padding: 18px 60px; border-radius: 8px; border: none; font-weight: 800; cursor: pointer; text-transform: uppercase; margin-top: 30px; transition: 0.3s; }
-        .btn-action:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(229,57,53,0.3); }
-        .floating-text { color: #64748b; font-size: 15px; line-height: 1.6; white-space: pre-line; }
+        #tool-icon { font-size: 70px; color: var(--red); margin-bottom: 15px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
+        #tool-title { color: var(--dark); font-size: 32px; font-weight: 900; margin: 0; text-transform: uppercase; }
+        .btn-action { background: var(--red); color: #fff; padding: 18px 60px; border-radius: 35px; border: none; font-weight: 800; cursor: pointer; text-transform: uppercase; margin-top: 30px; box-shadow: 0 10px 20px rgba(229, 57, 53, 0.2); }
+        .floating-text { color: #64748b; font-size: 15px; line-height: 1.6; white-space: pre-line; font-weight: 600; }
     </style>
 </head>
 <body onload="initApp()">
@@ -81,7 +81,7 @@
 
 <header>
     <a href="#" class="logo-box">
-        <img src="logo.png" alt="KellynePDF" class="logo-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4726/4726012.png'">
+        <img src="logo.png" alt="PDF" class="logo-img" style="height:40px;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/4726/4726012.png'">
         <span class="logo-text">KELLYNE PDF</span>
     </a>
     <nav class="nav">
@@ -96,10 +96,9 @@
                     <h3>To PDF</h3>
                     <a class="dropdown-item" onclick="setMode('JPG to PDF')"><i class="fa-solid fa-image" style="color:#f59e0b;"></i> JPG to PDF</a>
                     <a class="dropdown-item" onclick="setMode('Word to PDF')"><i class="fa-solid fa-file-word" style="color:#2563eb;"></i> Word to PDF</a>
-                    <a class="dropdown-item" onclick="setMode('Excel to PDF')"><i class="fa-solid fa-file-excel" style="color:#16a34a;"></i> Excel to PDF</a>
                     <a class="dropdown-item" onclick="setMode('PPT to PDF')"><i class="fa-solid fa-file-powerpoint" style="color:#d32f2f;"></i> PPT to PDF</a>
+                    <a class="dropdown-item" onclick="setMode('Excel to PDF')"><i class="fa-solid fa-file-excel" style="color:#16a34a;"></i> Excel to PDF</a>
                     <a class="dropdown-item" onclick="setMode('HTML to PDF')"><i class="fa-solid fa-code" style="color:#f59e0b;"></i> HTML to PDF</a>
-                    <a class="dropdown-item" onclick="setMode('Text to PDF')"><i class="fa-solid fa-file-lines" style="color:#475569;"></i> Text to PDF</a>
                 </div>
                 <div class="dropdown-col">
                     <h3>From PDF</h3>
@@ -107,19 +106,18 @@
                     <a class="dropdown-item" onclick="setMode('PDF to Word')"><i class="fa-solid fa-file-word" style="color:#2563eb;"></i> PDF to Word</a>
                     <a class="dropdown-item" onclick="setMode('PDF to Excel')"><i class="fa-solid fa-file-excel" style="color:#16a34a;"></i> PDF to Excel</a>
                     <a class="dropdown-item" onclick="setMode('PDF to PPT')"><i class="fa-solid fa-file-powerpoint" style="color:#d32f2f;"></i> PDF to PPT</a>
-                    <a class="dropdown-item" onclick="setMode('PDF to HTML')"><i class="fa-solid fa-code" style="color:#f59e0b;"></i> PDF to HTML</a>
-                    <a class="dropdown-item" onclick="setMode('PDF to Text')"><i class="fa-solid fa-file-lines" style="color:#475569;"></i> PDF to Text</a>
+                    <a class="dropdown-item" onclick="setMode('PDF to PDF/A')"><i class="fa-solid fa-file-shield" style="color:#475569;"></i> PDF to PDF/A</a>
                 </div>
             </div>
         </div>
 
         <div class="dropdown">
             <button class="nav-item">eSign <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></button>
-            <div class="dropdown-content" style="min-width:320px; grid-template-columns:1fr;">
+            <div class="dropdown-content" style="min-width:340px; grid-template-columns:1fr;">
                 <div class="dropdown-col">
-                    <h3>Signatures</h3>
+                    <h3>Sign Document</h3>
                     <a class="dropdown-item" onclick="setMode('Digital Sign')"><i class="fa-solid fa-pen-nib" style="color:#e53935;"></i> Digital Sign <span class="tag tag-any">Anyone</span></a>
-                    <a class="dropdown-item" onclick="setMode('Aadhar Sign')"><i class="fa-solid fa-id-card" style="color:#f59e0b;"></i> Aadhar Sign <span class="tag tag-ind">Indians</span></a>
+                    <a class="dropdown-item" onclick="setMode('Aadhar Sign')"><i class="fa-solid fa-id-card" style="color:#16a34a;"></i> Aadhar Sign <span class="tag tag-ind">Indians</span></a>
                     <a class="dropdown-item" onclick="setMode('Global Sign')"><i class="fa-solid fa-globe" style="color:#2563eb;"></i> Global Sign <span class="tag tag-glo">Global</span></a>
                 </div>
             </div>
@@ -147,16 +145,16 @@
                     <h3>Convert to PDF</h3>
                     <a class="tool-link" onclick="setMode('JPG to PDF')"><i class="fa-solid fa-image" style="color:#f59e0b;"></i> JPG to PDF</a>
                     <a class="tool-link" onclick="setMode('Word to PDF')"><i class="fa-solid fa-file-word" style="color:#2563eb;"></i> WORD to PDF</a>
-                    <a class="tool-link" onclick="setMode('PPT to PDF')"><i class="fa-solid fa-file-powerpoint" style="color:#d32f2f;"></i> POWERPOINT to PDF</a>
+                    <a class="tool-link" onclick="setMode('PPT to PDF')"><i class="fa-solid fa-file-powerpoint" style="color:#d32f2f;"></i> PPT to PDF</a>
                     <a class="tool-link" onclick="setMode('Excel to PDF')"><i class="fa-solid fa-file-excel" style="color:#16a34a;"></i> EXCEL to PDF</a>
                     <a class="tool-link" onclick="setMode('HTML to PDF')"><i class="fa-solid fa-code" style="color:#f59e0b;"></i> HTML to PDF</a>
                 </div>
                 <div class="dropdown-col">
                     <h3>Convert from PDF</h3>
-                    <a class="tool-link" onclick="setMode('PDF to JPG')"><i class="fa-solid fa-image" style="color:#f59e0b;"></i> PDF to JPG</a>
+                    <a class="tool-link" onclick="setMode('PDF to JPG')"><i class="fa-solid fa-file-image" style="color:#f59e0b;"></i> PDF to JPG</a>
                     <a class="tool-link" onclick="setMode('PDF to Word')"><i class="fa-solid fa-file-word" style="color:#2563eb;"></i> PDF to WORD</a>
                     <a class="tool-link" onclick="setMode('PDF to Excel')"><i class="fa-solid fa-file-excel" style="color:#16a34a;"></i> PDF to EXCEL</a>
-                    <a class="tool-link" onclick="setMode('PDF to PPT')"><i class="fa-solid fa-file-powerpoint" style="color:#d32f2f;"></i> PDF to POWERPOINT</a>
+                    <a class="tool-link" onclick="setMode('PDF to PPT')"><i class="fa-solid fa-file-powerpoint" style="color:#d32f2f;"></i> PDF to PPT</a>
                     <a class="tool-link" onclick="setMode('PDF to PDF/A')"><i class="fa-solid fa-file-shield" style="color:#475569;"></i> PDF to PDF/A</a>
                 </div>
                 <div class="dropdown-col">
@@ -171,15 +169,16 @@
                     <h3>PDF Security</h3>
                     <a class="tool-link" onclick="setMode('Unlock PDF')"><i class="fa-solid fa-unlock-keyhole" style="color:#2563eb;"></i> Unlock PDF</a>
                     <a class="tool-link" onclick="setMode('Protect PDF')"><i class="fa-solid fa-lock" style="color:#2563eb;"></i> Protect PDF</a>
+                    <a class="tool-link" onclick="setMode('Sign PDF')"><i class="fa-solid fa-signature" style="color:#2563eb;"></i> Sign PDF</a>
                     <a class="tool-link" onclick="setMode('Redact PDF')"><i class="fa-solid fa-eraser" style="color:#2563eb;"></i> Redact PDF</a>
                     <a class="tool-link" onclick="setMode('Compare PDF')"><i class="fa-solid fa-columns" style="color:#2563eb;"></i> Compare PDF</a>
                 </div>
             </div>
         </div>
     </nav>
-    <div class="auth-btns">
+    <div class="auth-btns" id="auth-container">
         <button class="login-btn" onclick="googleLogin()">LOGIN</button>
-        <a href="#" class="signup-btn">SIGN UP</a>
+        <button class="signup-btn" onclick="googleLogin()">SIGN UP</button>
     </div>
 </header>
 
@@ -193,46 +192,50 @@
         <button class="btn-action" onclick="document.getElementById('pdf-input').click()">SELECT FILES</button>
     </div>
     <div class="task-info-floating">
-        <strong id="task-name-title" style="font-size:22px; color:var(--dark); display:block; margin-bottom:10px;">Merge PDF</strong>
+        <strong id="task-name-title" style="font-size:24px; color:var(--dark); display:block; margin-bottom:12px;">Merge PDF</strong>
         <p id="task-desc-text" class="floating-text"></p>
     </div>
 </div>
 
-<script src="js/merge.js"></script><script src="js/split.js"></script>
-<script src="js/compress.js"></script><script src="js/convert.js"></script>
-<script src="js/esign.js"></script><script src="js/allpdftools.js"></script>
+<script src="js/allpdftools.js"></script><script src="js/compress.js"></script>
+<script src="js/convert.js"></script><script src="js/esign.js"></script>
+<script src="js/Google OAuth.js"></script><script src="js/merge.js"></script>
+<script src="js/split.js"></script><script src="js/sw.js"></script>
 
 <script>
+    // --- COMPLETED toolData WITH DETAILED WHAT & HOW ---
     const toolData = {
-        'Merge PDF': 'What: Combine many PDF files into one single document.\nHow: Select files, arrange their order, and click Merge.',
-        'Split PDF': 'What: Separate one PDF into multiple files.\nHow: Upload file and select page ranges.',
-        'Rename PDF': 'What: Quickly change the name of your PDF file instantly.\nHow: Type new name and save.',
-        'Compress PDF': 'What: Reduce file size while maintaining professional quality.\nHow: Select PDF and choose compression level.',
-        'JPG to PDF': 'What: Convert images into a clean PDF document.\nHow: Select JPG/PNG and convert.',
-        'Word to PDF': 'What: Transform Word docs into secure PDF format.\nHow: Upload .docx file.',
-        'Excel to PDF': 'What: Turn spreadsheets into professional PDF tables.',
-        'PPT to PDF': 'What: Convert PowerPoint slides into PDF pages.',
-        'HTML to PDF': 'What: Convert web pages or HTML code into a PDF.',
-        'Text to PDF': 'What: Convert plain text files into PDF.',
-        'PDF to JPG': 'What: Extract PDF pages as separate JPG images.',
-        'PDF to Word': 'What: Convert PDF back into an editable Word doc.',
-        'PDF to Excel': 'What: Extract PDF tables into Excel spreadsheets.',
-        'PDF to PPT': 'What: Convert PDF document into PowerPoint slides.',
+        'Merge PDF': 'What: Combine multiple PDF files into one single document effortlessly.\nHow: Select files, arrange their order, and click Merge to download.',
+        'Split PDF': 'What: Separate one PDF into multiple files or extract specific pages.\nHow: Upload file and select the page ranges you wish to split.',
+        'Rename PDF': 'What: Quickly change the name of your PDF file for better management.\nHow: Type the new name and save it instantly.',
+        'Compress PDF': 'What: Reduce the file size of your PDF while maintaining professional quality.\nHow: Select your PDF and choose a compression level.',
+        'JPG to PDF': 'What: Convert images like JPG or PNG into a clean, high-quality PDF document.\nHow: Select your photos and generate the PDF.',
+        'Word to PDF': 'What: Transform Microsoft Word docs (.docx) into secure PDF format instantly.\nHow: Upload your Word file and download the formatted PDF.',
+        'PPT to PDF': 'What: Convert PowerPoint slides into PDF document pages.\nHow: Select your .pptx file and start conversion.',
+        'Excel to PDF': 'What: Turn spreadsheets into professional, non-editable PDF tables.\nHow: Simply upload your Excel file.',
+        'HTML to PDF': 'What: Convert web pages or raw HTML code into a downloadable PDF file.\nHow: Provide a URL or paste code to generate.',
+        'PDF to JPG': 'What: Extract every page of a PDF as separate high-quality JPG images.\nHow: Upload PDF and download images in a ZIP.',
+        'PDF to Word': 'What: Convert your PDF back into an editable Microsoft Word document.\nHow: High-accuracy AI extraction ensures clean results.',
+        'PDF to Excel': 'What: Convert PDF tables into Excel spreadsheets.\nHow: Simply upload your PDF file.',
         'PDF to PDF/A': 'What: Convert PDF into a standard for archival storage.',
-        'Digital Sign': 'What: Add a secure digital signature to your PDF.',
-        'Aadhar Sign': 'What: Sign documents using Indian Aadhar OTP.',
-        'Global Sign': 'What: Secure digital sign for international users.',
-        'Remove Pages': 'What: Permanently delete unwanted pages from PDF.',
-        'Repair PDF': 'What: Fix corrupted or broken PDF files.',
-        'OCR PDF': 'What: Convert scanned images to searchable PDF text.',
+        'Digital Sign': 'What: Add a secure digital signature to your official documents.\nHow: Verify and sign globally.',
+        'Aadhar Sign': 'What: Legally sign documents using Indian Aadhar OTP verification.\nHow: Specifically for Indian citizens.',
+        'Global Sign': 'What: Apply enterprise-grade digital signatures for international business standards.',
+        'Repair PDF': 'What: Fix corrupted or broken PDF files and recover your data.',
+        'OCR PDF': 'What: Convert scanned images into searchable and selectable text PDF documents.',
+        'Unlock PDF': 'What: Remove password protection from your PDF files if authorized.',
+        'Protect PDF': 'What: Secure your document by adding a strong password lock.',
+        'Sign PDF': 'What: Add an electronic signature to your documents visually.',
+        'Watermark': 'What: Add a security stamp or text overlay behind your PDF content.',
+        'Rotate PDF': 'What: Change the orientation of your PDF pages permanently.',
+        'Scan to PDF': 'What: Convert photographs of physical documents into PDF format.',
+        'Add Numbers': 'What: Add automatic page numbering to your document header or footer.',
+        'Remove Pages': 'What: Permanently delete unwanted pages from your PDF document.',
         'Extract Pages': 'What: Create a new PDF with specific pages only.',
-        'Protect PDF': 'What: Lock your PDF with a strong password.',
-        'Unlock PDF': 'What: Remove password protection from a file.',
-        'Redact PDF': 'What: Permanently hide sensitive information.',
-        'Watermark': 'What: Add a security stamp or text on your pages.',
-        'Rotate PDF': 'What: Change the orientation of PDF pages permanently.',
-        'Scan to PDF': 'What: Convert photographs of documents into PDF.',
-        'Add Numbers': 'What: Add page numbering to your document easily.'
+        'Redact PDF': 'What: Permanently black out sensitive information.',
+        'Compare PDF': 'What: Find differences between two versions of a PDF document.',
+        'Crop PDF': 'What: Trim the edges of your PDF pages for better focus.',
+        'Edit PDF': 'What: Add text, shapes, or comments to your PDF pages easily.'
     };
 
     function initApp() { 
@@ -252,17 +255,22 @@
         document.getElementById('task-desc-text').innerText = toolData[n] || "Professional PDF Processing Tool.";
     }
 
+    // --- Functional Google Auth ---
     function googleLogin() {
         google.accounts.id.initialize({
             client_id: "1056519552768-qis2jrnm3fokkrmpr3teoid1lqvgvplh.apps.googleusercontent.com",
-            callback: (res) => {
-                const payload = JSON.parse(atob(res.credential.split('.')[1]));
-                document.getElementById('greeting-display').innerText = `Hello, ${payload.given_name}!`;
-            }
+            callback: handleCredentialResponse
         });
         google.accounts.id.prompt();
     }
 
+    function handleCredentialResponse(response) {
+        const payload = JSON.parse(atob(response.credential.split('.')[1]));
+        document.getElementById('greeting-display').innerText = `Hello, ${payload.given_name}!`;
+        document.getElementById('auth-container').innerHTML = `<span style="font-weight:800; color:var(--dark); text-transform:uppercase; font-size:13px; border:2px solid #eee; padding:8px 20px; border-radius:30px; background:white;">${payload.name}</span>`;
+    }
+
+    // --- Premium Background: 20% Dark Blue Stars ---
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     let pts = []; const mouse = { x: -1000, y: -1000 };
@@ -273,9 +281,8 @@
         pts = [];
         for (let i = 0; i < 700; i++) {
             let rand = Math.random();
-            let color = rand < 0.20 ? '#1e3a8a' : // 20% Dark Blue
-                        rand < 0.50 ? '#bae6fd' : 
-                        rand < 0.80 ? '#fecaca' : '#ffffff'; 
+            // Exactly 20% Dark Blue (#1e3a8a), rest Mixed Colors
+            let color = rand < 0.20 ? '#1e3a8a' : rand < 0.50 ? '#bae6fd' : rand < 0.80 ? '#fecaca' : '#ffffff'; 
             pts.push({
                 x: Math.random() * canvas.width, y: Math.random() * canvas.height,
                 bx: 0, by: 0, a: Math.random() * Math.PI * 2,
@@ -293,7 +300,7 @@
             let dx = mouse.x - p.x, dy = mouse.y - p.y, d = Math.sqrt(dx*dx+dy*dy);
             if (d < 300) { p.x += dx*0.03; p.y += dy*0.03; }
             else { p.x += (p.bx+sx-p.x)*0.03; p.y += (p.by+sy-p.y)*0.03; }
-            ctx.fillStyle = p.c; ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = p.c; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
         });
         requestAnimationFrame(animate);
     }
