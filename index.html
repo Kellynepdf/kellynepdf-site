@@ -17,6 +17,7 @@
         body {
             background-color: #ffffff;
             color: #333;
+            overflow-x: hidden;
         }
 
         /* Navigation Bar */
@@ -25,7 +26,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 40px;
-            height: 85px; /* Increased height for bigger logo */
+            height: 85px;
             background: #fff;
             border-bottom: 1px solid #eee;
             position: sticky;
@@ -39,7 +40,6 @@
             gap: 40px;
         }
 
-        /* Logo Section - Full Red KELLYNEPDF */
         .logo-container {
             display: flex;
             align-items: center;
@@ -51,54 +51,39 @@
             height: 55px;
             width: auto;
             margin-right: 12px;
-            display: block; 
         }
 
         .logo-text {
             font-size: 26px;
             font-weight: 900;
-            color: #e5322d; /* Set the entire logo text to red */
+            color: #e5322d;
             letter-spacing: -1px;
             text-transform: uppercase;
         }
 
-        /* Removed specific span color to keep it all red */
-        .logo-text span {
-            color: #e5322d; 
-        }
-
-        /* Nav Menu - Increased Font Size */
         .nav-menu {
             display: flex;
             list-style: none;
-            gap: 25px;
+            gap: 20px;
         }
 
         .nav-menu li a {
             text-decoration: none;
             color: #444;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             text-transform: uppercase;
-            transition: color 0.2s ease;
+            transition: color 0.2s;
         }
 
         .nav-menu li a:hover {
             color: #e5322d;
         }
 
-        /* Right Side Actions */
         .nav-right {
             display: flex;
             align-items: center;
             gap: 25px;
-        }
-
-        .login-link {
-            text-decoration: none;
-            color: #333;
-            font-size: 16px;
-            font-weight: 700;
         }
 
         .signup-btn {
@@ -108,62 +93,108 @@
             border-radius: 8px;
             text-decoration: none;
             font-weight: 800;
-            font-size: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .signup-btn:hover {
-            background-color: #c42a25;
-            box-shadow: 0 5px 15px rgba(229, 50, 45, 0.3);
         }
 
         /* Hero Section */
         .hero {
-            max-width: 1000px;
-            margin: 120px auto;
+            max-width: 1100px;
+            margin: 60px auto;
             text-align: center;
             padding: 0 20px;
         }
 
         .hero h1 {
-            font-size: 52px;
+            font-size: 48px;
             font-weight: 800;
-            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .tool-status-title {
+            color: #e5322d;
+            text-transform: uppercase;
+            font-weight: 900;
+            font-size: 28px;
+            margin-bottom: 30px;
+            display: block;
+            min-height: 35px;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Animated Floating Gradient Box */
+        .upload-container {
+            position: relative;
+            width: 100%;
+            max-width: 850px;
+            height: 380px;
+            margin: 0 auto;
+            border-radius: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px dashed rgba(0,0,0,0.1);
+            background: #fff;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        }
+
+        .floating-bg {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            right: -50%;
+            bottom: -50%;
+            z-index: 1;
+            background: linear-gradient(45deg, #ffcccb, #ffdef2, #d0e1ff, #e6e6fa, #ffcccb);
+            background-size: 300% 300%;
+            animation: moveGradient 12s ease infinite;
+            opacity: 0.4;
+            filter: blur(40px);
+        }
+
+        @keyframes moveGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .upload-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .upload-btn {
+            background: #e5322d;
+            color: white;
+            padding: 22px 65px;
+            border-radius: 15px;
+            font-size: 26px;
+            font-weight: 900;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 15px 30px rgba(229, 50, 45, 0.3);
+            display: inline-block;
+            transition: all 0.3s ease;
             margin-bottom: 25px;
         }
 
-        .hero p {
-            font-size: 22px;
-            color: #666;
-            margin-bottom: 60px;
-            line-height: 1.6;
-        }
-
-        /* Upload Button */
-        .upload-area {
-            display: inline-block;
-            background: #e5322d;
-            color: white;
-            padding: 30px 90px;
-            border-radius: 15px;
-            font-size: 30px;
-            font-weight: 900;
-            text-decoration: none;
-            cursor: pointer;
-            box-shadow: 0 12px 30px rgba(229, 50, 45, 0.3);
-            transition: transform 0.2s, background 0.2s;
-        }
-
-        .upload-area:hover {
-            background: #d42d28;
+        .upload-btn:hover {
+            background: #c42a25;
             transform: translateY(-3px);
         }
 
-        .drop-text {
-            margin-top: 25px;
-            color: #999;
-            font-size: 16px;
-            font-weight: 600;
+        .drag-drop-text {
+            font-size: 20px;
+            color: #444;
+            font-weight: 700;
+        }
+
+        .upload-container.drag-over {
+            border-color: #e5322d;
+            background: rgba(229, 50, 45, 0.08);
+            transform: scale(1.02);
         }
     </style>
 </head>
@@ -178,12 +209,12 @@
             
             <nav>
                 <ul class="nav-menu">
-                    <li><a href="#merge">Merge PDF</a></li>
-                    <li><a href="#split">Split PDF</a></li>
-                    <li><a href="#compress">Compress PDF</a></li>
-                    <li><a href="#convert">Convert PDF</a></li>
-                    <li><a href="#esign">eSign</a></li>
-                    <li><a href="#all-tools">All PDF Tools</a></li>
+                    <li><a href="javascript:void(0)" onclick="updateTool('Merge PDF')">Merge PDF</a></li>
+                    <li><a href="javascript:void(0)" onclick="updateTool('Split PDF')">Split PDF</a></li>
+                    <li><a href="javascript:void(0)" onclick="updateTool('Compress PDF')">Compress PDF</a></li>
+                    <li><a href="javascript:void(0)" onclick="updateTool('Convert PDF')">Convert PDF</a></li>
+                    <li><a href="javascript:void(0)" onclick="updateTool('eSign PDF')">eSign</a></li>
+                    <li><a href="javascript:void(0)" onclick="updateTool('All PDF Tools')">All PDF Tools</a></li>
                 </ul>
             </nav>
         </div>
@@ -196,47 +227,88 @@
 
     <main class="hero">
         <h1>KellynePDF - All-In-One Solution</h1>
-        <p>The most powerful and professional tool to manage, convert, and secure your PDF documents with ease.</p>
+        <p id="tool-display-name" class="tool-status-title">SELECT PDF FILES</p>
         
-        <div class="upload-area">
-            Select PDF files
+        <div class="upload-container" id="drop-zone">
+            <div class="floating-bg"></div>
+            <div class="upload-content">
+                <label for="file-input" class="upload-btn">Select PDF files</label>
+                <input type="file" id="file-input" hidden multiple accept=".pdf">
+                <div class="drag-drop-text">or drop PDF files here</div>
+            </div>
         </div>
-        
-        <div class="drop-text">or drop PDF files here</div>
     </main>
+
+    <script>
+        function updateTool(name) {
+            const toolTitle = document.getElementById('tool-display-name');
+            toolTitle.style.opacity = '0';
+            setTimeout(() => {
+                toolTitle.innerText = name;
+                toolTitle.style.opacity = '1';
+            }, 200);
+        }
+
+        const dropZone = document.getElementById('drop-zone');
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            console.log("Files dropped:", files);
+        });
+    </script>
 
     <script src="js/auth/google-oauth.js"></script>
     <script src="js/utils/graphics-helper.js"></script>
+    
     <script src="js/allpdftools/organize/merge-pdf.js"></script>
     <script src="js/allpdftools/organize/split-pdf.js"></script>
     <script src="js/allpdftools/organize/extract-pages.js"></script>
     <script src="js/allpdftools/organize/remove-pages.js"></script>
     <script src="js/allpdftools/organize/rename-pdf.js"></script>
     <script src="js/allpdftools/organize/scan-to-pdf.js"></script>
+    
     <script src="js/allpdftools/optimize/compress-pdf.js"></script>
     <script src="js/allpdftools/optimize/ocr-pdf.js"></script>
     <script src="js/allpdftools/optimize/repair-pdf.js"></script>
+    
     <script src="js/allpdftools/edit/edit-pdf.js"></script>
     <script src="js/allpdftools/edit/crop-pdf.js"></script>
     <script src="js/allpdftools/edit/page-numbers.js"></script>
     <script src="js/allpdftools/edit/rotate-pdf.js"></script>
     <script src="js/allpdftools/edit/watermark.js"></script>
+    
     <script src="js/allpdftools/security/protect-pdf.js"></script>
     <script src="js/allpdftools/security/unlock-pdf.js"></script>
     <script src="js/allpdftools/security/compare-pdf.js"></script>
     <script src="js/allpdftools/security/redact-pdf.js"></script>
+    
     <script src="js/converters/from-pdf/pdf-to-word.js"></script>
     <script src="js/converters/from-pdf/pdf-to-excel.js"></script>
     <script src="js/converters/from-pdf/pdf-to-jpg.js"></script>
     <script src="js/converters/from-pdf/pdf-to-ppt.js"></script>
     <script src="js/converters/from-pdf/pdf-to-html.js"></script>
     <script src="js/converters/from-pdf/pdf-to-pdfa.js"></script>
+    
     <script src="js/converters/to-pdf/word-to-pdf.js"></script>
     <script src="js/converters/to-pdf/jpg-to-pdf.js"></script>
     <script src="js/converters/to-pdf/excel-to-pdf.js"></script>
     <script src="js/converters/to-pdf/ppt-to-pdf.js"></script>
     <script src="js/converters/to-pdf/html-to-pdf.js"></script>
     <script src="js/converters/to-pdf/text-to-pdf.js"></script>
+    
     <script src="js/esign/aadhar-sign.js"></script>
     <script src="js/esign/digital-sign.js"></script>
     <script src="js/esign/global-sign.js"></script>
