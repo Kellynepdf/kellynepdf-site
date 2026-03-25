@@ -1,144 +1,110 @@
-/* KellynePDF - Professional Merge Logic 
-   Features: 
-   - Drag & Drop Support
-   - Smart ZIP for 10+ Files
-   - Custom Naming: "Kellyne Merge PDF"
-   - Success UI with BACK TO HOME Button
-*/
+// KellynePDF - Merge Logic
+let pdfFiles = [];
 
-let selectedMergeFiles = [];
+const fileInput = document.getElementById('fileInput');
+const mergeBtn = document.getElementById('merge-btn');
+const previewContainer = document.getElementById('file-list-preview');
 
-// 1. --- DRAG AND DROP HANDLERS ---
-function setupMergeDragDrop() {
-    const dropZone = document.getElementById('tool-container');
-    if (!dropZone) return;
-
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, e => { 
-            e.preventDefault(); 
-            e.stopPropagation(); 
-        }, false);
-    });
-
-    // Visual feedback on drag
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropZone.addEventListener(eventName, () => {
-            if (document.getElementById('tool-title').innerText === "Merge PDF") {
-                dropZone.style.border = '2px dashed #e53935';
-                dropZone.style.background = '#fff5f5';
-            }
-        }, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropZone.addEventListener(eventName, () => {
-            dropZone.style.border = '1px solid #f1f5f9';
-            dropZone.style.background = 'linear-gradient(135deg, #ffffff 0%, #e0f2fe 25%, #fecaca 50%, #fdf2f8 75%, #f5f3ff 100%)';
-        }, false);
-    });
-
-    // Handle dropped files
-    dropZone.addEventListener('drop', (e) => {
-        if (document.getElementById('tool-title').innerText === "Merge PDF") {
-            const files = Array.from(e.dataTransfer.files).filter(f => f.type === "application/pdf");
-            if (files.length > 0) handleMergeFiles(files);
-        }
-    }, false);
-}
-
-// 2. --- FILE INPUT HANDLER ---
-// Listens for file selection via the "SELECT FILES" button
-document.addEventListener('change', (e) => {
-    if (e.target && e.target.id === 'pdf-input') {
-        if (document.getElementById('tool-title').innerText === "Merge PDF") {
-            const files = Array.from(e.target.files);
-            handleMergeFiles(files);
-        }
-    }
+// Handle File Selection
+fileInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    pdfFiles = [...pdfFiles, ...files];
+    renderFileList();
+    toggleMergeButton();
 });
 
-function handleMergeFiles(files) {
-    selectedMergeFiles = files;
-    const descMain = document.getElementById('tool-desc-main');
-    const mainBtn = document.getElementById('main-btn');
-
-    if (descMain && mainBtn) {
-        descMain.innerText = `${selectedMergeFiles.length} PDF Files Loaded! Ready to Merge.`;
-        descMain.style.color = "#16a34a"; // Success Green
-        
-        mainBtn.innerText = "START MERGE PDF";
-        mainBtn.style.background = "#16a34a";
-        mainBtn.onclick = executeMergeTask;
-    }
+// Render the UI for uploaded files
+function renderFileList() {
+    previewContainer.innerHTML = '';
+    pdfFiles.forEach((file, index) => {
+        const fileCard = document.createElement('div');
+        fileCard.className = 'file-card';
+        fileCard.innerHTML = `
+            <div class="file-info">
+                <span class="file-name">${file.name}</span>
+                <span class="file-size">${(file.size / 1024).toFixed(1)} KB</span>
+            </div>
+            <div class="three-dots-container">
+                <button class="dots-btn" onclick="toggleMenu(${index})">⋮</button>
+                <div id="menu-${index}" class="dropdown-menu">
+                    <button onclick="shareFile('whatsapp', ${index})">Share to WhatsApp</button>
+                    <button onclick="shareFile('email', ${index})">Share via Email</button>
+                    <button onclick="shareFile('drive', ${index})">Save to Drive</button>
+                    <button onclick="removeFile(${index})" style="color: #ff4d4d;">Remove File</button>
+                </div>
+            </div>
+        `;
+        previewContainer.appendChild(fileCard);
+    });
 }
 
-// 3. --- MAIN MERGE & ZIP EXECUTION ---
-async function executeMergeTask() {
-    if (selectedMergeFiles.length === 0) return;
+// Toggle Merge Button state
+function toggleMergeButton() {
+    mergeBtn.disabled = pdfFiles.length < 2;
+}
 
-    // Show processing status
-    document.getElementById('tool-title').innerText = "Merging... Please Wait";
-    
+// Remove file from list
+function removeFile(index) {
+    pdfFiles.splice(index, 1);
+    renderFileList();
+    toggleMergeButton();
+}
+
+// Toggle 3-Dots Menu
+function toggleMenu(index) {
+    const menu = document.getElementById(`menu-${index}`);
+    const allMenus = document.querySelectorAll('.dropdown-menu');
+    allMenus.forEach(m => { if(m !== menu) m.style.display = 'none'; });
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+}
+
+// Merge Logic using PDF-Lib
+async function executeMerge() {
+    mergeBtn.innerText = "Merging... Please wait";
+    mergeBtn.disabled = true;
+
     try {
         const { PDFDocument } = PDFLib;
-        
-        // CASE A: More than 10 files -> Download as ZIP Bundle
-        if (selectedMergeFiles.length > 10) {
-            if (typeof JSZip === "undefined") {
-                alert("JSZip library is missing! Check index.html head section.");
-                return;
-            }
-            const zip = new JSZip();
-            for (let i = 0; i < selectedMergeFiles.length; i++) {
-                const fileData = await selectedMergeFiles[i].arrayBuffer();
-                zip.file(`Kellyne_Merge_Part_${i + 1}.pdf`, fileData);
-            }
-            const content = await zip.generateAsync({ type: "blob" });
-            saveMergeFile(content, "Kellyne_Merge_PDF_Bundle.zip");
-        } 
-        // CASE B: 10 or fewer files -> Merge into single PDF
-        else {
-            const mergedPdf = await PDFDocument.create();
-            for (const file of selectedMergeFiles) {
-                const arrayBuffer = await file.arrayBuffer();
-                const pdf = await PDFDocument.load(arrayBuffer);
-                const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-                copiedPages.forEach(page => mergedPdf.addPage(page));
-            }
-            const pdfBytes = await mergedPdf.save();
-            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-            saveMergeFile(blob, "Kellyne_Merge_PDF.pdf");
+        const mergedPdf = await PDFDocument.create();
+
+        for (const file of pdfFiles) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await PDFDocument.load(arrayBuffer);
+            const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+            copiedPages.forEach((page) => mergedPdf.addPage(page));
         }
 
-        // Trigger Success Screen
-        showMergeSuccessUI();
-    } catch (err) {
-        console.error("Task Error:", err);
-        alert("Merging Failed. Please ensure all files are valid PDFs.");
+        const pdfBytes = await mergedPdf.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `KellynePDF_Merged_${Date.now()}.pdf`;
+        link.click();
+
+        mergeBtn.innerText = "Merge Successful!";
+    } catch (error) {
+        console.error("Error merging PDFs:", error);
+        alert("An error occurred during merging. Please try again.");
+    } finally {
+        setTimeout(() => {
+            mergeBtn.innerText = "Merge PDF";
+            toggleMergeButton();
+        }, 3000);
     }
 }
 
-// Download Helper
-function saveMergeFile(blob, filename) {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+// Share Logic Placeholder
+function shareFile(platform, index) {
+    const file = pdfFiles[index];
+    alert(`Preparing to share ${file.name} via ${platform}...`);
+    // Add specific API logic for WhatsApp/Email/Drive here
 }
 
-// 4. --- SUCCESS UI WITH BACK TO HOME ---
-function showMergeSuccessUI() {
-    const container = document.getElementById('tool-container');
-    container.innerHTML = `
-        <div id="tool-icon" style="color:#16a34a; font-size:90px;"><i class="fa-solid fa-circle-check"></i></div>
-        <h2 style="color:#16a34a; margin-top:20px;">SUCCESSFUL MERGE COMPLETED!</h2>
-        <p style="font-weight:bold; color:#475569;">Your "Kellyne Merge PDF" file is ready.</p>
-        <button class="btn-action" onclick="window.location.reload()" style="background:#0f172a; margin-top:30px; padding:15px 50px;">BACK TO HOME</button>
-    `;
-}
+mergeBtn.addEventListener('click', executeMerge);
 
-// Initial Call to set up listeners
-setupMergeDragDrop();
+// Close dropdowns when clicking outside
+window.onclick = function(event) {
+    if (!event.target.matches('.dots-btn')) {
+        document.querySelectorAll('.dropdown-menu').forEach(m => m.style.display = 'none');
+    }
+}
