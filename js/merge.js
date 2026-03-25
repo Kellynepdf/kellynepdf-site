@@ -1,68 +1,48 @@
-// KellynePDF - Merge Logic
+// merge.js - Logic for KellynePDF
 let pdfFiles = [];
-
 const fileInput = document.getElementById('fileInput');
-const mergeBtn = document.getElementById('merge-btn');
+const dropZone = document.getElementById('drop-zone');
 const previewContainer = document.getElementById('file-list-preview');
 
-// Handle File Selection
-fileInput.addEventListener('change', (e) => {
-    const files = Array.from(e.target.files);
-    pdfFiles = [...pdfFiles, ...files];
-    renderFileList();
-    toggleMergeButton();
+// Function to check if the user is on Mobile
+const isMobile = () => window.innerWidth <= 768;
+
+// 1. Handle File Selection (Button Click)
+fileInput.addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files).filter(f => f.type === "application/pdf");
+    processFiles(files);
 });
 
-// Render the UI for uploaded files
-function renderFileList() {
-    previewContainer.innerHTML = '';
-    pdfFiles.forEach((file, index) => {
-        const fileCard = document.createElement('div');
-        fileCard.className = 'file-card';
-        fileCard.innerHTML = `
-            <div class="file-info">
-                <span class="file-name">${file.name}</span>
-                <span class="file-size">${(file.size / 1024).toFixed(1)} KB</span>
-            </div>
-            <div class="three-dots-container">
-                <button class="dots-btn" onclick="toggleMenu(${index})">⋮</button>
-                <div id="menu-${index}" class="dropdown-menu">
-                    <button onclick="shareFile('whatsapp', ${index})">Share to WhatsApp</button>
-                    <button onclick="shareFile('email', ${index})">Share via Email</button>
-                    <button onclick="shareFile('drive', ${index})">Save to Drive</button>
-                    <button onclick="removeFile(${index})" style="color: #ff4d4d;">Remove File</button>
-                </div>
-            </div>
-        `;
-        previewContainer.appendChild(fileCard);
-    });
+// 2. Handle Drag and Drop
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); });
+dropZone.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type === "application/pdf");
+    processFiles(files);
+});
+
+// 3. Process Logic based on Device
+async function processFiles(files) {
+    if (files.length === 0) return;
+
+    if (isMobile()) {
+        // MOBILE: Add to list for user to see/manage
+        pdfFiles = [...pdfFiles, ...files];
+        renderMobileList();
+    } else {
+        // DESKTOP: Instant Merge and Download
+        if (files.length < 2) {
+            alert("Please select at least 2 PDF files to merge instantly.");
+            return;
+        }
+        pdfFiles = files;
+        await executeInstantMerge();
+    }
 }
 
-// Toggle Merge Button state
-function toggleMergeButton() {
-    mergeBtn.disabled = pdfFiles.length < 2;
-}
-
-// Remove file from list
-function removeFile(index) {
-    pdfFiles.splice(index, 1);
-    renderFileList();
-    toggleMergeButton();
-}
-
-// Toggle 3-Dots Menu
-function toggleMenu(index) {
-    const menu = document.getElementById(`menu-${index}`);
-    const allMenus = document.querySelectorAll('.dropdown-menu');
-    allMenus.forEach(m => { if(m !== menu) m.style.display = 'none'; });
-    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-}
-
-// Merge Logic using PDF-Lib
-async function executeMerge() {
-    mergeBtn.innerText = "Merging... Please wait";
-    mergeBtn.disabled = true;
-
+// 4. Execution: PDF-Lib Merging & Auto-Download
+async function executeInstantMerge() {
     try {
         const { PDFDocument } = PDFLib;
         const mergedPdf = await PDFDocument.create();
@@ -79,32 +59,36 @@ async function executeMerge() {
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = `KellynePDF_Merged_${Date.now()}.pdf`;
+        
+        // Trigger download immediately
+        document.body.appendChild(link);
         link.click();
-
-        mergeBtn.innerText = "Merge Successful!";
-    } catch (error) {
-        console.error("Error merging PDFs:", error);
-        alert("An error occurred during merging. Please try again.");
-    } finally {
-        setTimeout(() => {
-            mergeBtn.innerText = "Merge PDF";
-            toggleMergeButton();
-        }, 3000);
+        document.body.removeChild(link);
+        
+        console.log("Instant Download Triggered for Desktop");
+    } catch (err) {
+        console.error("Merge Error:", err);
     }
 }
 
-// Share Logic Placeholder
-function shareFile(platform, index) {
-    const file = pdfFiles[index];
-    alert(`Preparing to share ${file.name} via ${platform}...`);
-    // Add specific API logic for WhatsApp/Email/Drive here
+// 5. Mobile UI Rendering (Shows the list in your screenshot)
+function renderMobileList() {
+    previewContainer.style.display = 'block';
+    previewContainer.innerHTML = pdfFiles.map((file, index) => `
+        <div class="file-card">
+            <span>${file.name}</span>
+            <div class="three-dots-menu">⋮
+                <div class="dropdown-menu">
+                    <button onclick="shareFile('whatsapp', ${index})">WhatsApp</button>
+                    <button onclick="shareFile('email', ${index})">Email</button>
+                    <button onclick="removeFile(${index})">Remove</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
 }
 
-mergeBtn.addEventListener('click', executeMerge);
-
-// Close dropdowns when clicking outside
-window.onclick = function(event) {
-    if (!event.target.matches('.dots-btn')) {
-        document.querySelectorAll('.dropdown-menu').forEach(m => m.style.display = 'none');
-    }
+function removeFile(index) {
+    pdfFiles.splice(index, 1);
+    renderMobileList();
 }
