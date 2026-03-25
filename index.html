@@ -7,12 +7,15 @@
     <style>
         /* Global Styling */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        
+        /* Pure White Background */
         body { background-color: #ffffff; color: #333; overflow-x: hidden; min-height: 100vh; }
-        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle, #ffffff 0%, #f1f3f5 100%); }
+        
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: #ffffff; }
 
         /* Navigation Bar */
-        .navbar { display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 95px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(238, 238, 238, 0.5); position: sticky; top: 0; z-index: 5000; }
-        .nav-waves { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.6; }
+        .navbar { display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 85px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 5000; }
+        .nav-waves { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; }
         .wave { position: absolute; width: 200%; height: 100%; background-repeat: repeat-x; background-position: 0 bottom; transform-origin: center bottom; }
         .wave1 { background-image: linear-gradient(to right, rgba(229, 50, 45, 0.05) 0%, rgba(255, 255, 255, 0) 50%, rgba(135, 206, 235, 0.05) 100%); animation: waveMove 15s linear infinite; }
         .wave2 { background-image: linear-gradient(to right, rgba(135, 206, 235, 0.08) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(229, 50, 45, 0.08) 100%); animation: waveMove 10s linear infinite reverse; top: 5px; }
@@ -20,77 +23,68 @@
 
         .nav-left { display: flex; align-items: center; gap: 30px; }
         .logo-container { display: flex; align-items: center; text-decoration: none; }
-        .logo-img { height: 50px; width: auto; margin-right: 10px; }
-        .logo-text { font-size: 24px; font-weight: 900; color: #e5322d; text-transform: uppercase; }
+        .logo-img { height: 45px; width: auto; margin-right: 10px; }
+        .logo-text { font-size: 22px; font-weight: 900; color: #e5322d; text-transform: uppercase; }
 
-        /* FIXED: Navbar Dropdown Alignment (No sliding/moving) */
+        /* Navbar Menu & Stationary Dropdowns */
         .nav-menu { display: flex; list-style: none; gap: 20px; height: 100%; align-items: center; }
         .nav-menu li { position: relative; height: 100%; display: flex; align-items: center; }
-        
-        .nav-menu li > a { 
-            text-decoration: none; color: #222; font-size: 15px; font-weight: 800; 
-            text-transform: uppercase; transition: color 0.2s; padding: 38px 10px; 
-            cursor: pointer;
-        }
+        .nav-menu li > a { text-decoration: none; color: #222; font-size: 14px; font-weight: 800; text-transform: uppercase; transition: color 0.2s; padding: 30px 5px; cursor: pointer; }
         .nav-menu li a:hover { color: #e5322d; }
 
         .dropdown-content { 
-            display: none; position: absolute; top: 90px; 
-            left: 0; /* Align exactly to the left edge of the parent link */
-            background-color: #fff; box-shadow: 0px 15px 40px rgba(0,0,0,0.12); 
-            border-radius: 16px; padding: 25px; z-index: 9999; border: 1px solid #eee; 
-            opacity: 0; transform: translateY(5px); transition: all 0.2s ease;
+            display: none; position: absolute; top: 80px; left: 0; 
+            background-color: #fff; box-shadow: 0px 10px 30px rgba(0,0,0,0.1); 
+            border-radius: 12px; padding: 25px; z-index: 9999; border: 1px solid #eee; 
+            animation: fadeIn 0.3s ease; 
         }
 
-        .convert-dropdown { min-width: 550px; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .mega-dropdown { min-width: 900px; grid-template-columns: repeat(4, 1fr); gap: 20px; left: auto; right: -250px; }
-        .esign-dropdown { min-width: 380px; flex-direction: column; gap: 5px; padding: 15px; }
+        .convert-dropdown { min-width: 500px; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .mega-dropdown { min-width: 900px; grid-template-columns: repeat(4, 1fr); gap: 20px; left: auto; right: -200px; }
+        .esign-dropdown { min-width: 350px; flex-direction: column; gap: 5px; padding: 15px; }
         
-        .nav-menu li:hover .dropdown-content { display: grid; opacity: 1; transform: translateY(0); }
-        .nav-menu li:hover .esign-dropdown { display: flex; opacity: 1; transform: translateY(0); }
+        .nav-menu li:hover .dropdown-content, .nav-menu li:hover .esign-dropdown { display: flex; }
+        .nav-menu li:hover .convert-dropdown, .nav-menu li:hover .mega-dropdown { display: grid; }
 
-        .dropdown-column h3 { font-size: 11px; color: #b0b0b0; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; border-bottom: 1px solid #f9f9f9; padding-bottom: 5px; }
+        .dropdown-column h3 { font-size: 11px; color: #aaa; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; border-bottom: 1px solid #f5f5f5; padding-bottom: 5px; }
         .dropdown-column ul { list-style: none; }
-        .dropdown-column ul li a, .esign-link { 
-            font-size: 13.5px; font-weight: 700; color: #333; display: flex; 
-            align-items: center; gap: 10px; padding: 8px; border-radius: 8px; 
-            transition: 0.2s; text-decoration: none; cursor: pointer;
-        }
+        .dropdown-column ul li a, .esign-link { font-size: 13px; font-weight: 700; color: #333; display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; transition: 0.2s; text-decoration: none; cursor: pointer; }
+        .esign-link { font-size: 11px; text-transform: uppercase; }
         .dropdown-column ul li a:hover, .esign-link:hover { background: #fff5f5; color: #e5322d; }
 
-        .tag { font-size: 9px; padding: 3px 8px; border-radius: 20px; color: #fff; font-weight: 800; margin-left: auto; text-transform: uppercase; }
+        .tag { font-size: 8px; padding: 3px 7px; border-radius: 20px; color: #fff; font-weight: 800; margin-left: auto; }
         .tag-any { background-color: #90ee90; }
         .tag-india { background-color: #006400; }
         .tag-global { background-color: #00008b; }
-        .tool-icon { width: 22px; height: 22px; object-fit: contain; }
+        .tool-icon { width: 20px; height: 20px; object-fit: contain; }
 
-        /* Hero Section */
-        .hero { max-width: 1100px; margin: 60px auto; text-align: center; padding: 0 20px; }
-        .greeting-text { font-size: 32px; font-weight: 800; color: #222; margin-bottom: 10px; }
-        .hero h1 { font-size: 24px; font-weight: 600; margin-bottom: 40px; color: #666; }
+        /* Compact Hero Section */
+        .hero { max-width: 1000px; margin: 30px auto; text-align: center; padding: 0 20px; }
+        .greeting-text { font-size: 28px; font-weight: 800; color: #222; margin-bottom: 5px; }
+        .hero h1 { font-size: 18px; font-weight: 600; margin-bottom: 30px; color: #777; }
 
-        /* Upload Container */
-        .upload-container { position: relative; width: 100%; max-width: 850px; height: 420px; margin: 0 auto; border-radius: 35px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; border: 2.5px dashed rgba(229, 50, 45, 0.3); background: rgba(255, 255, 255, 0.85); box-shadow: 0 25px 60px rgba(0,0,0,0.06); transition: 0.4s; cursor: pointer; }
-        .upload-container:hover { border-color: #e5322d; transform: translateY(-5px); }
-        .upload-container.drag-over { background: rgba(229, 50, 45, 0.08); border-style: solid; }
+        /* Reduced Size Upload Box */
+        .upload-container { position: relative; width: 100%; max-width: 750px; height: 320px; margin: 0 auto; border-radius: 25px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; border: 2px dashed rgba(229, 50, 45, 0.25); background: #ffffff; box-shadow: 0 15px 40px rgba(0,0,0,0.04); transition: 0.4s; cursor: pointer; }
+        .upload-container:hover { border-color: #e5322d; transform: translateY(-3px); }
+        .upload-container.drag-over { background: #fffafa; border-style: solid; }
 
-        .box-tool-name { position: relative; z-index: 2; color: #000; font-size: 28px; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; }
-        .cloud-upload-wrapper { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .cloud-icon { width: 100px; height: 100px; filter: drop-shadow(0 10px 15px rgba(229, 50, 45, 0.2)); transition: transform 0.3s ease; }
+        .box-tool-name { position: relative; z-index: 2; color: #000; font-size: 24px; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; }
+        .cloud-upload-wrapper { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .cloud-icon { width: 70px; height: 70px; filter: drop-shadow(0 5px 10px rgba(229, 50, 45, 0.1)); transition: 0.3s; }
         .upload-container:hover .cloud-icon { transform: scale(1.1); }
-        .upload-label-text { font-size: 24px; font-weight: 800; color: #e5322d; }
-        .drag-drop-text { position: relative; z-index: 2; font-size: 18px; color: #777; font-weight: 600; margin-top: 15px; }
+        .upload-label-text { font-size: 20px; font-weight: 800; color: #e5322d; }
+        .drag-drop-text { position: relative; z-index: 2; font-size: 16px; color: #999; font-weight: 600; margin-top: 10px; }
 
-        /* Documentation Box */
-        .tool-info-container { max-width: 850px; margin: 40px auto; padding: 30px; background: #fff; border-radius: 20px; border: 1px solid #eee; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.02); display: none; animation: fadeIn 0.5s ease; }
+        /* Documentation Section */
+        .tool-info-container { max-width: 750px; margin: 30px auto; padding: 25px; background: #fff; border-radius: 15px; border: 1px solid #eee; text-align: left; box-shadow: 0 5px 20px rgba(0,0,0,0.02); display: none; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .info-title { font-size: 20px; font-weight: 900; color: #e5322d; margin-bottom: 15px; text-transform: uppercase; border-left: 4px solid #e5322d; padding-left: 15px; }
-        .info-block { margin-bottom: 20px; }
-        .info-block h4 { font-size: 15px; font-weight: 800; color: #111; margin-bottom: 5px; text-transform: uppercase; }
-        .info-block p { font-size: 14px; color: #555; line-height: 1.6; }
+        .info-title { font-size: 18px; font-weight: 900; color: #e5322d; margin-bottom: 10px; text-transform: uppercase; border-left: 4px solid #e5322d; padding-left: 12px; }
+        .info-block { margin-bottom: 15px; }
+        .info-block h4 { font-size: 13px; font-weight: 800; color: #111; margin-bottom: 3px; text-transform: uppercase; }
+        .info-block p { font-size: 13.5px; color: #666; line-height: 1.5; }
 
         .nav-right { display: flex; align-items: center; }
-        .google-login-btn { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px; }
+        .google-login-btn { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid #ddd; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -192,9 +186,7 @@
                 </ul>
             </nav>
         </div>
-        <div class="nav-right">
-            <button class="google-login-btn">Continue with Google</button>
-        </div>
+        <div class="nav-right"><button class="google-login-btn"><img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" style="width:18px;"> Continue with Google</button></div>
     </header>
 
     <main class="hero">
@@ -202,7 +194,6 @@
         <h1>KellynePDF - All-In-One Solution</h1>
         
         <div class="upload-container" id="drop-zone" onclick="document.getElementById('file-input').click()">
-            <div class="floating-bg"></div>
             <div id="tool-display-name" class="box-tool-name">SELECT PDF FILES</div>
             <div class="cloud-upload-wrapper">
                 <img src="https://cdn-icons-png.flaticon.com/512/860/860812.png" alt="Upload" class="cloud-icon">
@@ -221,35 +212,35 @@
 
     <script>
         const toolDocs = {
-            'Merge PDF': { what: 'Combine multiple PDF files into one single document in your desired order.', how: 'Upload PDFs, drag to reorder them, and click Merge.' },
-            'Split PDF': { what: 'Separate a large PDF into smaller files or individual pages.', how: 'Upload your PDF, select the page ranges to split, and download.' },
+            'Merge PDF': { what: 'Combine multiple PDF files into one single document in your desired order.', how: 'Upload PDFs, drag to reorder them, and click the Merge button.' },
+            'Split PDF': { what: 'Separate a large PDF into smaller files or extract individual pages.', how: 'Upload your PDF, select the page ranges to split, and download.' },
             'Compress PDF': { what: 'Reduce the file size of your PDF while maintaining quality.', how: 'Upload a heavy PDF file and our engine will shrink it.' },
-            'JPG to PDF': { what: 'Convert image files into a high-quality PDF document.', how: 'Upload images, arrange them, and download PDF.' },
-            'WORD to PDF': { what: 'Transform Word documents (.docx) into PDF format.', how: 'Upload your docx file and get the PDF instantly.' },
-            'POWERPOINT to PDF': { what: 'Convert presentation slides into portable PDF format.', how: 'Upload PPTX and download the slide-based PDF.' },
+            'JPG to PDF': { what: 'Convert images (JPG, PNG, GIF) into a professional PDF document.', how: 'Upload your images, adjust settings, and download your PDF.' },
+            'WORD to PDF': { what: 'Transform Word documents (.docx) into PDF format.', how: 'Upload your Word file and get the PDF instantly.' },
+            'POWERPOINT to PDF': { what: 'Convert presentation slides (PPTX) into a portable PDF format.', how: 'Upload your slides and get slide-based PDF.' },
             'EXCEL to PDF': { what: 'Transform Excel sheets into readable PDF tables.', how: 'Upload spreadsheet and we will format for PDF.' },
-            'HTML to PDF': { what: 'Save web pages as offline PDF documents.', how: 'Upload HTML file or link to generate a PDF.' },
+            'HTML to PDF': { what: 'Save web pages as offline PDF documents.', how: 'Upload your HTML file or link to generate a PDF.' },
             'PDF to JPG': { what: 'Extract PDF pages as separate high-quality JPG images.', how: 'Upload PDF and download images in ZIP.' },
-            'PDF to WORD': { what: 'Convert PDF back into editable Microsoft Word documents.', how: 'Upload PDF and rebuild layout in .docx.' },
-            'PDF to POWERPOINT': { what: 'Turn PDF pages into editable presentation slides.', how: 'Upload PDF and get a PPTX presentation.' },
-            'PDF to EXCEL': { what: 'Extract PDF tables into Excel sheets.', how: 'Upload PDF with tables and download .xlsx.' },
+            'PDF to WORD': { what: 'Convert PDF files back into editable Word documents.', how: 'Upload PDF and we will rebuild the layout in .docx.' },
+            'PDF to POWERPOINT': { what: 'Turn PDF pages into editable PowerPoint slides.', how: 'Select your PDF and wait for it to be transformed into PPTX.' },
+            'PDF to EXCEL': { what: 'Extract data tables from PDF into Excel sheets.', how: 'Upload PDF with tables and download .xlsx.' },
             'PDF to PDF/A': { what: 'Standardize PDF for long-term archiving.', how: 'Upload PDF to convert to ISO archive format.' },
-            'Remove Pages': { what: 'Delete unwanted pages from PDF.', how: 'Select pages to delete and save file.' },
-            'Extract Pages': { what: 'Extract only specific pages into new doc.', how: 'Select pages and click extract to save.' },
+            'Remove Pages': { what: 'Delete specific unwanted pages from PDF.', how: 'Select pages to delete and save file.' },
+            'Extract Pages': { what: 'Save specific pages as a new doc.', how: 'Select pages and click extract.' },
             'Rename PDF': { what: 'Change the title of your PDF document professionally.', how: 'Type new name and click update.' },
             'Scan to PDF': { what: 'Create a PDF using your camera or scanner.', how: 'Grant camera access and scan document.' },
             'Repair PDF': { what: 'Recover data from corrupted or damaged PDF files.', how: 'Upload broken file and we will repair it.' },
             'OCR PDF': { what: 'Convert scanned images into searchable text.', how: 'Upload scan and let OCR recognize text.' },
-            'Rotate PDF': { what: 'Fix orientation of sideways PDF pages.', how: 'Click rotate icons to fix alignment.' },
+            'Rotate PDF': { what: 'Correct the orientation of sideways PDF pages.', how: 'Click rotate icons to fix alignment.' },
             'Page Numbers': { what: 'Add automatic numbering to PDF pages.', how: 'Choose style/position and apply.' },
             'Add Watermark': { what: 'Protect PDF with a text or image stamp.', how: 'Enter text/logo and set transparency.' },
             'Crop PDF': { what: 'Remove margins or trim specific areas.', how: 'Select crop area and apply changes.' },
             'Edit PDF': { what: 'Add text, shapes, or highlights to your PDF.', how: 'Use online editor to type directly on pages.' },
             'Unlock PDF': { what: 'Remove password lock from protected PDF.', how: 'Enter password and remove encryption.' },
             'Protect PDF': { what: 'Encrypt your PDF with a strong password.', how: 'Set secure password and download.' },
-            'Sign PDF': { what: 'Apply digital signature to your pages.', how: 'Draw/type signature and place on PDF.' },
+            'Sign PDF': { what: 'Apply digital signature to your pages.', how: 'Upload document and draw or type your signature.' },
             'Redact PDF': { what: 'Black out sensitive text or info permanently.', how: 'Select private areas to hide forever.' },
-            'Compare PDF': { what: 'Highlight differences between two PDFs.', how: 'Upload both files for comparison.' },
+            'Compare PDF': { what: 'Highlight differences between two versions.', how: 'Upload both files for comparison.' },
             'Digital Sign': { what: 'A fast electronic signature for any user.', how: 'Draw sign using mouse and place.' },
             'Aadhar eSign': { what: 'Legal Indian e-sign using Aadhar OTP.', how: 'Verify via UIDAI OTP and sign doc.' },
             'Global eSign': { what: 'Secure digital sign for global standards.', how: 'Verify identity and sign global doc.' }
@@ -274,7 +265,7 @@
             }
         }
 
-        /* Drag & Drop Logic */
+        /* Drag & Drop */
         const dropZone = document.getElementById('drop-zone');
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eName => {
             dropZone.addEventListener(eName, e => { e.preventDefault(); e.stopPropagation(); }, false);
@@ -298,7 +289,7 @@
             draw() { ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); }
             update() { this.x += this.speedX; this.y += this.speedY; if (this.x > canvas.width) this.x = 0; if (this.y > canvas.height) this.y = 0; }
         }
-        function init() { particles = []; for (let i = 0; i < 300; i++) particles.push(new Particle()); }
+        function init() { particles = []; for (let i = 0; i < 200; i++) particles.push(new Particle()); }
         function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.draw(); p.update(); }); requestAnimationFrame(animate); }
         init(); animate();
     </script>
