@@ -34,7 +34,7 @@
         .login-btn { color: var(--dark); font-size: 14px; font-weight: 800; text-transform: uppercase; cursor: pointer; border: none; background: none; }
         .signup-btn { background: var(--red); color: #fff; padding: 10px 22px; border-radius: 30px; font-size: 13px; font-weight: 800; text-transform: uppercase; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(229, 57, 53, 0.2); }
 
-        /* Dropdowns & Mega Menu */
+        /* Mega Dropdowns */
         .dropdown { position: relative; height: 100%; display: flex; align-items: center; }
         .dropdown-content { 
             display: grid; position: absolute; background: #fff; min-width: 1200px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
@@ -43,11 +43,10 @@
         }
         .dropdown:hover .dropdown-content { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
         .dropdown-col h3 { font-size: 11px; color: #94a3b8; text-transform: uppercase; border-bottom: 1px solid #f1f5f9; margin-bottom: 12px; padding-bottom: 5px; }
-        .tool-link, .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; color: #334155; text-decoration: none; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .tool-link:hover { color: var(--red); transform: translateX(3px); }
+        .tool-link, .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; color: #334155; text-decoration: none; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; }
         .tool-link i { width: 22px; text-align: center; font-size: 17px; }
 
-        /* Pill tags for eSign */
+        /* eSign Tags */
         .tag { font-size: 9px; padding: 4px 12px; border-radius: 20px; font-weight: 800; margin-left: auto; text-transform: uppercase; }
         .tag-any { background: #000; color: #fff; } 
         .tag-ind { background: #16a34a; color: #fff; } 
@@ -99,7 +98,7 @@
         
         <div class="dropdown">
             <button class="nav-item">Convert PDF <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></button>
-            <div class="dropdown-content" style="min-width:550px; grid-template-columns: 1fr 1fr;">
+            <div class="dropdown-content" style="min-width:600px; grid-template-columns: 1fr 1fr;">
                 <div class="dropdown-col">
                     <h3>To PDF</h3>
                     <a class="dropdown-item" onclick="setMode('JPG to PDF')"><i class="fa-solid fa-image" style="color:#f59e0b;"></i> JPG to PDF</a>
@@ -152,14 +151,14 @@
                     <a class="tool-link" onclick="setMode('OCR PDF')"><i class="fa-solid fa-eye" style="color:#16a34a;"></i> OCR PDF</a>
                 </div>
                 <div class="dropdown-col">
-                    <h3>Convert To</h3>
+                    <h3>Convert To PDF</h3>
                     <a class="tool-link" onclick="setMode('JPG to PDF')"><i class="fa-solid fa-image" style="color:#f59e0b;"></i> JPG to PDF</a>
                     <a class="tool-link" onclick="setMode('Word to PDF')"><i class="fa-solid fa-file-word" style="color:#2563eb;"></i> Word to PDF</a>
                     <a class="tool-link" onclick="setMode('Excel to PDF')"><i class="fa-solid fa-file-excel" style="color:#16a34a;"></i> Excel to PDF</a>
                     <a class="tool-link" onclick="setMode('PPT to PDF')"><i class="fa-solid fa-file-powerpoint" style="color:#d32f2f;"></i> PPT to PDF</a>
                 </div>
                 <div class="dropdown-col">
-                    <h3>Convert From</h3>
+                    <h3>Convert From PDF</h3>
                     <a class="tool-link" onclick="setMode('PDF to JPG')"><i class="fa-solid fa-file-image" style="color:#f59e0b;"></i> PDF to JPG</a>
                     <a class="tool-link" onclick="setMode('PDF to Word')"><i class="fa-solid fa-file-word" style="color:#2563eb;"></i> PDF to Word</a>
                     <a class="tool-link" onclick="setMode('PDF to Excel')"><i class="fa-solid fa-file-excel" style="color:#16a34a;"></i> PDF to Excel</a>
@@ -213,25 +212,42 @@
 <script src="js/Google OAuth.js"></script><script src="js/sw.js"></script>
 
 <script>
+    // --- UPDATED TOOL DATABASE FOR ALL REQUESTED TOOLS ---
     const toolData = {
-        'Merge PDF': 'What: Combine many PDF files into one single document effortlessly.\nHow: Select files, arrange their order, and click Merge to download.',
+        'Merge PDF': 'What: Combine multiple PDF files into one single document effortlessly.\nHow: Select files, arrange their order, and click Merge to download.',
         'Split PDF': 'What: Separate one PDF into multiple files or extract specific pages.\nHow: Upload file and select the page ranges you wish to split.',
-        'Rename PDF': 'What: Quickly change the name of your PDF file for better management.\nHow: Type the new name and save it instantly.',
-        'Compress PDF': 'What: Reduce the file size while maintaining professional quality.\nHow: Select PDF and choose a compression level.',
-        'JPG to PDF': 'What: Convert images (JPG/PNG) into a high-quality PDF document.',
-        'Word to PDF': 'What: Transform Microsoft Word docs into secure PDF format.',
-        'PPT to PDF': 'What: Convert PowerPoint slides into PDF document pages.',
-        'Digital Sign': 'What: Add a secure digital signature to your official documents.\nHow: Verify and sign globally.',
-        'Aadhar Sign': 'What: Legally sign documents using Indian Aadhar OTP verification.',
-        'Global Sign': 'What: Secure digital sign for international standard use.',
-        'Protect PDF': 'What: Secure your document by adding a strong password lock.',
-        'Unlock PDF': 'What: Remove password protection from a file if authorized.',
-        'Watermark': 'What: Add a security stamp or text overlay behind your PDF content.',
-        'Rotate PDF': 'What: Change the orientation of PDF pages permanently.',
-        'Scan to PDF': 'What: Convert photographs of documents into PDF.',
-        'Compare PDF': 'What: Find visual differences between two PDF versions.',
-        'Redact PDF': 'What: Permanently hide sensitive text or images from a PDF.',
-        'Crop PDF': 'What: Trim the margins of your PDF pages easily.'
+        'Remove Pages': 'What: Permanently delete unwanted pages from your PDF document.\nHow: Upload file, select pages to remove, and download the new version.',
+        'Extract Pages': 'What: Create a new PDF containing only the specific pages you need.\nHow: Upload file and select individual pages for extraction.',
+        'Rename PDF': 'What: Quickly change the name of your PDF file for better management.\nHow: Upload file, type new name, and save instantly.',
+        'Scan to PDF': 'What: Convert photographs of physical documents into high-quality PDF format.\nHow: Upload your document photos or scans.',
+        'Compress PDF': 'What: Reduce the file size of your PDF while maintaining professional quality.\nHow: Select your PDF and choose compression level (Basic/Strong).',
+        'Repair PDF': 'What: Fix corrupted or broken PDF files and recover your data.\nHow: Our AI system will attempt to restore the original structure.',
+        'OCR PDF': 'What: Convert scanned images into searchable and selectable text PDF documents.\nHow: Simply upload your scanned PDF.',
+        'JPG to PDF': 'What: Convert images like JPG or PNG into a clean PDF document.\nHow: Select your photos and generate the PDF instantly.',
+        'Word to PDF': 'What: Transform Microsoft Word docs (.docx) into secure PDF format.\nHow: Upload your Word file and download the formatted PDF.',
+        'Excel to PDF': 'What: Turn spreadsheets into professional, non-editable PDF tables.\nHow: Upload your Excel file to start.',
+        'PPT to PDF': 'What: Convert PowerPoint slides into high-quality PDF document pages.\nHow: Select your .pptx file for conversion.',
+        'HTML to PDF': 'What: Convert web pages or raw HTML code into a downloadable PDF file.\nHow: Provide a URL or paste code to generate.',
+        'Text to PDF': 'What: Convert plain text files into professional PDF documents.\nHow: Upload your .txt file instantly.',
+        'PDF to JPG': 'What: Extract every page of a PDF as separate high-quality JPG images.\nHow: Upload PDF and download images in a ZIP file.',
+        'PDF to Word': 'What: Convert your PDF back into an editable Microsoft Word document.\nHow: High-accuracy AI extraction ensures clean results.',
+        'PDF to Excel': 'What: Extract PDF tables directly into editable Excel spreadsheets.\nHow: Upload your PDF and get the Excel file.',
+        'PDF to PPT': 'What: Convert PDF document pages into editable PowerPoint slides.\nHow: Upload PDF for slide extraction.',
+        'PDF to HTML': 'What: Convert your PDF content into web-friendly HTML code structure.\nHow: Simply upload your document.',
+        'PDF to PDF/A': 'What: Convert PDF into a standardized version for long-term archiving.\nHow: Secure your document for the future.',
+        'Rotate PDF': 'What: Change the orientation of your PDF pages permanently.\nHow: Rotate individual or all pages.',
+        'Watermark': 'What: Add a security stamp or text overlay behind your PDF content.\nHow: Customize text, transparency, and position.',
+        'Page Numbers': 'What: Add automatic page numbering to your document header or footer.\nHow: Select position and format.',
+        'Crop PDF': 'What: Trim the margins of your PDF pages to focus on specific content.\nHow: Select the area you want to keep.',
+        'Edit PDF': 'What: Directly add text, shapes, or comments to your PDF pages.\nHow: Use our online editor tools.',
+        'Protect PDF': 'What: Secure your document by adding a strong password lock.\nHow: Set a password to encrypt your file.',
+        'Unlock PDF': 'What: Remove password protection from a file if you have authorized access.\nHow: Upload locked file and enter password.',
+        'Sign PDF': 'What: Add a visual electronic signature to your documents.\nHow: Draw, type, or upload your signature image.',
+        'Compare PDF': 'What: Find visual and text differences between two PDF versions.\nHow: Upload two files to see changes.',
+        'Redact PDF': 'What: Permanently black out sensitive text or images for security.\nHow: Select areas to hide permanently.',
+        'Digital Sign': 'What: Add a secure digital signature to official documents.\nHow: Verify and sign globally.',
+        'Aadhar Sign': 'What: Legally sign documents using Indian Aadhar OTP verification.\nHow: Specifically for Indian citizens.',
+        'Global Sign': 'What: International standard digital signatures for global use.'
     };
 
     function initApp() { 
