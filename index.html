@@ -12,31 +12,33 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Courier+Prime:wght@700&display=swap');
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: #fdfdfd; color: #222; overflow-x: hidden; min-height: 100vh; }
+        body { background-color: #fdfdfd; color: #111; overflow-x: hidden; min-height: 100vh; position: relative; }
         #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
         /* Navigation Bar */
-        .navbar { display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 100px; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px); border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 5000; }
-        .nav-left-section { display: flex; align-items: center; gap: 40px; flex: 1; }
-        .logo-container { display: flex; align-items: center; text-decoration: none; gap: 10px; }
-        .logo-img { height: 45px; width: auto; }
-        .logo-text { font-size: 22px; font-weight: 900; color: #e5322d; text-transform: uppercase; letter-spacing: 1px; }
+        .navbar { display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 110px; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px); border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 5000; }
+        .nav-left-section { display: flex; align-items: center; gap: 50px; flex: 1; }
+        .logo-container { display: flex; align-items: center; text-decoration: none; gap: 12px; }
+        .logo-img { height: 65px; width: auto; }
+        .logo-text { font-size: 24px; font-weight: 900; color: #e5322d; text-transform: uppercase; letter-spacing: 1px; }
 
-        .nav-menu { display: flex; list-style: none; gap: 20px; height: 100%; align-items: center; }
+        .nav-menu { display: flex; list-style: none; gap: 25px; height: 100%; align-items: center; }
         .nav-menu li { position: relative; height: 100%; display: flex; align-items: center; }
-        .nav-menu li > a { text-decoration: none; color: #111; font-size: 15px; font-weight: 800; text-transform: uppercase; transition: color 0.2s; cursor: pointer; padding: 35px 5px; }
+        .nav-menu li > a { text-decoration: none; color: #111; font-size: 15px; font-weight: 800; text-transform: uppercase; transition: color 0.2s; cursor: pointer; padding: 40px 5px; }
         
-        /* Dropdown Stability */
-        .dropdown-content { display: none; position: absolute; top: 85px; left: 0; background-color: #fff; box-shadow: 0px 15px 50px rgba(0,0,0,0.15); border-radius: 16px; padding: 30px; z-index: 9999; border: 1px solid #eee; animation: fadeIn 0.3s ease; }
+        /* Dropdowns */
+        .dropdown-content { display: none; position: absolute; top: 95px; left: 0; background-color: #fff; box-shadow: 0px 15px 40px rgba(0,0,0,0.15); border-radius: 16px; padding: 30px; z-index: 9999; border: 1px solid #eee; animation: fadeIn 0.3s ease; }
         .nav-menu li:hover .dropdown-content { display: grid; }
         .esign-dropdown { min-width: 380px; flex-direction: column; gap: 8px; padding: 15px; }
         .nav-menu li:hover .esign-dropdown { display: flex; }
-        
-        .convert-dropdown { min-width: 550px; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .convert-dropdown { min-width: 580px; grid-template-columns: 1fr 1fr; gap: 30px; }
         .mega-dropdown { min-width: 1100px; grid-template-columns: repeat(5, 1fr); gap: 20px; left: 50%; transform: translateX(-65%); }
 
-        .dropdown-column h3 { font-size: 10px; color: #aaa; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #f5f5f5; padding-bottom: 5px; }
+        /* Categorized Headers */
+        .dropdown-column h3 { font-size: 14px; color: #8B0000; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px solid #f5f5f5; padding-bottom: 8px; font-weight: 900; }
         .dropdown-column ul { list-style: none; }
         .dropdown-column ul li a, .esign-link { font-size: 13px; font-weight: 700; color: #333; display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 10px; transition: 0.2s; text-decoration: none; cursor: pointer; }
         .dropdown-column ul li a:hover { background: #fff5f5; color: #e5322d; }
@@ -47,38 +49,46 @@
         .tag-global { background-color: #00008b; color: #fff; }
         .tool-icon { width: 22px; height: 22px; object-fit: contain; }
 
-        /* UI Font Resizing */
+        /* Greeting Section (Pure Black) */
         .wish-container { margin-top: 60px; text-align: center; }
-        .wish-text { font-size: 32px; font-weight: 800; color: #444; letter-spacing: -1px; } /* Thagginchina font size */
-        .type-heading { font-size: 26px; font-weight: 900; color: #111; height: 35px; margin-bottom: 30px; } /* Penchina font size */
+        .wish-text { font-size: 48px; font-weight: 900; color: #000; letter-spacing: -2px; margin-bottom: 10px; }
+        .type-heading { font-family: 'Courier Prime', monospace; font-size: 28px; font-weight: 700; color: #111; height: 40px; margin-bottom: 30px; }
         
+        /* Hero Box */
         @keyframes floatBox { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
         .hero { max-width: 1000px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
-        
         .upload-container { 
             position: relative; width: 100%; max-width: 600px; height: 350px; margin: 0 auto; 
             border-radius: 40px; display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; border: 2.5px dashed rgba(229, 50, 45, 0.15); 
+            justify-content: center; border: 2.5px dashed rgba(229, 50, 45, 0.2); 
             background: #ffffff; box-shadow: 0 30px 70px rgba(0,0,0,0.05); cursor: pointer;
             animation: floatBox 6s ease-in-out infinite; overflow: hidden;
         }
-
         .box-tool-name { position: relative; z-index: 5; color: #e5322d; font-size: 28px; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; }
         .floating-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; background: linear-gradient(135deg, #fffafa 0%, #f8faff 100%); opacity: 0.9; }
 
-        .cloud-icon-svg { width: 80px; z-index: 5; margin-bottom: 15px; filter: drop-shadow(0 10px 20px rgba(229,50,45,0.2)); }
+        .cloud-icon-svg { width: 85px; z-index: 5; margin-bottom: 10px; filter: drop-shadow(0 10px 20px rgba(229,50,45,0.2)); }
         .upload-label-text { font-size: 20px; font-weight: 800; color: #444; z-index: 5; }
 
-        /* Floating Animated Info - Auto Hide Logic */
-        .info-floating-wrap { max-width: 750px; margin: 50px auto; text-align: left; padding: 0 30px; display: none; }
-        .info-item { margin-bottom: 20px; }
+        /* Documentation UI Alignment */
+        .info-floating-wrap { max-width: 750px; margin: 40px auto; text-align: left; padding: 0 30px; display: none; }
+        .info-item { margin-bottom: 15px; }
         .info-item h4 { font-size: 14px; color: #e5322d; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; }
-        .char-anim { display: inline-block; opacity: 0; transform: translateX(-10px); animation: charIn 0.3s forwards; color: #555; font-weight: 600; font-size: 16px; line-height: 1.6; }
+        .char-anim { display: inline-block; opacity: 0; transform: translateX(-10px); animation: charIn 0.3s forwards; color: #111; font-weight: 600; font-size: 16px; line-height: 1.6; }
         @keyframes charIn { to { opacity: 1; transform: translateX(0); } }
 
-        .nav-right { display: flex; align-items: center; min-width: 220px; justify-content: flex-end;}
-        .logout-btn { background: #f0f0f0; border: 1px solid #ddd; padding: 8px 16px; border-radius: 30px; cursor: pointer; font-size: 11px; font-weight: 800; color: #666; text-transform: uppercase; margin-left: 10px; transition: 0.3s; }
-        .logout-btn:hover { background: #ffebeb; color: #e5322d; border-color: #e5322d; }
+        /* Professional Logout UI Card */
+        .nav-right { display: flex; align-items: center; min-width: 300px; justify-content: flex-end; }
+        .user-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 10px 15px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .user-pic { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #eee; }
+        .user-name-text { font-size: 14px; font-weight: 800; color: #333; }
+        .logout-btn-blue { width: 100%; background: #0073b1; color: #fff; border: none; padding: 8px 0; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 700; transition: 0.3s; }
+        .logout-btn-blue:hover { background: #005a8a; }
+
+        /* Taskbar Footer */
+        .taskbar-bottom { width: 100%; height: 60px; background: #fff; display: flex; align-items: center; justify-content: center; border-top: 1px solid #eee; font-size: 13px; font-weight: 700; color: #777; margin-top: 50px; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -116,6 +126,7 @@
                                     <li><a onclick="updateTool('PDF to JPG')"><img src="https://cdn-icons-png.flaticon.com/512/337/337940.png" class="tool-icon"> PDF to JPG</a></li>
                                     <li><a onclick="updateTool('PDF to WORD')"><img src="https://cdn-icons-png.flaticon.com/512/337/337948.png" class="tool-icon"> PDF to WORD</a></li>
                                     <li><a onclick="updateTool('PDF to EXCEL')"><img src="https://cdn-icons-png.flaticon.com/512/337/337941.png" class="tool-icon"> PDF to EXCEL</a></li>
+                                    <li><a onclick="updateTool('PDF to PPT')"><img src="https://cdn-icons-png.flaticon.com/512/337/337947.png" class="tool-icon"> PDF to PPT</a></li>
                                     <li><a onclick="updateTool('PDF to HTML')"><img src="https://cdn-icons-png.flaticon.com/512/2165/2165000.png" class="tool-icon"> PDF to HTML</a></li>
                                     <li><a onclick="updateTool('PDF to PDF/A')"><img src="https://cdn-icons-png.flaticon.com/512/8242/8242253.png" class="tool-icon"> PDF to PDF/A</a></li>
                                 </ul>
@@ -156,7 +167,7 @@
                                 <h3>Edit</h3>
                                 <ul>
                                     <li><a onclick="updateTool('Rotate PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" class="tool-icon"> Rotate</a></li>
-                                    <li><a onclick="updateTool('Add Page Numbers')"><img src="https://cdn-icons-png.flaticon.com/512/337/337943.png" class="tool-icon"> Numbers</a></li>
+                                    <li><a onclick="updateTool('Add Page Numbers')"><img src="https://cdn-icons-png.flaticon.com/512/337/337943.png" class="tool-icon"> Add Page Numbers</a></li>
                                     <li><a onclick="updateTool('Add Watermark')"><img src="https://cdn-icons-png.flaticon.com/512/337/337942.png" class="tool-icon"> Watermark</a></li>
                                     <li><a onclick="updateTool('Crop PDF')"><img src="https://cdn-icons-png.flaticon.com/512/2541/2541991.png" class="tool-icon"> Crop</a></li>
                                     <li><a onclick="updateTool('Edit PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" class="tool-icon"> Edit</a></li>
@@ -173,10 +184,10 @@
                                 </ul>
                             </div>
                             <div class="dropdown-column">
-                                <h3>Intelligence</h3>
+                                <h3>AI</h3>
                                 <ul>
                                     <li><a onclick="updateTool('AI Summarizer')"><img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" class="tool-icon"> AI Summarizer</a></li>
-                                    <li><a onclick="updateTool('Translate PDF')"><img src="https://cdn-icons-png.flaticon.com/512/3269/3269819.png" class="tool-icon"> Translate PDF</a></li>
+                                    <li><a onclick="updateTool('Translate PDF')"><img src="https://cdn-icons-png.flaticon.com/512/3269/3269819.png" class="tool-icon"> Translate</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -188,11 +199,16 @@
         <div class="nav-right">
             <div id="login-section">
                 <div id="g_id_onload" data-client_id="1056519552768-qis2jrnm3fokkrmpr3teoid1lqvgvplh.apps.googleusercontent.com" data-callback="handleCredentialResponse"></div>
-                <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="continue_with" data-size="large"></div>
+                <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="continue_with"></div>
             </div>
-            <div id="user-section" class="auth-container" style="display:none;">
-                <span id="display-name" style="font-weight:800; font-size:14px;"></span>
-                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            <div id="user-section" style="display:none;">
+                <div class="user-card">
+                    <div class="user-info">
+                        <img id="user-avatar" class="user-pic" src="" alt="Profile">
+                        <span id="display-name" class="user-name-text"></span>
+                    </div>
+                    <button class="logout-btn-blue" onclick="handleLogout()">Log Out</button>
+                </div>
             </div>
         </div>
     </header>
@@ -226,41 +242,46 @@
         </div>
     </main>
 
+    <footer class="taskbar-bottom">
+        Copyright © 2026 - Kellynepdf.com • Made with ❤️
+    </footer>
+
     <script>
         const toolDocs = {
             'Merge PDF': { what: 'Combine multiple PDF files into one professional document instantly.', how: 'Upload 2 or more PDFs, arrange them in order, and click Merge.' },
-            'Split PDF': { what: 'Divide a large PDF into smaller parts or extract individual pages as separate files.', how: 'Upload your file, specify the page ranges, and download the segments.' },
-            'Compress PDF': { what: 'Reduce the file size of your PDF while maintaining the highest possible visual quality.', how: 'Select a heavy PDF and let our optimization engine shrink it automatically.' },
-            'JPG to PDF': { what: 'Convert image formats like JPG, PNG, and GIF into a clean, professional PDF file.', how: 'Upload your images, adjust page settings, and generate your document.' },
-            'WORD to PDF': { what: 'Transform Microsoft Word documents into universally readable PDF format.', how: 'Simply upload your Word file and download the converted PDF in seconds.' },
-            'EXCEL to PDF': { what: 'Convert complex Excel spreadsheets into neat, easy-to-read PDF tables.', how: 'Select your .xlsx file and we will format it for perfect PDF viewing.' },
-            'PPT to PDF': { what: 'Transform PowerPoint presentations into portable PDFs.', how: 'Upload your slides and get a PDF version ready for sharing.' },
-            'HTML to PDF': { what: 'Save full web pages as offline PDF documents with one click.', how: 'Paste a URL or upload an HTML file to generate a readable PDF.' },
-            'PDF to JPG': { what: 'Extract every single page of your PDF as high-resolution JPG images.', how: 'Upload the PDF and receive a ZIP containing all images.' },
-            'PDF to WORD': { what: 'Convert PDF files back into editable Microsoft Word documents.', how: 'Upload your PDF and wait for our AI to rebuild the editable layout.' },
-            'PDF to EXCEL': { what: 'Extract data tables from PDF directly into organized Excel spreadsheets.', how: 'Select a PDF with tables and download the generated .xlsx file.' },
-            'PDF to HTML': { what: 'Convert your PDF document into a responsive HTML web page.', how: 'Upload your file and our engine will create the HTML code.' },
-            'PDF to PDF/A': { what: 'Standardize your PDF for long-term archiving using the ISO-standard PDF/A format.', how: 'Upload your file and convert it for permanent digital preservation.' },
-            'Remove Pages': { what: 'Permanently delete specific unwanted pages from your PDF document.', how: 'Select the pages you want to discard and save the cleaned file.' },
-            'Extract Pages': { what: 'Save specific pages from a document as a brand new standalone PDF.', how: 'Check the boxes for the pages you need and click extract.' },
-            'Rename PDF': { what: 'Professionally rename your PDF document filename without opening it.', how: 'Type the new name in the field and click update instantly.' },
-            'Scan to PDF': { what: 'Create PDF documents instantly using your camera or connected scanner.', how: 'Grant camera permissions, capture the pages, and save as PDF.' },
-            'Repair PDF': { what: 'Recover data from corrupted or broken PDF files that won’t open.', how: 'Upload the damaged file; we will attempt to fix the structure.' },
-            'OCR PDF': { what: 'Convert scanned non-selectable PDFs into searchable text documents.', how: 'Upload your scan and let our OCR engine recognize text.' },
-            'Rotate PDF': { what: 'Correct the orientation of upside-down or sideways PDF pages.', how: 'Use rotation icons to fix alignment and save changes.' },
-            'Add Page Numbers': { what: 'Add automatic page numbering to your PDF headers or footers.', how: 'Choose your preferred numbering style and position, then apply.' },
-            'Add Watermark': { what: 'Protect your property by adding a text or image watermark to every page.', how: 'Enter your text/logo and set the transparency.' },
-            'Crop PDF': { what: 'Trim margins or specific areas of your PDF pages.', how: 'Select crop area and apply changes to the file.' },
+            'Split PDF': { what: 'Divide a large PDF into smaller parts or extract individual pages.', how: 'Upload your file, specify the page ranges, and download segments.' },
+            'Compress PDF': { what: 'Reduce file size while maintaining the highest possible quality.', how: 'Select a heavy PDF and let our optimization engine shrink it.' },
+            'JPG to PDF': { what: 'Convert images into high-quality PDF files for professional use.', how: 'Upload images, adjust page settings, and generate your PDF.' },
+            'WORD to PDF': { what: 'Turn Word documents into universally readable PDF format.', how: 'Upload your .docx file and download the converted PDF.' },
+            'EXCEL to PDF': { what: 'Convert spreadsheets into neat, organized PDF tables.', how: 'Select your .xlsx file and download the formatted PDF.' },
+            'PPT to PDF': { what: 'Transform PowerPoint slides into portable PDF documents.', how: 'Upload your slides and get a PDF version ready for sharing.' },
+            'HTML to PDF': { what: 'Save full web pages as offline PDF documents with one click.', how: 'Paste a URL or upload HTML to generate a readable PDF.' },
+            'PDF to JPG': { what: 'Extract every single page of your PDF as high-resolution images.', how: 'Upload the PDF and receive a ZIP of all page images.' },
+            'PDF to WORD': { what: 'Convert PDF files back into editable Microsoft Word documents.', how: 'Upload your PDF and wait for our AI to rebuild the layout.' },
+            'PDF to EXCEL': { what: 'Extract data tables from PDF directly into organized Excel spreadsheets.', how: 'Select a PDF with tables and download the generated .xlsx.' },
+            'PDF to PPT': { what: 'Convert PDF pages back into editable PowerPoint slides.', how: 'Upload your file and receive the generated .pptx slides.' },
+            'PDF to HTML': { what: 'Turn your PDF document into a responsive HTML web page.', how: 'Upload your file and our engine will create the HTML code.' },
+            'PDF to PDF/A': { what: 'Standardize PDF for long-term ISO digital archiving.', how: 'Upload your file and convert it for permanent preservation.' },
+            'Remove Pages': { what: 'Permanently delete unwanted pages from your document.', how: 'Select the pages to discard and save the cleaned file.' },
+            'Extract Pages': { what: 'Save specific pages from a document as a brand new PDF.', how: 'Check required pages and click extract.' },
+            'Rename PDF': { what: 'Professionally rename your PDF document filename instantly.', how: 'Type the new name and click update without opening the file.' },
+            'Scan to PDF': { what: 'Create PDF documents instantly using your camera or scanner.', how: 'Grant camera permissions, capture the pages, and save.' },
+            'Repair PDF': { what: 'Recover data from corrupted or broken PDF files.', how: 'Upload the damaged file; we will attempt to fix the structure.' },
+            'OCR PDF': { what: 'Convert scanned non-selectable PDFs into searchable text.', how: 'Upload your scan and let our OCR engine recognize text.' },
+            'Rotate PDF': { what: 'Correct the orientation of upside-down or sideways pages.', how: 'Use rotation icons to fix alignment and save your changes.' },
+            'Add Page Numbers': { what: 'Add automatic numbering to your PDF headers or footers.', how: 'Choose your preferred style and position, then apply.' },
+            'Add Watermark': { what: 'Protect your property with a text or image watermark.', how: 'Enter your text/logo and set the transparency level.' },
+            'Crop PDF': { what: 'Trim margins or specific areas of your PDF pages.', how: 'Select crop area and apply changes.' },
             'Edit PDF': { what: 'Directly add text, shapes, or highlights to your PDF content.', how: 'Use our online editor tools to type on the document pages.' },
-            'Unlock PDF': { what: 'Remove password security and printing restrictions from protected PDFs.', how: 'Enter the known password to permanently remove encryption.' },
-            'Protect PDF': { what: 'Encrypt your sensitive PDF documents with a strong, secure password.', how: 'Set your secure password and download the encrypted version.' },
+            'Unlock PDF': { what: 'Remove password security and printing restrictions from PDFs.', how: 'Enter the known password to permanently remove encryption.' },
+            'Protect PDF': { what: 'Encrypt your sensitive PDF documents with a strong, secure password.', how: 'Set your secure password and download the encrypted file.' },
             'Sign PDF': { what: 'Apply digital signatures to any page of your PDF.', how: 'Draw your signature and place it on the document.' },
-            'Redact PDF': { what: 'Permanently black out sensitive text or images to protect privacy.', how: 'Select the private areas to hide them forever.' },
-            'Compare PDF': { what: 'Identify differences between two versions of a PDF side-by-side.', how: 'Upload both files and see highlighted changes.' },
-            'AI Summarizer': { what: 'Summarize long PDF documents into key points using advanced AI.', how: 'Upload your PDF and get an instant intelligent summary.' },
+            'Redact PDF': { what: 'Permanently black out sensitive text or images for privacy.', how: 'Select the private areas to hide them forever.' },
+            'Compare PDF': { what: 'Identify differences between two versions of a PDF.', how: 'Upload both files and see highlighted changes side-by-side.' },
+            'AI Summarizer': { what: 'Summarize long PDF documents into key points using AI.', how: 'Upload your PDF and get an instant intelligent summary.' },
             'Translate PDF': { what: 'Translate the entire content of your PDF into multiple languages.', how: 'Upload your file and select your target language.' },
-            'Digital Sign': { what: 'Fast electronic signature for any user globally.', how: 'Draw or type your sign and place it on the page.' },
-            'Aadhar eSign': { what: 'Official Indian electronic signature using Aadhaar OTP verification.', how: 'Verify your identity via UIDAI OTP and sign legally.' },
+            'Digital Sign': { what: 'Fast electronic signature for any user or document globally.', how: 'Draw or type your sign and place it on the page.' },
+            'Aadhar eSign': { what: 'Official Indian electronic signature using Aadhaar OTP.', how: 'Verify your identity via UIDAI OTP and sign legally.' },
             'Global eSign': { what: 'Enterprise-grade digital signature for international business.', how: 'Verify your global ID and sign documents securely.' }
         };
 
@@ -270,18 +291,12 @@
             clearTimeout(hideTimeout);
             document.getElementById('tool-title-box').innerText = name.toUpperCase();
             const infoArea = document.getElementById('tool-info-area');
-            
             infoArea.style.display = 'block';
-            
             if(toolDocs[name]) {
                 animateText('info-what', toolDocs[name].what);
                 animateText('info-how', toolDocs[name].how);
             }
-
-            // Auto-hide after 10 seconds
-            hideTimeout = setTimeout(() => {
-                infoArea.style.display = 'none';
-            }, 10000);
+            hideTimeout = setTimeout(() => { infoArea.style.display = 'none'; }, 10000);
         }
 
         function animateText(id, text) {
@@ -299,26 +314,32 @@
         function handleCredentialResponse(r) {
             const p = JSON.parse(atob(r.credential.split('.')[1]));
             localStorage.setItem("userName", p.given_name);
+            localStorage.setItem("userPic", p.picture);
             location.reload();
         }
-        function handleLogout() { localStorage.removeItem("userName"); location.reload(); }
+        function handleLogout() { 
+            localStorage.removeItem("userName"); 
+            localStorage.removeItem("userPic");
+            location.reload(); 
+        }
         
         window.onload = () => {
-            const user = localStorage.getItem("userName");
+            const user = localStorage.getItem("userName") || "Guest";
+            const pic = localStorage.getItem("userPic");
             const h = new Date().getHours();
             const wish = h<12?"Good Morning":h<17?"Good Afternoon":"Good Evening";
-            if(user) {
+            
+            if(user !== "Guest") {
                 document.getElementById('login-section').style.display='none';
                 document.getElementById('user-section').style.display='flex';
                 document.getElementById('display-name').innerText = user;
-                document.getElementById('greeting').innerText = `Hello ${user}, ${wish}!`;
-            } else {
-                document.getElementById('greeting').innerText = `Hello Guest, ${wish}!`;
+                document.getElementById('user-avatar').src = pic || "";
             }
+            document.getElementById('greeting').innerText = `Hello ${user}, ${wish}!`;
             animateText('sub-heading', "KellynePDF - All-In-One Solution");
         };
 
-        /* JELLYFISH 450 - SMOOTH FINISH */
+        /* JELLYFISH 450 - SMOOTH PHYSICS */
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -332,7 +353,7 @@
                 this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height;
                 this.size = Math.random()*2+0.5; this.vx = (Math.random()-0.5)*0.5; this.vy = (Math.random()-0.5)*0.5;
                 this.isStar = Math.random()>0.85; this.angle = Math.random()*Math.PI*2;
-                this.color = ['#1a237e', '#90caf9', '#ef9a9a', '#444'][Math.floor(Math.random()*4)];
+                this.color = ['#1a237e', '#90caf9', '#ef9a9a', '#777'][Math.floor(Math.random()*4)];
             }
             draw() {
                 ctx.fillStyle = this.color; ctx.beginPath();
@@ -355,8 +376,8 @@
                     let dist = Math.sqrt(dx*dx + dy*dy);
                     if(dist < mouse.radius){
                         let force = (mouse.radius - dist) / mouse.radius;
-                        this.x -= dx * force * 0.03;
-                        this.y -= dy * force * 0.03;
+                        this.x -= dx * force * 0.05;
+                        this.y -= dy * force * 0.05;
                     }
                 }
             }
@@ -366,6 +387,7 @@
         init(); animate();
 
         const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => {
             dropZone.addEventListener(e, ev => { ev.preventDefault(); ev.stopPropagation(); });
         });
@@ -375,26 +397,24 @@
         });
     </script>
 
-    <script src="js/auth/google-oauth.js"></script>
-    <script src="js/utils/graphics-helper.js"></script>
     <script src="js/allpdftools/organize/merge-pdf.js"></script>
     <script src="js/allpdftools/organize/split-pdf.js"></script>
-    <script src="js/allpdftools/organize/extract-pages.js"></script>
     <script src="js/allpdftools/organize/remove-pages.js"></script>
+    <script src="js/allpdftools/organize/extract-pages.js"></script>
     <script src="js/allpdftools/organize/rename-pdf.js"></script>
     <script src="js/allpdftools/organize/scan-to-pdf.js"></script>
     <script src="js/allpdftools/optimize/compress-pdf.js"></script>
-    <script src="js/allpdftools/optimize/ocr-pdf.js"></script>
     <script src="js/allpdftools/optimize/repair-pdf.js"></script>
-    <script src="js/allpdftools/edit/edit-pdf.js"></script>
-    <script src="js/allpdftools/edit/crop-pdf.js"></script>
-    <script src="js/allpdftools/edit/page-numbers.js"></script>
+    <script src="js/allpdftools/optimize/ocr-pdf.js"></script>
     <script src="js/allpdftools/edit/rotate-pdf.js"></script>
+    <script src="js/allpdftools/edit/page-numbers.js"></script>
     <script src="js/allpdftools/edit/watermark.js"></script>
-    <script src="js/allpdftools/security/protect-pdf.js"></script>
+    <script src="js/allpdftools/edit/crop-pdf.js"></script>
+    <script src="js/allpdftools/edit/edit-pdf.js"></script>
     <script src="js/allpdftools/security/unlock-pdf.js"></script>
-    <script src="js/allpdftools/security/compare-pdf.js"></script>
+    <script src="js/allpdftools/security/protect-pdf.js"></script>
     <script src="js/allpdftools/security/redact-pdf.js"></script>
+    <script src="js/allpdftools/security/compare-pdf.js"></script>
     <script src="js/converters/from-pdf/pdf-to-word.js"></script>
     <script src="js/converters/from-pdf/pdf-to-excel.js"></script>
     <script src="js/converters/from-pdf/pdf-to-jpg.js"></script>
@@ -406,7 +426,6 @@
     <script src="js/converters/to-pdf/excel-to-pdf.js"></script>
     <script src="js/converters/to-pdf/ppt-to-pdf.js"></script>
     <script src="js/converters/to-pdf/html-to-pdf.js"></script>
-    <script src="js/converters/to-pdf/text-to-pdf.js"></script>
     <script src="js/esign/aadhar-sign.js"></script>
     <script src="js/esign/digital-sign.js"></script>
     <script src="js/esign/global-sign.js"></script>
