@@ -46,14 +46,12 @@
         .tag-global { background-color: #00008b; color: #fff; }
         .tool-icon { width: 22px; height: 22px; object-fit: contain; }
 
-        /* Main Content Area */
+        /* Main UI */
         .content-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; }
         .wish-container { margin-top: 60px; text-align: center; }
         .wish-text { font-size: 32px; font-weight: 800; color: #000; letter-spacing: -1px; margin-bottom: 10px; }
         .type-heading { font-family: 'Courier Prime', monospace; font-size: 28px; font-weight: 700; color: #111; height: 40px; margin-bottom: 30px; }
         
-        /* Hero Box */
-        @keyframes floatBox { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
         .hero { width: 100%; max-width: 1000px; text-align: center; position: relative; z-index: 1; }
         .upload-container { 
             position: relative; width: 100%; max-width: 600px; height: 350px; margin: 0 auto; 
@@ -64,28 +62,27 @@
         }
         .box-tool-name { position: relative; z-index: 5; color: #e5322d; font-size: 28px; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; }
         .floating-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; background: linear-gradient(135deg, #fffafa 0%, #f8faff 100%); opacity: 0.9; }
-
         .cloud-icon-svg { width: 85px; z-index: 5; margin-bottom: 10px; filter: drop-shadow(0 10px 20px rgba(229,50,45,0.2)); }
         .upload-label-text { font-size: 20px; font-weight: 800; color: #444; z-index: 5; }
 
-        /* Documentation Area - Perfectly Aligned Below Box */
-        .info-floating-wrap { width: 100%; max-width: 600px; margin: 30px auto; text-align: left; padding: 0 10px; height: 120px; } /* Fixed height to prevent footer jumping */
+        /* Documentation Area - HIDDEN BY DEFAULT */
+        .info-floating-wrap { width: 100%; max-width: 600px; margin: 30px auto; text-align: left; padding: 0 10px; display: none; min-height: 120px; }
         .info-item { margin-bottom: 15px; }
         .info-item h4 { font-size: 14px; color: #e5322d; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; }
         .char-anim { display: inline-block; opacity: 0; transform: translateX(-10px); animation: charIn 0.3s forwards; color: #111; font-weight: 600; font-size: 16px; line-height: 1.6; }
-        @keyframes charIn { to { opacity: 1; transform: translateX(0); } }
 
-        /* Auth Section */
+        /* Professional Auth UI */
         .nav-right { display: flex; align-items: center; min-width: 300px; justify-content: flex-end; }
         .user-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 10px 15px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .user-info { display: flex; align-items: center; gap: 10px; }
-        .user-pic { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .user-pic { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #eee; }
         .user-name-text { font-size: 14px; font-weight: 800; color: #333; }
         .logout-btn-blue { width: 100%; background: #0073b1; color: #fff; border: none; padding: 8px 0; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 700; transition: 0.3s; }
 
-        /* Sticky Taskbar Bottom */
+        /* Taskbar Bottom */
         .taskbar-bottom { width: 100%; height: 60px; background: #fff; display: flex; align-items: center; justify-content: center; border-top: 1px solid #eee; font-size: 13px; font-weight: 700; color: #777; margin-top: auto; }
 
+        @keyframes charIn { to { opacity: 1; transform: translateX(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -164,7 +161,7 @@
                                 <h3>Edit</h3>
                                 <ul>
                                     <li><a onclick="updateTool('Rotate PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" class="tool-icon"> Rotate</a></li>
-                                    <li><a onclick="updateTool('Add Page Numbers')"><img src="https://cdn-icons-png.flaticon.com/512/337/337943.png" class="tool-icon"> Page Numbers</a></li>
+                                    <li><a onclick="updateTool('Add Page Numbers')"><img src="https://cdn-icons-png.flaticon.com/512/337/337943.png" class="tool-icon"> Numbers</a></li>
                                     <li><a onclick="updateTool('Add Watermark')"><img src="https://cdn-icons-png.flaticon.com/512/337/337942.png" class="tool-icon"> Watermark</a></li>
                                     <li><a onclick="updateTool('Crop PDF')"><img src="https://cdn-icons-png.flaticon.com/512/2541/2541991.png" class="tool-icon"> Crop</a></li>
                                     <li><a onclick="updateTool('Edit PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" class="tool-icon"> Edit</a></li>
@@ -201,7 +198,7 @@
             <div id="user-section" style="display:none;">
                 <div class="user-card">
                     <div class="user-info">
-                        <img id="user-avatar" class="user-pic" src="" alt="Profile">
+                        <img id="user-avatar" class="user-pic" src="" alt="">
                         <span id="display-name" class="user-name-text"></span>
                     </div>
                     <button class="logout-btn-blue" onclick="handleLogout()">Log Out</button>
@@ -251,16 +248,16 @@
             'Split PDF': { what: 'Divide a large PDF into smaller parts or extract individual pages.', how: 'Upload your file, specify the page ranges, and download segments.' },
             'Compress PDF': { what: 'Reduce file size while maintaining the highest possible quality.', how: 'Select a heavy PDF and let our optimization engine shrink it.' },
             'JPG to PDF': { what: 'Convert images into high-quality PDF files for professional use.', how: 'Upload images, adjust settings, and generate PDF.' },
-            'WORD to PDF': { what: 'Transform Word documents into readable PDF format.', how: 'Upload your Word file and download the converted PDF.' },
-            'EXCEL to PDF': { what: 'Convert Excel spreadsheets into organized PDF tables.', how: 'Select your .xlsx file and download the formatted PDF.' },
+            'WORD to PDF': { what: 'Transform Word documents into readable PDF format.', how: 'Upload your .docx file and download the converted PDF.' },
+            'EXCEL to PDF': { what: 'Convert spreadsheets into clean, organized PDF tables.', how: 'Select your .xlsx file and download the formatted PDF.' },
             'PPT to PDF': { what: 'Transform PowerPoint slides into portable PDF documents.', how: 'Upload your slides and get a PDF version ready for sharing.' },
             'HTML to PDF': { what: 'Save full web pages as offline PDF documents with one click.', how: 'Paste a URL or upload HTML to generate a readable PDF.' },
-            'PDF to JPG': { what: 'Extract PDF pages as high-resolution images.', how: 'Upload the PDF and receive a ZIP of all images.' },
-            'PDF to WORD': { what: 'Convert PDF files back into editable Microsoft Word documents.', how: 'Upload your PDF and rebuild the layout.' },
+            'PDF to JPG': { what: 'Extract every single page of your PDF as high-resolution images.', how: 'Upload the PDF and receive a ZIP of all images.' },
+            'PDF to WORD': { what: 'Convert PDF files back into editable Microsoft Word documents.', how: 'Upload your PDF and wait for our AI to rebuild the layout.' },
             'PDF to EXCEL': { what: 'Extract data tables from PDF directly into Excel spreadsheets.', how: 'Select a PDF with tables and download the generated .xlsx.' },
-            'PDF to PPT': { what: 'Convert PDF pages back into editable PowerPoint slides.', how: 'Upload your file and receive the generated slides.' },
+            'PDF to PPT': { what: 'Convert PDF pages back into editable PowerPoint slides.', how: 'Upload your PDF and receive generated slides.' },
             'PDF to HTML': { what: 'Turn your PDF document into a responsive HTML web page.', how: 'Upload your file and our engine will create the HTML code.' },
-            'PDF to PDF/A': { what: 'Standardize PDF for long-term digital archiving.', how: 'Upload file and convert it for permanent preservation.' },
+            'PDF to PDF/A': { what: 'Standardize PDF for long-term ISO digital archiving.', how: 'Upload file and convert it for permanent preservation.' },
             'Remove Pages': { what: 'Permanently delete unwanted pages from your document.', how: 'Select the pages you want to discard and save.' },
             'Extract Pages': { what: 'Save specific pages from a document as a brand new PDF.', how: 'Check required pages and click extract.' },
             'Rename PDF': { what: 'Professionally rename your PDF document filename instantly.', how: 'Type the new name and click update.' },
@@ -276,12 +273,12 @@
             'Protect PDF': { what: 'Encrypt PDF documents with a strong, secure password.', how: 'Set your secure password and download.' },
             'Sign PDF': { what: 'Apply digital signatures to any page of your PDF.', how: 'Draw your signature and place it on the document.' },
             'Redact PDF': { what: 'Permanently black out sensitive text or images.', how: 'Select the private areas to hide them forever.' },
-            'Compare PDF': { what: 'Identify differences between two versions of a PDF.', how: 'Upload both files and see highlighted changes.' },
-            'AI Summarizer': { what: 'Summarize long PDF documents into key points using AI.', how: 'Upload your PDF and get an intelligent summary.' },
+            'Compare PDF': { what: 'Identify differences between two versions of a PDF.', how: 'Upload both files and see highlighted changes side-by-side.' },
+            'AI Summarizer': { what: 'Summarize long PDF documents into key points using AI.', how: 'Upload your PDF and get an instant intelligent summary.' },
             'Translate PDF': { what: 'Translate the entire content of your PDF into multiple languages.', how: 'Upload your file and select your target language.' },
-            'Digital Sign': { what: 'Fast electronic signature for any user or document.', how: 'Draw or type your sign and place it on the page.' },
-            'Aadhar eSign': { what: 'Official Indian e-signature using Aadhaar OTP.', how: 'Verify your identity via UIDAI and sign legally.' },
-            'Global eSign': { what: 'Enterprise-grade digital signature for business.', how: 'Verify your global ID and sign documents securely.' }
+            'Digital Sign': { what: 'Fast electronic signature for any user or document globally.', how: 'Draw or type your sign and place it on the page.' },
+            'Aadhar eSign': { what: 'Official Indian electronic signature using Aadhaar OTP.', how: 'Verify your identity via UIDAI OTP and sign legally.' },
+            'Global eSign': { what: 'Enterprise-grade digital signature for international standards.', how: 'Verify your global ID and sign documents securely.' }
         };
 
         let hideTimeout;
@@ -290,15 +287,18 @@
             clearTimeout(hideTimeout);
             document.getElementById('tool-title-box').innerText = name.toUpperCase();
             const infoArea = document.getElementById('tool-info-area');
+            
             infoArea.style.display = 'block';
+            
             if(toolDocs[name]) {
                 animateText('info-what', toolDocs[name].what);
                 animateText('info-how', toolDocs[name].how);
             }
-            hideTimeout = setTimeout(() => { 
+
+            hideTimeout = setTimeout(() => {
                 document.getElementById('info-what').innerHTML = "";
                 document.getElementById('info-how').innerHTML = "";
-                infoArea.style.display = 'none'; 
+                infoArea.style.display = 'none';
             }, 10000);
         }
 
@@ -314,6 +314,7 @@
             });
         }
 
+        /* Auth Logic */
         function handleCredentialResponse(r) {
             const p = JSON.parse(atob(r.credential.split('.')[1]));
             localStorage.setItem("userName", p.given_name);
@@ -354,7 +355,7 @@
                 this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height;
                 this.size = Math.random()*2+0.5; this.vx = (Math.random()-0.5)*0.5; this.vy = (Math.random()-0.5)*0.5;
                 this.isStar = Math.random()>0.85; this.angle = Math.random()*Math.PI*2;
-                this.color = ['#1a237e', '#90caf9', '#ef9a9a', '#444'][Math.floor(Math.random()*4)];
+                this.color = ['#1a237e', '#90caf9', '#ef9a9a', '#777'][Math.floor(Math.random()*4)];
             }
             draw() {
                 ctx.fillStyle = this.color; ctx.beginPath();
