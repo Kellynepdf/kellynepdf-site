@@ -5,84 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KellynePDF - Professional PDF Solution</title>
     
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
-        /* Global Styling */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #ffffff; color: #333; overflow-x: hidden; min-height: 100vh; }
-        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: #fdfdfd; color: #222; overflow-x: hidden; min-height: 100vh; }
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
         /* Navigation Bar */
-        .navbar { display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 95px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 5000; overflow: visible; }
-        .nav-waves { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; }
-        .wave { position: absolute; width: 200%; height: 100%; background-repeat: repeat-x; background-position: 0 bottom; transform-origin: center bottom; }
-        .wave1 { background-image: linear-gradient(to right, rgba(229, 50, 45, 0.05) 0%, rgba(255, 255, 255, 0) 50%, rgba(135, 206, 235, 0.05) 100%); animation: waveMove 15s linear infinite; }
-        .wave2 { background-image: linear-gradient(to right, rgba(135, 206, 235, 0.08) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(229, 50, 45, 0.08) 100%); animation: waveMove 10s linear infinite reverse; top: 5px; }
-        @keyframes waveMove { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .navbar { display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 100px; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px); border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 5000; }
+        .nav-left-section { display: flex; align-items: center; gap: 40px; flex: 1; }
+        .logo-container { display: flex; align-items: center; text-decoration: none; gap: 10px; }
+        .logo-img { height: 45px; width: auto; }
+        .logo-text { font-size: 22px; font-weight: 900; color: #e5322d; text-transform: uppercase; letter-spacing: 1px; }
 
-        .nav-left { display: flex; align-items: center; gap: 30px; }
-        .logo-container { display: flex; align-items: center; text-decoration: none; }
-        .logo-img { height: 45px; width: auto; margin-right: 10px; }
-        .logo-text { font-size: 22px; font-weight: 900; color: #e5322d; text-transform: uppercase; }
-
-        /* Navbar Menu & Stationary Dropdowns */
         .nav-menu { display: flex; list-style: none; gap: 20px; height: 100%; align-items: center; }
         .nav-menu li { position: relative; height: 100%; display: flex; align-items: center; }
-        .nav-menu li > a { text-decoration: none; color: #222; font-size: 14px; font-weight: 800; text-transform: uppercase; transition: color 0.2s; padding: 35px 10px; cursor: pointer; }
-        .nav-menu li a:hover { color: #e5322d; }
-
-        .dropdown-content { display: none; position: absolute; top: 90px; left: 0; background-color: #fff; box-shadow: 0px 15px 40px rgba(0,0,0,0.1); border-radius: 16px; padding: 30px; z-index: 9999; border: 1px solid #eee; animation: fadeIn 0.3s ease; }
-        .convert-dropdown { min-width: 550px; grid-template-columns: 1fr 1fr; gap: 40px; }
-        .mega-dropdown { min-width: 950px; grid-template-columns: repeat(4, 1fr); gap: 30px; left: auto; right: -200px; }
-        .esign-dropdown { min-width: 350px; flex-direction: column; gap: 5px; padding: 15px; }
+        .nav-menu li > a { text-decoration: none; color: #111; font-size: 15px; font-weight: 800; text-transform: uppercase; transition: color 0.2s; cursor: pointer; padding: 35px 5px; }
         
-        .nav-menu li:hover .dropdown-content, .nav-menu li:hover .esign-dropdown { display: flex; }
-        .nav-menu li:hover .convert-dropdown, .nav-menu li:hover .mega-dropdown { display: grid; }
+        /* Dropdown Stability */
+        .dropdown-content { display: none; position: absolute; top: 85px; left: 0; background-color: #fff; box-shadow: 0px 15px 50px rgba(0,0,0,0.15); border-radius: 16px; padding: 30px; z-index: 9999; border: 1px solid #eee; animation: fadeIn 0.3s ease; }
+        .nav-menu li:hover .dropdown-content { display: grid; }
+        .esign-dropdown { min-width: 380px; flex-direction: column; gap: 8px; padding: 15px; }
+        .nav-menu li:hover .esign-dropdown { display: flex; }
+        
+        .convert-dropdown { min-width: 550px; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .mega-dropdown { min-width: 1100px; grid-template-columns: repeat(5, 1fr); gap: 20px; left: 50%; transform: translateX(-65%); }
 
-        .dropdown-column h3 { font-size: 12px; color: #b0b0b0; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1.5px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
+        .dropdown-column h3 { font-size: 10px; color: #aaa; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #f5f5f5; padding-bottom: 5px; }
         .dropdown-column ul { list-style: none; }
-        .dropdown-column ul li a, .esign-link { font-size: 13.5px; font-weight: 700; color: #333; display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 10px; transition: 0.2s; text-decoration: none; cursor: pointer; }
-        .esign-link { font-size: 11px; text-transform: uppercase; }
-        .dropdown-column ul li a:hover, .esign-link:hover { background: #fff5f5; color: #e5322d; }
+        .dropdown-column ul li a, .esign-link { font-size: 13px; font-weight: 700; color: #333; display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 10px; transition: 0.2s; text-decoration: none; cursor: pointer; }
+        .dropdown-column ul li a:hover { background: #fff5f5; color: #e5322d; }
 
-        .tag { font-size: 9px; padding: 3px 8px; border-radius: 20px; color: #fff; font-weight: 800; margin-left: auto; text-transform: uppercase; }
-        .tag-any { background-color: #ffffff; color: #000000; border: 1px solid #ddd; }
-        .tag-india { background-color: #006400; }
-        .tag-global { background-color: #00008b; }
+        .tag { font-size: 8px; padding: 3px 10px; border-radius: 20px; font-weight: 800; margin-left: auto; text-transform: uppercase; }
+        .tag-any { background-color: #ffffff; color: #000; border: 1px solid #ddd; }
+        .tag-india { background-color: #006400; color: #fff; }
+        .tag-global { background-color: #00008b; color: #fff; }
         .tool-icon { width: 22px; height: 22px; object-fit: contain; }
 
-        /* Compact Hero Section */
-        .hero { max-width: 1000px; margin: 40px auto; text-align: center; padding: 0 20px; position: relative; z-index: 1; }
-        .greeting-text { font-size: 32px; font-weight: 800; color: #222; margin-bottom: 10px; }
-        .hero h1 { font-size: 20px; font-weight: 600; margin-bottom: 30px; color: #666; }
+        /* UI Font Resizing */
+        .wish-container { margin-top: 60px; text-align: center; }
+        .wish-text { font-size: 32px; font-weight: 800; color: #444; letter-spacing: -1px; } /* Thagginchina font size */
+        .type-heading { font-size: 26px; font-weight: 900; color: #111; height: 35px; margin-bottom: 30px; } /* Penchina font size */
+        
+        @keyframes floatBox { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
+        .hero { max-width: 1000px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
+        
+        .upload-container { 
+            position: relative; width: 100%; max-width: 600px; height: 350px; margin: 0 auto; 
+            border-radius: 40px; display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; border: 2.5px dashed rgba(229, 50, 45, 0.15); 
+            background: #ffffff; box-shadow: 0 30px 70px rgba(0,0,0,0.05); cursor: pointer;
+            animation: floatBox 6s ease-in-out infinite; overflow: hidden;
+        }
 
-        /* Compact Upload Box with Floating Multi-Colors */
-        .upload-container { position: relative; width: 100%; max-width: 750px; height: 350px; margin: 0 auto; border-radius: 35px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; border: 2.5px dashed rgba(229, 50, 45, 0.2); background: #ffffff; box-shadow: 0 25px 60px rgba(0,0,0,0.05); transition: 0.4s; cursor: pointer; }
-        .upload-container:hover { border-color: #e5322d; transform: translateY(-5px); }
-        .floating-bg { position: absolute; top: -50%; left: -50%; right: -50%; bottom: -50%; z-index: 1; background: linear-gradient(45deg, #fff0f0, #f3e8ff, #e0f2fe, #f5f3ff); background-size: 400% 400%; animation: colorFlow 10s ease infinite; opacity: 0.7; filter: blur(40px); }
-        @keyframes colorFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .box-tool-name { position: relative; z-index: 5; color: #e5322d; font-size: 28px; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; }
+        .floating-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; background: linear-gradient(135deg, #fffafa 0%, #f8faff 100%); opacity: 0.9; }
 
-        .box-tool-name { position: relative; z-index: 2; color: #000; font-size: 24px; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; }
-        .cloud-upload-wrapper { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .cloud-icon { width: 85px; height: 85px; filter: drop-shadow(0 10px 15px rgba(229, 50, 45, 0.15)); transition: transform 0.3s ease; }
-        .upload-container:hover .cloud-icon { transform: scale(1.1); }
-        .upload-label-text { font-size: 22px; font-weight: 800; color: #e5322d; }
-        .drag-drop-text { position: relative; z-index: 2; font-size: 17px; color: #888; font-weight: 600; margin-top: 10px; }
+        .cloud-icon-svg { width: 80px; z-index: 5; margin-bottom: 15px; filter: drop-shadow(0 10px 20px rgba(229,50,45,0.2)); }
+        .upload-label-text { font-size: 20px; font-weight: 800; color: #444; z-index: 5; }
 
-        /* Documentation Section */
-        .tool-info-container { max-width: 750px; margin: 40px auto; padding: 30px; background: #fff; border-radius: 20px; border: 1px solid #eee; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.02); display: none; animation: fadeIn 0.5s ease; position: relative; z-index: 1; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .info-title { font-size: 18px; font-weight: 900; color: #e5322d; margin-bottom: 15px; text-transform: uppercase; border-left: 4px solid #e5322d; padding-left: 15px; }
-        .info-block { margin-bottom: 20px; }
-        .info-block h4 { font-size: 14px; font-weight: 800; color: #111; margin-bottom: 5px; text-transform: uppercase; }
-        .info-block p { font-size: 14px; color: #555; line-height: 1.6; }
+        /* Floating Animated Info - Auto Hide Logic */
+        .info-floating-wrap { max-width: 750px; margin: 50px auto; text-align: left; padding: 0 30px; display: none; }
+        .info-item { margin-bottom: 20px; }
+        .info-item h4 { font-size: 14px; color: #e5322d; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; }
+        .char-anim { display: inline-block; opacity: 0; transform: translateX(-10px); animation: charIn 0.3s forwards; color: #555; font-weight: 600; font-size: 16px; line-height: 1.6; }
+        @keyframes charIn { to { opacity: 1; transform: translateX(0); } }
 
-        .nav-right { display: flex; align-items: center; }
-        .google-login-btn { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 14px; }
+        .nav-right { display: flex; align-items: center; min-width: 220px; justify-content: flex-end;}
+        .logout-btn { background: #f0f0f0; border: 1px solid #ddd; padding: 8px 16px; border-radius: 30px; cursor: pointer; font-size: 11px; font-weight: 800; color: #666; text-transform: uppercase; margin-left: 10px; transition: 0.3s; }
+        .logout-btn:hover { background: #ffebeb; color: #e5322d; border-color: #e5322d; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -90,93 +87,96 @@
     <canvas id="particle-canvas"></canvas>
 
     <header class="navbar">
-        <div class="nav-waves"><div class="wave wave1"></div><div class="wave wave2"></div></div>
-        <div class="nav-left">
+        <div class="nav-left-section">
             <a href="index.html" class="logo-container">
                 <img src="logo.png" alt="KellynePDF" class="logo-img">
-                <div class="logo-text">KELLYNE<span>PDF</span></div>
+                <div class="logo-text">KELLYNEPDF</div>
             </a>
             <nav>
                 <ul class="nav-menu">
                     <li><a onclick="updateTool('Merge PDF')">Merge PDF</a></li>
                     <li><a onclick="updateTool('Split PDF')">Split PDF</a></li>
                     <li><a onclick="updateTool('Compress PDF')">Compress PDF</a></li>
-                    
                     <li>
                         <a>Convert PDF ▾</a>
                         <div class="dropdown-content convert-dropdown">
                             <div class="dropdown-column">
-                                <h3>Convert to PDF</h3>
+                                <h3>To PDF</h3>
                                 <ul>
                                     <li><a onclick="updateTool('JPG to PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337940.png" class="tool-icon"> JPG to PDF</a></li>
                                     <li><a onclick="updateTool('WORD to PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337948.png" class="tool-icon"> WORD to PDF</a></li>
-                                    <li><a onclick="updateTool('POWERPOINT to PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337947.png" class="tool-icon"> POWERPOINT to PDF</a></li>
                                     <li><a onclick="updateTool('EXCEL to PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337941.png" class="tool-icon"> EXCEL to PDF</a></li>
+                                    <li><a onclick="updateTool('PPT to PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337947.png" class="tool-icon"> PPT to PDF</a></li>
                                     <li><a onclick="updateTool('HTML to PDF')"><img src="https://cdn-icons-png.flaticon.com/512/2165/2165000.png" class="tool-icon"> HTML to PDF</a></li>
                                 </ul>
                             </div>
                             <div class="dropdown-column">
-                                <h3>Convert from PDF</h3>
+                                <h3>From PDF</h3>
                                 <ul>
                                     <li><a onclick="updateTool('PDF to JPG')"><img src="https://cdn-icons-png.flaticon.com/512/337/337940.png" class="tool-icon"> PDF to JPG</a></li>
                                     <li><a onclick="updateTool('PDF to WORD')"><img src="https://cdn-icons-png.flaticon.com/512/337/337948.png" class="tool-icon"> PDF to WORD</a></li>
-                                    <li><a onclick="updateTool('PDF to POWERPOINT')"><img src="https://cdn-icons-png.flaticon.com/512/337/337947.png" class="tool-icon"> PDF to POWERPOINT</a></li>
                                     <li><a onclick="updateTool('PDF to EXCEL')"><img src="https://cdn-icons-png.flaticon.com/512/337/337941.png" class="tool-icon"> PDF to EXCEL</a></li>
+                                    <li><a onclick="updateTool('PDF to HTML')"><img src="https://cdn-icons-png.flaticon.com/512/2165/2165000.png" class="tool-icon"> PDF to HTML</a></li>
                                     <li><a onclick="updateTool('PDF to PDF/A')"><img src="https://cdn-icons-png.flaticon.com/512/8242/8242253.png" class="tool-icon"> PDF to PDF/A</a></li>
                                 </ul>
                             </div>
                         </div>
                     </li>
-
                     <li>
                         <a>eSign PDF ▾</a>
                         <div class="esign-dropdown dropdown-content">
-                            <a class="esign-link" onclick="updateTool('Digital Sign')">🖋️ Digital Sign <span class="tag tag-any">for anyone</span></a>
-                            <a class="esign-link" onclick="updateTool('Aadhar eSign')"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/cf/Aadhaar_Logo.svg/1200px-Aadhaar_Logo.svg.png" style="width:20px"> Aadhar eSign <span class="tag tag-india">for Indians</span></a>
-                            <a class="esign-link" onclick="updateTool('Global eSign')">🌐 Global eSign <span class="tag tag-global">for Global user</span></a>
+                            <a class="esign-link" onclick="updateTool('Digital Sign')">🖋️ Digital Sign <span class="tag tag-any">Anyone</span></a>
+                            <a class="esign-link" onclick="updateTool('Aadhar eSign')"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/cf/Aadhaar_Logo.svg/1200px-Aadhaar_Logo.svg.png" style="width:20px"> Aadhaar eSign <span class="tag tag-india">Indians</span></a>
+                            <a class="esign-link" onclick="updateTool('Global eSign')">🌐 Global eSign <span class="tag tag-global">Global</span></a>
                         </div>
                     </li>
-
                     <li>
                         <a>All PDF Tools ▾</a>
                         <div class="dropdown-content mega-dropdown">
                             <div class="dropdown-column">
                                 <h3>Organize</h3>
                                 <ul>
-                                    <li><a onclick="updateTool('Merge PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337944.png" class="tool-icon"> Merge PDF</a></li>
-                                    <li><a onclick="updateTool('Split PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337949.png" class="tool-icon"> Split PDF</a></li>
-                                    <li><a onclick="updateTool('Remove Pages')"><img src="https://cdn-icons-png.flaticon.com/512/6861/6861362.png" class="tool-icon"> Remove Pages</a></li>
-                                    <li><a onclick="updateTool('Extract Pages')"><img src="https://cdn-icons-png.flaticon.com/512/2991/2991108.png" class="tool-icon"> Extract Pages</a></li>
-                                    <li><a onclick="updateTool('Rename PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1250/1250615.png" class="tool-icon"> Rename PDF</a></li>
-                                    <li><a onclick="updateTool('Scan to PDF')"><img src="https://cdn-icons-png.flaticon.com/512/2685/2685048.png" class="tool-icon"> Scan to PDF</a></li>
+                                    <li><a onclick="updateTool('Merge PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337944.png" class="tool-icon"> Merge</a></li>
+                                    <li><a onclick="updateTool('Split PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337949.png" class="tool-icon"> Split</a></li>
+                                    <li><a onclick="updateTool('Remove Pages')"><img src="https://cdn-icons-png.flaticon.com/512/6861/6861362.png" class="tool-icon"> Remove</a></li>
+                                    <li><a onclick="updateTool('Extract Pages')"><img src="https://cdn-icons-png.flaticon.com/512/2991/2991108.png" class="tool-icon"> Extract</a></li>
+                                    <li><a onclick="updateTool('Rename PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1250/1250615.png" class="tool-icon"> Rename</a></li>
+                                    <li><a onclick="updateTool('Scan to PDF')"><img src="https://cdn-icons-png.flaticon.com/512/2685/2685048.png" class="tool-icon"> Scan</a></li>
                                 </ul>
                             </div>
                             <div class="dropdown-column">
                                 <h3>Optimize</h3>
                                 <ul>
-                                    <li><a onclick="updateTool('Compress PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337936.png" class="tool-icon"> Compress PDF</a></li>
-                                    <li><a onclick="updateTool('Repair PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1055/1055681.png" class="tool-icon"> Repair PDF</a></li>
-                                    <li><a onclick="updateTool('OCR PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1150/1150621.png" class="tool-icon"> OCR PDF</a></li>
+                                    <li><a onclick="updateTool('Compress PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337936.png" class="tool-icon"> Compress</a></li>
+                                    <li><a onclick="updateTool('Repair PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1055/1055681.png" class="tool-icon"> Repair</a></li>
+                                    <li><a onclick="updateTool('OCR PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1150/1150621.png" class="tool-icon"> OCR</a></li>
                                 </ul>
                             </div>
                             <div class="dropdown-column">
                                 <h3>Edit</h3>
                                 <ul>
-                                    <li><a onclick="updateTool('Rotate PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" class="tool-icon"> Rotate PDF</a></li>
-                                    <li><a onclick="updateTool('Add Page Numbers')"><img src="https://cdn-icons-png.flaticon.com/512/337/337943.png" class="tool-icon"> Add Page Numbers</a></li>
-                                    <li><a onclick="updateTool('Add Watermark')"><img src="https://cdn-icons-png.flaticon.com/512/337/337942.png" class="tool-icon"> Add Watermark</a></li>
-                                    <li><a onclick="updateTool('Crop PDF')"><img src="https://cdn-icons-png.flaticon.com/512/2541/2541991.png" class="tool-icon"> Crop PDF</a></li>
-                                    <li><a onclick="updateTool('Edit PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" class="tool-icon"> Edit PDF</a></li>
+                                    <li><a onclick="updateTool('Rotate PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" class="tool-icon"> Rotate</a></li>
+                                    <li><a onclick="updateTool('Add Page Numbers')"><img src="https://cdn-icons-png.flaticon.com/512/337/337943.png" class="tool-icon"> Numbers</a></li>
+                                    <li><a onclick="updateTool('Add Watermark')"><img src="https://cdn-icons-png.flaticon.com/512/337/337942.png" class="tool-icon"> Watermark</a></li>
+                                    <li><a onclick="updateTool('Crop PDF')"><img src="https://cdn-icons-png.flaticon.com/512/2541/2541991.png" class="tool-icon"> Crop</a></li>
+                                    <li><a onclick="updateTool('Edit PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" class="tool-icon"> Edit</a></li>
                                 </ul>
                             </div>
                             <div class="dropdown-column">
                                 <h3>Security</h3>
                                 <ul>
-                                    <li><a onclick="updateTool('Unlock PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337951.png" class="tool-icon"> Unlock PDF</a></li>
-                                    <li><a onclick="updateTool('Protect PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337945.png" class="tool-icon"> Protect PDF</a></li>
-                                    <li><a onclick="updateTool('Sign PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337950.png" class="tool-icon"> Sign PDF</a></li>
-                                    <li><a onclick="updateTool('Redact PDF')"><img src="https://cdn-icons-png.flaticon.com/512/2360/2360171.png" class="tool-icon"> Redact PDF</a></li>
-                                    <li><a onclick="updateTool('Compare PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337938.png" class="tool-icon"> Compare PDF</a></li>
+                                    <li><a onclick="updateTool('Unlock PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337951.png" class="tool-icon"> Unlock</a></li>
+                                    <li><a onclick="updateTool('Protect PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337945.png" class="tool-icon"> Protect</a></li>
+                                    <li><a onclick="updateTool('Sign PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337950.png" class="tool-icon"> Sign</a></li>
+                                    <li><a onclick="updateTool('Redact PDF')"><img src="https://cdn-icons-png.flaticon.com/512/2360/2360171.png" class="tool-icon"> Redact</a></li>
+                                    <li><a onclick="updateTool('Compare PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337938.png" class="tool-icon"> Compare</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-column">
+                                <h3>Intelligence</h3>
+                                <ul>
+                                    <li><a onclick="updateTool('AI Summarizer')"><img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" class="tool-icon"> AI Summarizer</a></li>
+                                    <li><a onclick="updateTool('Translate PDF')"><img src="https://cdn-icons-png.flaticon.com/512/3269/3269819.png" class="tool-icon"> Translate PDF</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -184,119 +184,195 @@
                 </ul>
             </nav>
         </div>
-        <div class="nav-right"><button class="google-login-btn" onclick="googleLogin()"><img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" style="width:20px;"> Continue with Google</button></div>
+
+        <div class="nav-right">
+            <div id="login-section">
+                <div id="g_id_onload" data-client_id="1056519552768-qis2jrnm3fokkrmpr3teoid1lqvgvplh.apps.googleusercontent.com" data-callback="handleCredentialResponse"></div>
+                <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="continue_with" data-size="large"></div>
+            </div>
+            <div id="user-section" class="auth-container" style="display:none;">
+                <span id="display-name" style="font-weight:800; font-size:14px;"></span>
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
     </header>
 
+    <div class="wish-container">
+        <div id="greeting" class="wish-text">Hello Guest!</div>
+        <div id="sub-heading" class="type-heading"></div>
+    </div>
+
     <main class="hero">
-        <div id="greeting" class="greeting-text">Welcome!</div>
-        <h1>Kellyne<span>PDF</span> - All-In-One Solution</h1>
-        
         <div class="upload-container" id="drop-zone" onclick="document.getElementById('file-input').click()">
             <div class="floating-bg"></div>
-            <div id="tool-display-name" class="box-tool-name">SELECT PDF FILES</div>
-            <div class="cloud-upload-wrapper">
-                <img src="https://cdn-icons-png.flaticon.com/512/860/860812.png" alt="Upload" class="cloud-icon">
-                <div class="upload-label-text">Upload your files</div>
-                <input type="file" id="file-input" hidden multiple accept=".pdf">
-            </div>
-            <div class="drag-drop-text">or drop PDF files here</div>
+            <div id="tool-title-box" class="box-tool-name">SELECT PDF FILES</div>
+            <svg class="cloud-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 10V9C7 6.23858 9.23858 4 12 4C14.7614 4 17 6.23858 17 9V10C19.2091 10 21 11.7909 21 14C21 16.2091 19.2091 18 17 18H7C4.79086 18 3 16.2091 3 14C3 11.7909 4.79086 10 7 10Z" stroke="#e5322d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 12V15M12 12L10 13.5M12 12L14 13.5" stroke="#e5322d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="upload-label-text">Click or Drag & Drop Files</div>
+            <input type="file" id="file-input" hidden multiple>
         </div>
 
-        <div id="tool-info-box" class="tool-info-container">
-            <h2 id="info-tool-title" class="info-title">Documentation</h2>
-            <div class="info-block"><h4>What is this?</h4><p id="info-what"></p></div>
-            <div class="info-block"><h4>How to use?</h4><p id="info-how"></p></div>
+        <div id="tool-info-area" class="info-floating-wrap">
+            <div class="info-item">
+                <h4>What is this?</h4>
+                <div id="info-what"></div>
+            </div>
+            <div class="info-item">
+                <h4>How to use?</h4>
+                <div id="info-how"></div>
+            </div>
         </div>
     </main>
 
     <script>
-        // FULL DATA FOR ALL TOOLS & SUB-TOOLS
         const toolDocs = {
-            'Merge PDF': { what: 'Combine multiple PDF files into one single document in any order.', how: 'Upload your PDFs, arrange order, and click Merge.' },
-            'Split PDF': { what: 'Separate a large PDF into smaller files or individual pages.', how: 'Upload your PDF and select the page ranges to split.' },
-            'Compress PDF': { what: 'Reduce PDF file size while maintaining the best possible quality.', how: 'Upload a heavy PDF file and wait for optimization.' },
-            'JPG to PDF': { what: 'Convert image files (JPG, PNG, GIF) into a professional PDF.', how: 'Select your images and download the generated PDF.' },
-            'WORD to PDF': { what: 'Transform Word documents (.docx) into universally readable PDF files.', how: 'Upload your Word file and the converter handles the rest.' },
-            'POWERPOINT to PDF': { what: 'Convert presentation slides (PPTX) into a portable PDF format.', how: 'Upload your slides and get slide-based PDF doc.' },
-            'EXCEL to PDF': { what: 'Transform Excel sheets into easy-to-read PDF tables.', how: 'Upload your spreadsheet and we format it for PDF viewing.' },
-            'HTML to PDF': { what: 'Save web pages as professional PDFs for offline reading.', how: 'Upload HTML file or paste a web URL to convert.' },
-            'PDF to JPG': { what: 'Extract PDF pages as separate high-quality JPG image files.', how: 'Upload PDF and download all pages as image files in a ZIP.' },
-            'PDF to WORD': { what: 'Convert PDF back into editable Microsoft Word documents.', how: 'Upload PDF and rebuild the document layout in .docx.' },
-            'PDF to POWERPOINT': { what: 'Turn PDF pages into editable PowerPoint presentation slides.', how: 'Upload PDF and wait for PPTX slide conversion.' },
-            'PDF to EXCEL': { what: 'Extract PDF tables directly into organized Excel spreadsheets.', how: 'Upload PDF with tables and download the .xlsx file.' },
-            'PDF to PDF/A': { what: 'Standardize PDF for long-term archiving (ISO standard).', how: 'Upload your PDF to convert it to ISO archive-ready format.' },
-            'Remove Pages': { what: 'Delete specific unwanted pages from your PDF document permanently.', how: 'Select the pages you want to remove and save the file.' },
-            'Extract Pages': { what: 'Save specific pages as a new, separate PDF document.', how: 'Select the pages required and click extract to download.' },
-            'Rename PDF': { what: 'Change the filename of your PDF document professionally.', how: 'Upload file, type new name, and click update instantly.' },
-            'Scan to PDF': { what: 'Create a PDF using your camera or scanner directly.', how: 'Grant camera access, scan your document and save to PDF.' },
-            'Repair PDF': { what: 'Recover data from corrupted or damaged PDF files.', how: 'Upload the broken file; we will try to fix the structure.' },
-            'OCR PDF': { what: 'Convert scanned images into searchable and selectable text.', how: 'Upload scan and let OCR recognize text automatically.' },
-            'Rotate PDF': { what: 'Correct orientation of upside-down or sideways PDF pages.', how: 'Click rotate icons to fix alignment and save.' },
-            'Add Page Numbers': { what: 'Add automatic page numbering to your PDF headers/footers.', how: 'Choose style and position then apply numbering.' },
-            'Add Watermark': { what: 'Protect your property by adding a text or image stamp.', how: 'Enter text or logo and set transparency level.' },
-            'Crop PDF': { what: 'Remove margins or trim specific areas of your PDF pages.', how: 'Select crop area and apply changes to all pages.' },
-            'Edit PDF': { what: 'Directly add text, shapes, or highlights to your PDF.', how: 'Use online editor to type directly on document pages.' },
-            'Unlock PDF': { what: 'Remove password security from protected PDF files.', how: 'Enter known password to unlock and remove lock.' },
-            'Protect PDF': { what: 'Encrypt your PDF document with a strong secure password.', how: 'Set a secure password and download encrypted file.' },
-            'Sign PDF': { what: 'Apply a digital or handwritten signature to your pages.', how: 'Upload document and use signature tool to sign.' },
-            'Redact PDF': { what: 'Permanently hide sensitive text or images (Black out).', how: 'Select private areas to hide them forever.' },
-            'Compare PDF': { what: 'Identify differences between two versions of a PDF.', how: 'Upload both files for a side-by-side comparison.' },
-            'Digital Sign': { what: 'A fast electronic signature for any user or document.', how: 'Draw sign using mouse and place anywhere.' },
-            'Aadhar eSign': { what: 'Legal Indian e-signature using Aadhar OTP authentication.', how: 'Verify via UIDAI OTP and sign document.' },
-            'Global eSign': { what: 'Secure digital signatures for global business standards.', how: 'Verify identity and sign international documents.' }
+            'Merge PDF': { what: 'Combine multiple PDF files into one professional document instantly.', how: 'Upload 2 or more PDFs, arrange them in order, and click Merge.' },
+            'Split PDF': { what: 'Divide a large PDF into smaller parts or extract individual pages as separate files.', how: 'Upload your file, specify the page ranges, and download the segments.' },
+            'Compress PDF': { what: 'Reduce the file size of your PDF while maintaining the highest possible visual quality.', how: 'Select a heavy PDF and let our optimization engine shrink it automatically.' },
+            'JPG to PDF': { what: 'Convert image formats like JPG, PNG, and GIF into a clean, professional PDF file.', how: 'Upload your images, adjust page settings, and generate your document.' },
+            'WORD to PDF': { what: 'Transform Microsoft Word documents into universally readable PDF format.', how: 'Simply upload your Word file and download the converted PDF in seconds.' },
+            'EXCEL to PDF': { what: 'Convert complex Excel spreadsheets into neat, easy-to-read PDF tables.', how: 'Select your .xlsx file and we will format it for perfect PDF viewing.' },
+            'PPT to PDF': { what: 'Transform PowerPoint presentations into portable PDFs.', how: 'Upload your slides and get a PDF version ready for sharing.' },
+            'HTML to PDF': { what: 'Save full web pages as offline PDF documents with one click.', how: 'Paste a URL or upload an HTML file to generate a readable PDF.' },
+            'PDF to JPG': { what: 'Extract every single page of your PDF as high-resolution JPG images.', how: 'Upload the PDF and receive a ZIP containing all images.' },
+            'PDF to WORD': { what: 'Convert PDF files back into editable Microsoft Word documents.', how: 'Upload your PDF and wait for our AI to rebuild the editable layout.' },
+            'PDF to EXCEL': { what: 'Extract data tables from PDF directly into organized Excel spreadsheets.', how: 'Select a PDF with tables and download the generated .xlsx file.' },
+            'PDF to HTML': { what: 'Convert your PDF document into a responsive HTML web page.', how: 'Upload your file and our engine will create the HTML code.' },
+            'PDF to PDF/A': { what: 'Standardize your PDF for long-term archiving using the ISO-standard PDF/A format.', how: 'Upload your file and convert it for permanent digital preservation.' },
+            'Remove Pages': { what: 'Permanently delete specific unwanted pages from your PDF document.', how: 'Select the pages you want to discard and save the cleaned file.' },
+            'Extract Pages': { what: 'Save specific pages from a document as a brand new standalone PDF.', how: 'Check the boxes for the pages you need and click extract.' },
+            'Rename PDF': { what: 'Professionally rename your PDF document filename without opening it.', how: 'Type the new name in the field and click update instantly.' },
+            'Scan to PDF': { what: 'Create PDF documents instantly using your camera or connected scanner.', how: 'Grant camera permissions, capture the pages, and save as PDF.' },
+            'Repair PDF': { what: 'Recover data from corrupted or broken PDF files that won’t open.', how: 'Upload the damaged file; we will attempt to fix the structure.' },
+            'OCR PDF': { what: 'Convert scanned non-selectable PDFs into searchable text documents.', how: 'Upload your scan and let our OCR engine recognize text.' },
+            'Rotate PDF': { what: 'Correct the orientation of upside-down or sideways PDF pages.', how: 'Use rotation icons to fix alignment and save changes.' },
+            'Add Page Numbers': { what: 'Add automatic page numbering to your PDF headers or footers.', how: 'Choose your preferred numbering style and position, then apply.' },
+            'Add Watermark': { what: 'Protect your property by adding a text or image watermark to every page.', how: 'Enter your text/logo and set the transparency.' },
+            'Crop PDF': { what: 'Trim margins or specific areas of your PDF pages.', how: 'Select crop area and apply changes to the file.' },
+            'Edit PDF': { what: 'Directly add text, shapes, or highlights to your PDF content.', how: 'Use our online editor tools to type on the document pages.' },
+            'Unlock PDF': { what: 'Remove password security and printing restrictions from protected PDFs.', how: 'Enter the known password to permanently remove encryption.' },
+            'Protect PDF': { what: 'Encrypt your sensitive PDF documents with a strong, secure password.', how: 'Set your secure password and download the encrypted version.' },
+            'Sign PDF': { what: 'Apply digital signatures to any page of your PDF.', how: 'Draw your signature and place it on the document.' },
+            'Redact PDF': { what: 'Permanently black out sensitive text or images to protect privacy.', how: 'Select the private areas to hide them forever.' },
+            'Compare PDF': { what: 'Identify differences between two versions of a PDF side-by-side.', how: 'Upload both files and see highlighted changes.' },
+            'AI Summarizer': { what: 'Summarize long PDF documents into key points using advanced AI.', how: 'Upload your PDF and get an instant intelligent summary.' },
+            'Translate PDF': { what: 'Translate the entire content of your PDF into multiple languages.', how: 'Upload your file and select your target language.' },
+            'Digital Sign': { what: 'Fast electronic signature for any user globally.', how: 'Draw or type your sign and place it on the page.' },
+            'Aadhar eSign': { what: 'Official Indian electronic signature using Aadhaar OTP verification.', how: 'Verify your identity via UIDAI OTP and sign legally.' },
+            'Global eSign': { what: 'Enterprise-grade digital signature for international business.', how: 'Verify your global ID and sign documents securely.' }
         };
 
-        function setGreeting() {
-            const h = new Date().getHours();
-            let w = h < 12 ? "Good Morning" : h < 17 ? "Good Afternoon" : "Good Evening";
-            document.getElementById("greeting").innerText = `Hello Guest, ${w}!`;
-        }
-        setGreeting();
+        let hideTimeout;
 
-        function updateTool(name) { 
-            document.getElementById('tool-display-name').innerText = name;
-            const infoBox = document.getElementById('tool-info-box');
+        function updateTool(name) {
+            clearTimeout(hideTimeout);
+            document.getElementById('tool-title-box').innerText = name.toUpperCase();
+            const infoArea = document.getElementById('tool-info-area');
+            
+            infoArea.style.display = 'block';
+            
             if(toolDocs[name]) {
-                infoBox.style.display = 'block';
-                document.getElementById('info-tool-title').innerText = name;
-                document.getElementById('info-what').innerText = toolDocs[name].what;
-                document.getElementById('info-how').innerText = toolDocs[name].how;
+                animateText('info-what', toolDocs[name].what);
+                animateText('info-how', toolDocs[name].how);
             }
+
+            // Auto-hide after 10 seconds
+            hideTimeout = setTimeout(() => {
+                infoArea.style.display = 'none';
+            }, 10000);
         }
 
-        /* 450 Particles Jellyfish Logic */
+        function animateText(id, text) {
+            const el = document.getElementById(id);
+            el.innerHTML = "";
+            text.split("").forEach((char, i) => {
+                const span = document.createElement("span");
+                span.innerText = char === " " ? "\u00A0" : char;
+                span.className = "char-anim";
+                span.style.animationDelay = `${i * 0.012}s`;
+                el.appendChild(span);
+            });
+        }
+
+        function handleCredentialResponse(r) {
+            const p = JSON.parse(atob(r.credential.split('.')[1]));
+            localStorage.setItem("userName", p.given_name);
+            location.reload();
+        }
+        function handleLogout() { localStorage.removeItem("userName"); location.reload(); }
+        
+        window.onload = () => {
+            const user = localStorage.getItem("userName");
+            const h = new Date().getHours();
+            const wish = h<12?"Good Morning":h<17?"Good Afternoon":"Good Evening";
+            if(user) {
+                document.getElementById('login-section').style.display='none';
+                document.getElementById('user-section').style.display='flex';
+                document.getElementById('display-name').innerText = user;
+                document.getElementById('greeting').innerText = `Hello ${user}, ${wish}!`;
+            } else {
+                document.getElementById('greeting').innerText = `Hello Guest, ${wish}!`;
+            }
+            animateText('sub-heading', "KellynePDF - All-In-One Solution");
+        };
+
+        /* JELLYFISH 450 - SMOOTH FINISH */
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
-        const mouse = { x: null, y: null, radius: 150 };
+        const mouse = { x: null, y: null, radius: 180 };
         window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 
         class Particle {
             constructor() {
-                this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = (Math.random() - 0.5) * 0.4; this.speedY = (Math.random() - 0.5) * 0.4;
-                this.color = ['#1a237e', '#90caf9', '#ef9a9a', '#222222'][Math.floor(Math.random() * 4)];
-                this.angle = Math.random() * Math.PI * 2; this.spin = Math.random() * 0.01 + 0.005;
+                this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height;
+                this.size = Math.random()*2+0.5; this.vx = (Math.random()-0.5)*0.5; this.vy = (Math.random()-0.5)*0.5;
+                this.isStar = Math.random()>0.85; this.angle = Math.random()*Math.PI*2;
+                this.color = ['#1a237e', '#90caf9', '#ef9a9a', '#444'][Math.floor(Math.random()*4)];
             }
-            draw() { ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+            draw() {
+                ctx.fillStyle = this.color; ctx.beginPath();
+                if(this.isStar) {
+                    for(let i=0;i<5;i++){
+                        ctx.lineTo(this.x + this.size * Math.cos((18+i*72)*Math.PI/180), this.y + this.size * Math.sin((18+i*72)*Math.PI/180));
+                        ctx.lineTo(this.x + (this.size/2) * Math.cos((54+i*72)*Math.PI/180), this.y + (this.size/2) * Math.sin((54+i*72)*Math.PI/180));
+                    }
+                } else { ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); }
+                ctx.fill();
+            }
             update() {
-                this.angle += this.spin;
-                this.x += this.speedX + Math.sin(this.angle) * 0.2;
-                this.y += this.speedY + Math.cos(this.angle) * 0.2;
-                if (this.x > canvas.width) this.x = 0; if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0; if (this.y < 0) this.y = canvas.height;
-                if (mouse.x != null) {
+                this.angle += 0.01;
+                this.x += this.vx + Math.sin(this.angle)*0.2;
+                this.y += this.vy + Math.cos(this.angle)*0.2;
+                if(this.x>canvas.width) this.x=0; if(this.x<0) this.x=canvas.width;
+                if(this.y>canvas.height) this.y=0; if(this.y<0) this.y=canvas.height;
+                if(mouse.x!=null){
                     let dx = mouse.x - this.x; let dy = mouse.y - this.y;
-                    let dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < mouse.radius) { this.x -= dx * 0.02; this.y -= dy * 0.02; }
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    if(dist < mouse.radius){
+                        let force = (mouse.radius - dist) / mouse.radius;
+                        this.x -= dx * force * 0.03;
+                        this.y -= dy * force * 0.03;
+                    }
                 }
             }
         }
-        function init() { particles = []; for (let i = 0; i < 450; i++) particles.push(new Particle()); }
-        function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.draw(); p.update(); }); requestAnimationFrame(animate); }
+        function init() { particles=[]; for(let i=0;i<450;i++) particles.push(new Particle()); }
+        function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.draw();p.update();}); requestAnimationFrame(animate); }
         init(); animate();
+
+        const dropZone = document.getElementById('drop-zone');
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => {
+            dropZone.addEventListener(e, ev => { ev.preventDefault(); ev.stopPropagation(); });
+        });
+        dropZone.addEventListener('drop', (e) => {
+            const files = Array.from(e.dataTransfer.files);
+            if (files.length > 0) alert(`${document.getElementById('tool-title-box').innerText} is ready for ${files.length} files!`);
+        });
     </script>
 
     <script src="js/auth/google-oauth.js"></script>
