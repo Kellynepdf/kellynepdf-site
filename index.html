@@ -27,8 +27,9 @@
         .nav-left { display: flex; align-items: center; gap: 30px; }
         .logo-container { display: flex; align-items: center; text-decoration: none; }
         .logo-img { height: 45px; width: auto; margin-right: 10px; }
-        .logo-text { font-size: 24px; font-weight: 900; color: #e5322d; text-transform: uppercase; }
+        .logo-text { font-size: 22px; font-weight: 900; color: #e5322d; text-transform: uppercase; }
 
+        /* Navbar Menu & Stationary Dropdowns */
         .nav-menu { display: flex; list-style: none; gap: 20px; height: 100%; align-items: center; }
         .nav-menu li { position: relative; height: 100%; display: flex; align-items: center; }
         .nav-menu li > a { text-decoration: none; color: #222; font-size: 14px; font-weight: 800; text-transform: uppercase; transition: color 0.2s; padding: 35px 10px; cursor: pointer; }
@@ -42,14 +43,14 @@
         .nav-menu li:hover .dropdown-content, .nav-menu li:hover .esign-dropdown { display: flex; }
         .nav-menu li:hover .convert-dropdown, .nav-menu li:hover .mega-dropdown { display: grid; }
 
-        .dropdown-column h3 { font-size: 11px; color: #b0b0b0; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1.5px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
+        .dropdown-column h3 { font-size: 12px; color: #b0b0b0; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1.5px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
         .dropdown-column ul { list-style: none; }
         .dropdown-column ul li a, .esign-link { font-size: 13.5px; font-weight: 700; color: #333; display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 10px; transition: 0.2s; text-decoration: none; cursor: pointer; }
         .esign-link { font-size: 11px; text-transform: uppercase; }
         .dropdown-column ul li a:hover, .esign-link:hover { background: #fff5f5; color: #e5322d; }
 
-        .tag { font-size: 9px; padding: 3px 8px; border-radius: 20px; color: #fff; font-weight: 800; margin-left: auto; }
-        .tag-any { background-color: #90ee90; }
+        .tag { font-size: 9px; padding: 3px 8px; border-radius: 20px; color: #fff; font-weight: 800; margin-left: auto; text-transform: uppercase; }
+        .tag-any { background-color: #ffffff; color: #000000; border: 1px solid #ddd; }
         .tag-india { background-color: #006400; }
         .tag-global { background-color: #00008b; }
         .tool-icon { width: 22px; height: 22px; object-fit: contain; }
@@ -62,13 +63,12 @@
         /* Compact Upload Box with Floating Multi-Colors */
         .upload-container { position: relative; width: 100%; max-width: 750px; height: 350px; margin: 0 auto; border-radius: 35px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; border: 2.5px dashed rgba(229, 50, 45, 0.2); background: #ffffff; box-shadow: 0 25px 60px rgba(0,0,0,0.05); transition: 0.4s; cursor: pointer; }
         .upload-container:hover { border-color: #e5322d; transform: translateY(-5px); }
-
         .floating-bg { position: absolute; top: -50%; left: -50%; right: -50%; bottom: -50%; z-index: 1; background: linear-gradient(45deg, #fff0f0, #f3e8ff, #e0f2fe, #f5f3ff); background-size: 400% 400%; animation: colorFlow 10s ease infinite; opacity: 0.7; filter: blur(40px); }
         @keyframes colorFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
         .box-tool-name { position: relative; z-index: 2; color: #000; font-size: 24px; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; }
         .cloud-upload-wrapper { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .cloud-icon { width: 85px; filter: drop-shadow(0 10px 15px rgba(229, 50, 45, 0.15)); transition: transform 0.3s ease; }
+        .cloud-icon { width: 85px; height: 85px; filter: drop-shadow(0 10px 15px rgba(229, 50, 45, 0.15)); transition: transform 0.3s ease; }
         .upload-container:hover .cloud-icon { transform: scale(1.1); }
         .upload-label-text { font-size: 22px; font-weight: 800; color: #e5322d; }
         .drag-drop-text { position: relative; z-index: 2; font-size: 17px; color: #888; font-weight: 600; margin-top: 10px; }
@@ -163,7 +163,7 @@
                                 <h3>Edit</h3>
                                 <ul>
                                     <li><a onclick="updateTool('Rotate PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" class="tool-icon"> Rotate PDF</a></li>
-                                    <li><a onclick="updateTool('Add Page Numbers')"><img src="https://cdn-icons-png.flaticon.com/512/337/337943.png" class="tool-icon"> Page Numbers</a></li>
+                                    <li><a onclick="updateTool('Add Page Numbers')"><img src="https://cdn-icons-png.flaticon.com/512/337/337943.png" class="tool-icon"> Add Page Numbers</a></li>
                                     <li><a onclick="updateTool('Add Watermark')"><img src="https://cdn-icons-png.flaticon.com/512/337/337942.png" class="tool-icon"> Add Watermark</a></li>
                                     <li><a onclick="updateTool('Crop PDF')"><img src="https://cdn-icons-png.flaticon.com/512/2541/2541991.png" class="tool-icon"> Crop PDF</a></li>
                                     <li><a onclick="updateTool('Edit PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" class="tool-icon"> Edit PDF</a></li>
@@ -189,7 +189,7 @@
 
     <main class="hero">
         <div id="greeting" class="greeting-text">Welcome!</div>
-        <h1>KellynePDF - All-In-One Solution</h1>
+        <h1>Kellyne<span>PDF</span> - All-In-One Solution</h1>
         
         <div class="upload-container" id="drop-zone" onclick="document.getElementById('file-input').click()">
             <div class="floating-bg"></div>
@@ -210,49 +210,46 @@
     </main>
 
     <script>
-        // COMPREHENSIVE TOOL DATA
+        // FULL DATA FOR ALL TOOLS & SUB-TOOLS
         const toolDocs = {
-            'Merge PDF': { what: 'Combine multiple PDF files into one single document in any order.', how: 'Upload PDFs, drag to reorder them, and click the Merge button.' },
-            'Split PDF': { what: 'Separate a large PDF into smaller files or extract individual pages.', how: 'Upload your PDF, select the page ranges to split, and download.' },
-            'Compress PDF': { what: 'Reduce the file size of your PDF while maintaining quality.', how: 'Upload a heavy PDF file and our engine will shrink it.' },
-            'JPG to PDF': { what: 'Convert image files into a high-quality PDF document.', how: 'Select images, adjust settings like page size, and download PDF.' },
-            'WORD to PDF': { what: 'Transform Word doc (.docx) into professional PDF.', how: 'Upload Word file and get the PDF instantly.' },
-            'POWERPOINT to PDF': { what: 'Convert slides into portable PDF format.', how: 'Upload PPTX and get slide-based PDF.' },
-            'EXCEL to PDF': { what: 'Transform Excel sheets into readable PDF tables.', how: 'Upload spreadsheet and we will format for PDF.' },
-            'HTML to PDF': { what: 'Save web pages as professional PDFs.', how: 'Paste URL or upload HTML file to convert.' },
-            'PDF to JPG': { what: 'Extract PDF pages as separate JPG images.', how: 'Upload PDF and download ZIP of images.' },
-            'PDF to WORD': { what: 'Convert PDF back into editable Word doc.', how: 'Upload PDF and rebuild as docx.' },
-            'PDF to POWERPOINT': { what: 'Turn PDF pages into PowerPoint slides.', how: 'Upload PDF and wait for PPTX conversion.' },
-            'PDF to EXCEL': { what: 'Extract PDF tables into Excel sheets.', how: 'Upload PDF with tables and download .xlsx.' },
-            'PDF to PDF/A': { what: 'Standardize PDF for long-term archiving.', how: 'Upload PDF for ISO standard conversion.' },
-            'Remove Pages': { what: 'Delete specific unwanted pages from PDF.', how: 'Select pages to delete and save new file.' },
-            'Extract Pages': { what: 'Save specific pages as a new doc.', how: 'Select pages and click extract.' },
-            'Rename PDF': { what: 'Change the title of your PDF professionally.', how: 'Type the new name and update.' },
-            'Scan to PDF': { what: 'Create PDF using your camera or scanner.', how: 'Grant camera access and scan document.' },
-            'Repair PDF': { what: 'Recover data from corrupted PDF files.', how: 'Upload broken file and we will repair it.' },
-            'OCR PDF': { what: 'Convert scanned images into searchable text.', how: 'Upload scan and let OCR recognize text.' },
-            'Rotate PDF': { what: 'Correct orientation of PDF pages.', how: 'Click rotate icons to fix alignment.' },
-            'Page Numbers': { what: 'Add automatic numbering to PDF pages.', how: 'Choose style/position and apply.' },
-            'Add Watermark': { what: 'Protect PDF with a text or image stamp.', how: 'Enter text/logo and set transparency.' },
-            'Crop PDF': { what: 'Trim margins or specific areas of pages.', how: 'Select crop area and apply changes.' },
-            'Edit PDF': { what: 'Directly add text or highlights to PDF.', how: 'Use online editor to type directly on pages.' },
-            'Unlock PDF': { what: 'Remove password lock from protected PDF.', how: 'Enter password and remove encryption.' },
-            'Protect PDF': { what: 'Encrypt your PDF with a strong password.', how: 'Set secure password and download.' },
-            'Sign PDF': { what: 'Apply digital signature to your pages.', how: 'Draw/type signature and place on PDF.' },
-            'Redact PDF': { what: 'Black out sensitive text or info.', how: 'Select private areas to hide forever.' },
-            'Compare PDF': { what: 'Highlight differences between two PDFs.', how: 'Upload both files for side-by-side view.' },
-            'Digital Sign': { what: 'A fast electronic signature for any user.', how: 'Draw sign using mouse and place.' },
-            'Aadhar eSign': { what: 'Legal Indian e-sign using Aadhar OTP.', how: 'Verify via UIDAI OTP and sign.' },
-            'Global eSign': { what: 'Secure digital sign for global standards.', how: 'Verify ID and sign global doc.' }
+            'Merge PDF': { what: 'Combine multiple PDF files into one single document in any order.', how: 'Upload your PDFs, arrange order, and click Merge.' },
+            'Split PDF': { what: 'Separate a large PDF into smaller files or individual pages.', how: 'Upload your PDF and select the page ranges to split.' },
+            'Compress PDF': { what: 'Reduce PDF file size while maintaining the best possible quality.', how: 'Upload a heavy PDF file and wait for optimization.' },
+            'JPG to PDF': { what: 'Convert image files (JPG, PNG, GIF) into a professional PDF.', how: 'Select your images and download the generated PDF.' },
+            'WORD to PDF': { what: 'Transform Word documents (.docx) into universally readable PDF files.', how: 'Upload your Word file and the converter handles the rest.' },
+            'POWERPOINT to PDF': { what: 'Convert presentation slides (PPTX) into a portable PDF format.', how: 'Upload your slides and get slide-based PDF doc.' },
+            'EXCEL to PDF': { what: 'Transform Excel sheets into easy-to-read PDF tables.', how: 'Upload your spreadsheet and we format it for PDF viewing.' },
+            'HTML to PDF': { what: 'Save web pages as professional PDFs for offline reading.', how: 'Upload HTML file or paste a web URL to convert.' },
+            'PDF to JPG': { what: 'Extract PDF pages as separate high-quality JPG image files.', how: 'Upload PDF and download all pages as image files in a ZIP.' },
+            'PDF to WORD': { what: 'Convert PDF back into editable Microsoft Word documents.', how: 'Upload PDF and rebuild the document layout in .docx.' },
+            'PDF to POWERPOINT': { what: 'Turn PDF pages into editable PowerPoint presentation slides.', how: 'Upload PDF and wait for PPTX slide conversion.' },
+            'PDF to EXCEL': { what: 'Extract PDF tables directly into organized Excel spreadsheets.', how: 'Upload PDF with tables and download the .xlsx file.' },
+            'PDF to PDF/A': { what: 'Standardize PDF for long-term archiving (ISO standard).', how: 'Upload your PDF to convert it to ISO archive-ready format.' },
+            'Remove Pages': { what: 'Delete specific unwanted pages from your PDF document permanently.', how: 'Select the pages you want to remove and save the file.' },
+            'Extract Pages': { what: 'Save specific pages as a new, separate PDF document.', how: 'Select the pages required and click extract to download.' },
+            'Rename PDF': { what: 'Change the filename of your PDF document professionally.', how: 'Upload file, type new name, and click update instantly.' },
+            'Scan to PDF': { what: 'Create a PDF using your camera or scanner directly.', how: 'Grant camera access, scan your document and save to PDF.' },
+            'Repair PDF': { what: 'Recover data from corrupted or damaged PDF files.', how: 'Upload the broken file; we will try to fix the structure.' },
+            'OCR PDF': { what: 'Convert scanned images into searchable and selectable text.', how: 'Upload scan and let OCR recognize text automatically.' },
+            'Rotate PDF': { what: 'Correct orientation of upside-down or sideways PDF pages.', how: 'Click rotate icons to fix alignment and save.' },
+            'Add Page Numbers': { what: 'Add automatic page numbering to your PDF headers/footers.', how: 'Choose style and position then apply numbering.' },
+            'Add Watermark': { what: 'Protect your property by adding a text or image stamp.', how: 'Enter text or logo and set transparency level.' },
+            'Crop PDF': { what: 'Remove margins or trim specific areas of your PDF pages.', how: 'Select crop area and apply changes to all pages.' },
+            'Edit PDF': { what: 'Directly add text, shapes, or highlights to your PDF.', how: 'Use online editor to type directly on document pages.' },
+            'Unlock PDF': { what: 'Remove password security from protected PDF files.', how: 'Enter known password to unlock and remove lock.' },
+            'Protect PDF': { what: 'Encrypt your PDF document with a strong secure password.', how: 'Set a secure password and download encrypted file.' },
+            'Sign PDF': { what: 'Apply a digital or handwritten signature to your pages.', how: 'Upload document and use signature tool to sign.' },
+            'Redact PDF': { what: 'Permanently hide sensitive text or images (Black out).', how: 'Select private areas to hide them forever.' },
+            'Compare PDF': { what: 'Identify differences between two versions of a PDF.', how: 'Upload both files for a side-by-side comparison.' },
+            'Digital Sign': { what: 'A fast electronic signature for any user or document.', how: 'Draw sign using mouse and place anywhere.' },
+            'Aadhar eSign': { what: 'Legal Indian e-signature using Aadhar OTP authentication.', how: 'Verify via UIDAI OTP and sign document.' },
+            'Global eSign': { what: 'Secure digital signatures for global business standards.', how: 'Verify identity and sign international documents.' }
         };
 
-        function googleLogin() { if(typeof signInWithGoogle === 'function') signInWithGoogle(); }
-        
         function setGreeting() {
-            const hour = new Date().getHours();
-            let wish = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
-            const user = localStorage.getItem("userName") || "Guest";
-            document.getElementById("greeting").innerText = `Hello ${user}, ${wish}!`;
+            const h = new Date().getHours();
+            let w = h < 12 ? "Good Morning" : h < 17 ? "Good Afternoon" : "Good Evening";
+            document.getElementById("greeting").innerText = `Hello Guest, ${w}!`;
         }
         setGreeting();
 
@@ -267,26 +264,21 @@
             }
         }
 
-        /* 600 MAX JELLYFISH PARTICLES LOGIC */
+        /* 450 Particles Jellyfish Logic */
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
         const mouse = { x: null, y: null, radius: 150 };
         window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
-
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        const colors = ['#1a237e', '#90caf9', '#ef9a9a', '#222222'];
 
         class Particle {
             constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2.5 + 0.5;
-                this.speedX = (Math.random() - 0.5) * 0.4;
-                this.speedY = (Math.random() - 0.5) * 0.4;
-                this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.angle = Math.random() * Math.PI * 2;
-                this.spin = Math.random() * 0.01 + 0.005;
+                this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.4; this.speedY = (Math.random() - 0.5) * 0.4;
+                this.color = ['#1a237e', '#90caf9', '#ef9a9a', '#222222'][Math.floor(Math.random() * 4)];
+                this.angle = Math.random() * Math.PI * 2; this.spin = Math.random() * 0.01 + 0.005;
             }
             draw() { ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
             update() {
@@ -297,27 +289,14 @@
                 if (this.y > canvas.height) this.y = 0; if (this.y < 0) this.y = canvas.height;
                 if (mouse.x != null) {
                     let dx = mouse.x - this.x; let dy = mouse.y - this.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < mouse.radius) { this.x -= dx * 0.02; this.y -= dy * 0.02; }
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < mouse.radius) { this.x -= dx * 0.02; this.y -= dy * 0.02; }
                 }
             }
         }
-        function init() { particles = []; for (let i = 0; i < 600; i++) particles.push(new Particle()); }
+        function init() { particles = []; for (let i = 0; i < 450; i++) particles.push(new Particle()); }
         function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.draw(); p.update(); }); requestAnimationFrame(animate); }
         init(); animate();
-
-        /* Global Drag & Drop Handler */
-        const dropZone = document.getElementById('drop-zone');
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eName => {
-            dropZone.addEventListener(eName, e => { e.preventDefault(); e.stopPropagation(); }, false);
-        });
-        dropZone.addEventListener('dragover', () => dropZone.classList.add('drag-over'));
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-        dropZone.addEventListener('drop', (e) => {
-            dropZone.classList.remove('drag-over');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) alert(`KellynePDF ready to process ${files.length} files for ${document.getElementById('tool-display-name').innerText}`);
-        });
     </script>
 
     <script src="js/auth/google-oauth.js"></script>
