@@ -1,49 +1,66 @@
+/**
+ * KellynePDF - Merge PDF Actual Processing Logic
+ */
+
 async function processMergePDF(files) {
-    // Merge ki కనీసం 2 files ఉండాలి
     if (files.length < 2) {
         alert("Please select at least 2 PDF files to merge.");
         return;
     }
 
     try {
-        const toolTitle = document.getElementById('tool-display-name');
-        toolTitle.innerText = "Merging... Please wait.";
+        // Simple loading message
+        const uploadText = document.querySelector('.upload-label-text');
+        const originalText = uploadText.innerText;
+        uploadText.innerText = "Merging PDFs... Please wait.";
+        uploadText.style.color = "#0073b1"; // Blue while processing
 
-        // pdf-lib logic
-        const { PDFDocument } = PDFLib;
-        const mergedPdf = await PDFDocument.create();
+        // 1. Create a new PDF Document
+        const mergedPdf = await PDFLib.PDFDocument.create();
 
         for (const file of files) {
-            // PDF file ani check cheyandi
-            if (file.type !== "application/pdf") {
-                console.warn(`Skipping non-pdf file: ${file.name}`);
-                continue;
-            }
+            if (file.type !== "application/pdf") continue;
 
-            const arrayBuffer = await file.arrayBuffer();
-            const pdfDoc = await PDFDocument.load(arrayBuffer);
-            const copiedPages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+            const fileArrayBuffer = await file.arrayBuffer();
+            const sourcePdf = await PDFLib.PDFDocument.load(fileArrayBuffer);
+            const copiedPages = await mergedPdf.copyPages(sourcePdf, sourcePdf.getPageIndices());
+            
             copiedPages.forEach((page) => mergedPdf.addPage(page));
         }
 
+        // 2. Save and Download
         const mergedPdfBytes = await mergedPdf.save();
-
-        // Download as PDF
         const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
+        
         link.href = url;
-        link.download = `KellynePDF_Merged_${new Date().getTime()}.pdf`;
+        link.download = `KellynePDF_Merged_${Date.now()}.pdf`;
         document.body.appendChild(link);
         link.click();
+        
+        // Cleanup
         document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        uploadText.innerText = originalText;
+        uploadText.style.color = "#444";
+        alert("Success! Your merged PDF has been downloaded.");
 
-        toolTitle.innerText = "MERGE PDF - SUCCESS!";
-        setTimeout(() => { toolTitle.innerText = "SELECT PDF FILES"; }, 3000);
-
-    } catch (err) {
-        console.error(err);
-        alert("Merging process failed. Make sure files are not corrupted.");
-        document.getElementById('tool-display-name').innerText = "MERGE PDF";
+    } catch (error) {
+        console.error("Merge Error:", error);
+        alert("An error occurred during merging. Please ensure the files are valid PDFs.");
     }
 }
+
+// Ippudu handleGlobalFiles ni direct ga Merge logic ki connect chestunnam
+window.handleGlobalFiles = async function(files) {
+    const currentTool = document.getElementById('tool-title-box').innerText;
+    
+    if (currentTool === "MERGE PDF") {
+        await processMergePDF(files);
+    } else {
+        // Vere tools inka build chestunnam ani alert
+        alert(`${currentTool} logic is being integrated. Please try Merge PDF for now.`);
+    }
+};
