@@ -35,6 +35,7 @@
         .nav-menu li { position: relative; height: 100%; display: flex; align-items: center; }
         .nav-menu li > a { text-decoration: none; color: #111; font-size: 15px; font-weight: 800; text-transform: uppercase; transition: color 0.2s; cursor: pointer; padding: 40px 5px; }
         
+        /* Dropdowns */
         .dropdown-content { display: none; position: absolute; top: 95px; left: 0; background-color: #fff; box-shadow: 0px 15px 40px rgba(0,0,0,0.15); border-radius: 16px; padding: 30px; z-index: 9999; border: 1px solid #eee; animation: fadeIn 0.3s ease; }
         .nav-menu li:hover .dropdown-content { display: grid; }
         .mega-dropdown { min-width: 1100px; grid-template-columns: repeat(5, 1fr); gap: 20px; left: 50%; transform: translateX(-65%); }
@@ -46,8 +47,7 @@
         .dropdown-column ul li a, .esign-link { font-size: 13.5px; font-weight: 700; color: #333; display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; transition: 0.2s; text-decoration: none; cursor: pointer; }
         .dropdown-column ul li a:hover { background: #fff5f5; color: #e5322d; }
 
-        /* Larger Round Boxes for eSign */
-        .tag { font-size: 9px; padding: 4px 12px; border-radius: 25px; font-weight: 800; margin-left: auto; text-transform: uppercase; min-width: 70px; text-align: center; }
+        .tag { font-size: 9px; padding: 6px 16px; border-radius: 25px; font-weight: 800; margin-left: auto; text-transform: uppercase; min-width: 80px; text-align: center; }
         .tag-any { background-color: #ffffff; color: #000; border: 1px solid #ddd; }
         .tag-india { background-color: #006400; color: #fff; }
         .tag-global { background-color: #00008b; color: #fff; }
@@ -72,13 +72,13 @@
         .cloud-icon-svg { width: 85px; z-index: 5; margin-bottom: 10px; filter: drop-shadow(0 10px 20px rgba(229,50,45,0.2)); }
         .upload-label-text { font-size: 20px; font-weight: 800; color: #444; z-index: 5; }
 
-        /* Documentation Area - Aligned to Box Edge */
+        /* Documentation UI */
         .info-floating-wrap { width: 100%; max-width: 600px; margin: 30px auto; text-align: left; padding: 0; min-height: 140px; display: none; }
         .info-item { margin-bottom: 15px; }
         .info-item h4 { font-size: 14px; color: #e5322d; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; }
         .char-anim { display: inline-block; opacity: 0; transform: translateX(-10px); animation: charIn 0.3s forwards; color: #111; font-weight: 600; font-size: 16px; line-height: 1.6; }
 
-        /* Profile Logout Card */
+        /* Auth UI */
         .nav-right { display: flex; align-items: center; min-width: 300px; justify-content: flex-end; }
         .user-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 10px 15px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .user-info { display: flex; align-items: center; gap: 10px; }
@@ -86,7 +86,7 @@
         .user-name-text { font-size: 14px; font-weight: 800; color: #333; }
         .logout-btn-blue { width: 100%; background: #0073b1; color: #fff; border: none; padding: 8px 0; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 700; transition: 0.3s; }
 
-        /* Stationary Footer */
+        /* Footer */
         .taskbar-bottom { width: 100%; height: 60px; background: #fff; display: flex; align-items: center; justify-content: center; border-top: 1px solid #eee; font-size: 13px; font-weight: 700; color: #777; margin-top: auto; }
 
         @keyframes charIn { to { opacity: 1; transform: translateX(0); } }
@@ -199,13 +199,13 @@
 
         <div class="nav-right">
             <div id="login-section">
-                <div id="g_id_onload" data-client_id="YOUR_GOOGLE_CLIENT_ID" data-callback="handleCredentialResponse"></div>
+                <div id="g_id_onload" data-client_id="YOUR_GOOGLE_ID" data-callback="handleCredentialResponse"></div>
                 <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="continue_with"></div>
             </div>
             <div id="user-section" style="display:none;">
                 <div class="user-card">
                     <div class="user-info">
-                        <img id="user-avatar" class="user-pic" src="" alt="User">
+                        <img id="user-avatar" class="user-pic" src="" alt="">
                         <span id="display-name" class="user-name-text"></span>
                     </div>
                     <button class="logout-btn-blue" onclick="handleLogout()">Log Out</button>
@@ -254,37 +254,38 @@
             'Merge PDF': { what: 'Combine multiple PDF files into one professional document instantly.', how: 'Upload 2 or more PDFs, arrange them in order, and click Merge.' },
             'Split PDF': { what: 'Divide a large PDF into smaller parts or extract individual pages.', how: 'Upload your file, specify the page ranges, and download segments.' },
             'Compress PDF': { what: 'Reduce file size while maintaining the highest possible quality.', how: 'Select a heavy PDF and let our optimization engine shrink it.' },
-            'JPG to PDF': { what: 'Convert images into high-quality PDF files for professional use.', how: 'Upload images, adjust settings, and generate PDF.' },
-            'WORD to PDF': { what: 'Transform Word documents into readable PDF format.', how: 'Upload your Word file and download the converted PDF.' },
-            'EXCEL to PDF': { what: 'Convert spreadsheets into organized PDF tables.', how: 'Select your .xlsx file and download the formatted PDF.' },
-            'PPT to PDF': { what: 'Transform PowerPoint slides into portable PDF documents.', how: 'Upload your slides and get a PDF version ready for sharing.' },
-            'HTML to PDF': { what: 'Save full web pages as offline PDF documents with one click.', how: 'Paste a URL or upload HTML to generate a readable PDF.' },
-            'PDF to JPG': { what: 'Extract every single page of your PDF as high-resolution images.', how: 'Upload the PDF and receive a ZIP of all images.' },
-            'PDF to WORD': { what: 'Convert PDF files back into editable Microsoft Word documents.', how: 'Upload your PDF and wait for our AI to rebuild the layout.' },
-            'PDF to EXCEL': { what: 'Extract data tables from PDF directly into Excel spreadsheets.', how: 'Select a PDF with tables and download the generated .xlsx.' },
-            'PDF to PPT': { what: 'Convert PDF pages back into editable PowerPoint slides.', how: 'Upload your file and receive the generated slides.' },
-            'PDF to HTML': { what: 'Turn your PDF document into a responsive HTML web page.', how: 'Upload your file and our engine will create the HTML code.' },
-            'PDF to PDF/A': { what: 'Standardize PDF for long-term ISO digital archiving.', how: 'Upload file and convert it for permanent preservation.' },
-            'Remove Pages': { what: 'Permanently delete unwanted pages from your document.', how: 'Select the pages you want to discard and save.' },
-            'Extract Pages': { what: 'Save specific pages from a document as a brand new PDF.', how: 'Check required pages and click extract.' },
+            'JPG to PDF': { what: 'Convert images into high-quality PDF files.', how: 'Upload images, adjust settings, and generate PDF.' },
+            'WORD to PDF': { what: 'Transform Word documents into readable PDF format.', how: 'Upload Word file and download the converted PDF.' },
+            'EXCEL to PDF': { what: 'Convert spreadsheets into organized PDF tables.', how: 'Select your .xlsx file and download PDF version.' },
+            'PPT to PDF': { what: 'Transform PowerPoint slides into portable PDF documents.', how: 'Upload slides and get a PDF version.' },
+            'HTML to PDF': { what: 'Save web pages as offline PDF documents with one click.', how: 'Paste URL or upload HTML to generate PDF.' },
+            'PDF to JPG': { what: 'Extract every single page of your PDF as high-resolution images.', how: 'Upload PDF and receive a ZIP of images.' },
+            'PDF to WORD': { what: 'Convert PDF back into editable Microsoft Word documents.', how: 'Upload PDF and rebuild the layout.' },
+            'PDF to EXCEL': { what: 'Extract PDF tables directly into Excel spreadsheets.', how: 'Select PDF with tables and download .xlsx.' },
+            'PDF to PPT': { what: 'Convert PDF pages back into editable PowerPoint slides.', how: 'Upload file and receive .pptx slides.' },
+            'PDF to HTML': { what: 'Turn your PDF document into a responsive HTML web page.', how: 'Upload file and create HTML code.' },
+            'PDF to PDF/A': { what: 'Standardize PDF for long-term ISO digital archiving.', how: 'Upload file and convert it.' },
+            'Remove Pages': { what: 'Permanently delete unwanted pages from your document.', how: 'Select pages you want to discard and save.' },
+            'Extract Pages': { what: 'Save specific pages as a brand new PDF.', how: 'Check required pages and click extract.' },
             'Rename PDF': { what: 'Professionally rename your PDF document filename instantly.', how: 'Type the new name and click update.' },
-            'Scan to PDF': { what: 'Create PDF documents instantly using your camera.', how: 'Grant camera permissions, capture, and save.' },
-            'Repair PDF': { what: 'Recover data from corrupted or broken PDF files.', how: 'Upload the damaged file; we will attempt to fix the structure.' },
-            'OCR PDF': { what: 'Convert scanned non-selectable PDFs into searchable text.', how: 'Upload your scan and let our OCR engine recognize text.' },
-            'Rotate PDF': { what: 'Correct the orientation of upside-down pages.', how: 'Use rotation icons to fix alignment and save.' },
-            'Add Numbers': { what: 'Add automatic numbering to your PDF headers or footers.', how: 'Choose your preferred style and position, then apply.' },
-            'Add Watermark': { what: 'Protect your property with a text or image watermark.', how: 'Enter your text/logo and set the transparency level.' },
-            'Crop PDF': { what: 'Trim margins or specific areas of your PDF pages.', how: 'Select crop area and apply changes.' },
-            'Edit PDF': { what: 'Directly add text, shapes, or highlights to PDF content.', how: 'Use our online editor tools to type on the pages.' },
-            'Unlock PDF': { what: 'Remove password security and printing restrictions from PDFs.', how: 'Enter known password to permanently remove encryption.' },
-            'Protect PDF': { what: 'Encrypt PDF documents with a strong, secure password.', how: 'Set your secure password and download.' },
-            'Redact PDF': { what: 'Permanently black out sensitive text or images.', how: 'Select the private areas to hide them forever.' },
-            'Compare PDF': { what: 'Identify differences between two versions of a PDF side-by-side.', how: 'Upload both files and see highlighted changes side-by-side.' },
-            'AI Summarizer': { what: 'Summarize long PDF documents into key points using AI.', how: 'Upload your PDF and get an instant intelligent summary.' },
-            'Translate PDF': { what: 'Translate the entire content of your PDF into multiple languages.', how: 'Upload your file and select your target language.' },
-            'Digital Sign': { what: 'Fast electronic signature for any user or document globally.', how: 'Draw or type your sign and place it on the page.' },
-            'Aadhar eSign': { what: 'Official Indian electronic signature using Aadhaar OTP.', how: 'Verify your identity via UIDAI OTP and sign legally.' },
-            'Global eSign': { what: 'Enterprise-grade digital signature for business standards.', how: 'Verify your global ID and sign documents securely.' }
+            'Scan to PDF': { what: 'Create PDF documents instantly using your camera.', how: 'Grant camera permissions and capture.' },
+            'Repair PDF': { what: 'Recover data from corrupted or broken PDF files.', how: 'Upload damaged file; we will fix the structure.' },
+            'OCR PDF': { what: 'Convert scanned non-selectable PDFs into searchable text.', how: 'Upload scan and let OCR recognize text.' },
+            'Rotate PDF': { what: 'Correct the orientation of upside-down pages.', how: 'Use rotation icons to fix alignment.' },
+            'Add Numbers': { what: 'Add automatic numbering to headers or footers.', how: 'Choose style and position, then apply.' },
+            'Add Watermark': { what: 'Protect your property with text or image stamp.', how: 'Enter text/logo and set transparency.' },
+            'Crop PDF': { what: 'Trim margins or specific areas of PDF pages.', how: 'Select crop area and apply changes.' },
+            'Edit PDF': { what: 'Directly add text or shapes to PDF content.', how: 'Use online editor tools to type on pages.' },
+            'Unlock PDF': { what: 'Remove password security and printing restrictions.', how: 'Enter password to permanently remove encryption.' },
+            'Protect PDF': { what: 'Encrypt PDF documents with a strong password.', how: 'Set secure password and download.' },
+            'Sign PDF': { what: 'Apply digital signatures to any page of your PDF.', how: 'Draw signature and place it on document.' },
+            'Redact PDF': { what: 'Permanently black out sensitive text or images.', how: 'Select private areas to hide forever.' },
+            'Compare PDF': { what: 'Identify differences between two versions of a PDF.', how: 'Upload both files and see highlights.' },
+            'AI Summarizer': { what: 'Summarize long PDF documents into key points using AI.', how: 'Upload PDF and get instant summary.' },
+            'Translate PDF': { what: 'Translate the entire PDF into multiple languages.', how: 'Upload file and select target language.' },
+            'Digital Sign': { what: 'Fast electronic signature for any user or document.', how: 'Draw or type your sign and place it.' },
+            'Aadhar eSign': { what: 'Official Indian electronic signature using Aadhaar OTP.', how: 'Verify via UIDAI and sign legally.' },
+            'Global eSign': { what: 'Enterprise-grade digital signature for global business.', how: 'Verify global ID and sign securely.' }
         };
 
         let hideTimeout;
@@ -317,11 +318,11 @@
             });
         }
 
-        /* --- GLOBAL PDF HANDLER --- */
+        /* ACTUAL MERGE LOGIC */
         async function runMerge(files) {
-            if (files.length < 2) { alert("Please select at least 2 PDF files to merge."); return; }
+            if (files.length < 2) { alert("Select at least 2 PDFs!"); return; }
             try {
-                document.getElementById('status-label').innerText = "Merging PDFs... Please wait.";
+                document.getElementById('status-label').innerText = "Merging... Please wait.";
                 const mergedPdf = await PDFLib.PDFDocument.create();
                 for (const file of files) {
                     if (file.type !== "application/pdf") continue;
@@ -334,18 +335,59 @@
                 const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
-                link.href = url; link.download = `Merged_${Date.now()}.pdf`;
-                document.body.appendChild(link); link.click();
+                link.href = url;
+                link.download = `Merged_${Date.now()}.pdf`;
+                document.body.appendChild(link);
+                link.click();
                 document.body.removeChild(link);
                 document.getElementById('status-label').innerText = "Click or Drag & Drop Files";
-                alert("Success! Your merged PDF has been downloaded.");
-            } catch (e) { alert("Merge Error: Check files."); }
+            } catch (e) { alert("Merge Error!"); }
         }
 
+        /* ACTUAL SPLIT LOGIC */
+        async function processSplitPDF(files) {
+            if (files.length === 0) return;
+            const file = files[0];
+            if (file.type !== "application/pdf") { alert("Invalid PDF!"); return; }
+            try {
+                const statusLabel = document.getElementById('status-label');
+                statusLabel.innerText = "Analyzing PDF...";
+                const fileArrayBuffer = await file.arrayBuffer();
+                const sourcePdf = await PDFLib.PDFDocument.load(fileArrayBuffer);
+                const pageCount = sourcePdf.getPageCount();
+                const range = prompt(`PDF has ${pageCount} pages. Enter numbers (e.g., 1, 3-5):`, "1");
+                if (!range) { statusLabel.innerText = "Click or Drag & Drop Files"; return; }
+                
+                const selectedPages = [];
+                range.split(',').forEach(p => {
+                    if (p.includes('-')) {
+                        const [s, e] = p.split('-').map(Number);
+                        for (let i = s; i <= e; i++) if (i > 0 && i <= pageCount) selectedPages.push(i);
+                    } else {
+                        const n = Number(p);
+                        if (n > 0 && n <= pageCount) selectedPages.push(n);
+                    }
+                });
+
+                const newPdf = await PDFLib.PDFDocument.create();
+                const copiedPages = await newPdf.copyPages(sourcePdf, selectedPages.map(p => p - 1));
+                copiedPages.forEach(page => newPdf.addPage(page));
+                const pdfBytes = await newPdf.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url; link.download = `Split_${Date.now()}.pdf`;
+                document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                statusLabel.innerText = "Click or Drag & Drop Files";
+            } catch (e) { alert("Split Error!"); }
+        }
+
+        /* GLOBAL HANDLER ROUTING */
         window.handleGlobalFiles = async function(files) {
             const tool = document.getElementById('tool-title-box').innerText;
             if (tool.includes("MERGE")) { await runMerge(files); }
-            else { alert(`${tool} logic is active! Processing files...`); }
+            else if (tool.includes("SPLIT")) { await processSplitPDF(files); }
+            else { alert(`${tool} processing is active!`); }
         };
 
         function handleCredentialResponse(r) {
@@ -371,7 +413,7 @@
             animateText('sub-heading', "KellynePDF - All-In-One Solution");
         };
 
-        /* PARTICLES Physics */
+        /* JELLYFISH Physics */
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -418,18 +460,25 @@
         function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.draw();p.update();}); requestAnimationFrame(animate); }
         init(); animate();
 
-        /* Global Drag & Drop */
+        /* Drop Zone Logic */
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => {
-            dropZone.addEventListener(e, ev => { ev.preventDefault(); ev.stopPropagation(); });
+
+        // Prevent default browser behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); });
         });
+
+        // Triggered when files are dropped into the zone
         dropZone.addEventListener('drop', (e) => {
             const files = Array.from(e.dataTransfer.files);
-            if (files.length > 0) window.handleGlobalFiles(files);
+            window.handleGlobalFiles(files); 
         });
+
+        // Triggered when files are selected manually via click
         fileInput.addEventListener('change', (e) => {
-            window.handleGlobalFiles(Array.from(e.target.files));
+            const files = Array.from(e.target.files);
+            window.handleGlobalFiles(files); 
         });
     </script>
 
