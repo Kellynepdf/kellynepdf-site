@@ -36,7 +36,8 @@ window.runMerge = async function(files) {
 
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-                if (file.type !== "application/pdf") continue;
+                const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+                if (!isPdf) continue;
                 
                 try {
                     let fileArrayBuffer = await file.arrayBuffer();
@@ -80,16 +81,25 @@ window.runMerge = async function(files) {
             if (titleBox) {
                 titleBox.innerText = 'MERGE SUCCESSFULLY COMPLETED';
                 titleBox.style.color = '#008000';
+                titleBox.style.fontSize = '24px'; // Sleek professional font
+                titleBox.style.fontWeight = '900';
             }
 
-            // Immediately reveal BACK TO HOME
-            btn.innerHTML = `<span style="color: #e5322d; font-weight: 900;">BACK TO HOME</span>`;
-            btn.style.backgroundColor = "#fdfdfd"; 
-            btn.style.border = "2px solid #e5322d";
+            // Immediately reveal BACK TO HOME (sleek, chinnaga)
+            btn.innerHTML = `<span style="color: #e5322d; font-weight: 700; font-size: 14px; text-transform: uppercase;">BACK TO HOME</span>`;
+            btn.style.backgroundColor = "transparent"; 
+            btn.style.border = "1.5px solid #e5322d";
+            btn.style.padding = "10px 25px";
+            btn.style.borderRadius = "25px";
+            btn.style.width = "auto";
+            btn.style.margin = "0 auto";
             
             btn.onclick = (e2) => {
                 e2.stopPropagation();
-                if (titleBox) titleBox.style.color = ''; // Revert core styling
+                if (titleBox) {
+                    titleBox.style.color = ''; // Revert core styling
+                    titleBox.style.fontSize = ''; // Revert to base css size
+                }
                 window.resetUI();
             };
 
@@ -102,15 +112,23 @@ window.runMerge = async function(files) {
             if (titleBox) {
                 titleBox.innerText = 'MERGE FAILED';
                 titleBox.style.color = '#e5322d';
+                titleBox.style.fontSize = '24px';
             }
             
-            btn.innerHTML = `<span style="color: #e5322d; font-weight: 900;">BACK TO HOME</span>`;
-            btn.style.backgroundColor = "#fdfdfd"; 
-            btn.style.border = "2px solid #e5322d";
+            btn.innerHTML = `<span style="color: #e5322d; font-weight: 700; font-size: 14px;">RESTORE HOME</span>`;
+            btn.style.backgroundColor = "transparent"; 
+            btn.style.border = "1.5px solid #e5322d";
+            btn.style.padding = "10px 25px";
+            btn.style.borderRadius = "25px";
+            btn.style.width = "auto";
+            btn.style.margin = "0 auto";
             
             btn.onclick = (e2) => {
                 e2.stopPropagation();
-                if (titleBox) titleBox.style.color = ''; 
+                if (titleBox) {
+                    titleBox.style.color = ''; 
+                    titleBox.style.fontSize = ''; 
+                }
                 window.resetUI();
             };
         }

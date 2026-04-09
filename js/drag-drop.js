@@ -38,7 +38,8 @@ async function handleGlobalFiles(files) {
     // Error Handling: Quick check if a PDF-centric tool gets non-PDF
     const requirePdfTools = ['MERGE PDF', 'SPLIT PDF', 'COMPRESS PDF', 'REPAIR PDF', 'ROTATE PDF'];
     if (requirePdfTools.includes(tool)) {
-        if (files[0] && files[0].type !== 'application/pdf') {
+        const isPdf = files[0] && (files[0].type === 'application/pdf' || files[0].name.toLowerCase().endsWith('.pdf'));
+        if (!isPdf) {
             statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: bold;">Error: Please upload a valid PDF document.</span>`;
             setTimeout(window.resetUI, 3000);
             return;
@@ -80,7 +81,7 @@ async function handleGlobalFiles(files) {
         case tool.includes("RENAME"):
         case tool.includes("SCAN"):
             statusLabel.innerHTML = `Executing ${tool} engine logic...`;
-            setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `kellynepdf_${tool.replace(' ','_').toLowerCase()}.pdf`); }, 2000);
+            setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `KELLYNE PDF_${tool.replace(' ','_')}.pdf`); }, 2000);
             break;
 
         // --- Optimize --- //
@@ -94,7 +95,7 @@ async function handleGlobalFiles(files) {
         case tool.includes("REPAIR"):
         case tool.includes("OCR"):
             statusLabel.innerHTML = `Running high-end ${tool} via WASM processor...`;
-            setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `kellynepdf_fixed.pdf`); }, 2500);
+            setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `KELLYNE PDF_Fixed.pdf`); }, 2500);
             break;
 
         // --- Convert To PDF --- //
@@ -104,7 +105,7 @@ async function handleGlobalFiles(files) {
         case tool.includes("PPT TO PDF"):
         case tool.includes("HTML TO PDF"):
             statusLabel.innerHTML = `Converting file layout to PDF using jsPDF...`;
-            setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `kellynepdf_converted.pdf`); }, 3000);
+            setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `KELLYNE PDF_Converted.pdf`); }, 3000);
             break;
 
         // --- Convert From PDF --- //
@@ -115,7 +116,7 @@ async function handleGlobalFiles(files) {
         case tool.includes("PDF TO PDF/A"):
         case tool.includes("PDF TO HTML"):
             statusLabel.innerHTML = `Extracting objects to target format...`;
-            setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `kellynepdf_converted_output.zip`); }, 3000);
+            setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `KELLYNE PDF_Converted_Output.zip`); }, 3000);
             break;
 
         // --- Security --- //
@@ -125,14 +126,14 @@ async function handleGlobalFiles(files) {
         case tool.includes("REDACT"):
         case tool.includes("COMPARE"):
             statusLabel.innerHTML = `Applying ${tool} security cryptography...`;
-            setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `kellynepdf_secured.pdf`); }, 2000);
+            setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `KELLYNE PDF_Secured.pdf`); }, 2000);
             break;
 
         // --- AI Features --- //
         case tool.includes("AI SUMMARIZER"):
         case tool.includes("TRANSLATE"):
             statusLabel.innerHTML = `Querying Neural Network for ${tool}...`;
-            setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `kellynepdf_ai_output.pdf`); }, 3000);
+            setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `KELLYNE PDF_AI_Output.pdf`); }, 3000);
             break;
 
         default:
@@ -141,7 +142,7 @@ async function handleGlobalFiles(files) {
                 await window.runMerge(files);
             } else {
                 statusLabel.innerHTML = `Processing ${tool}...`;
-                setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `kellynepdf_output.pdf`); }, 2000);
+                setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `KELLYNE PDF_Output.pdf`); }, 2000);
             }
             break;
     }
@@ -152,8 +153,10 @@ async function handleGlobalFiles(files) {
 async function processSplitPDF(files) {
     const file = files[0];
     const statusLabel = document.getElementById('status-label');
-    if (file.type !== "application/pdf") { 
+    const isPdf = file && (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
+    if (!isPdf) { 
         statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: bold;">Invalid PDF!</span>`;
+        setTimeout(window.resetUI, 3000);
         return; 
     }
     try {
@@ -192,11 +195,11 @@ async function processSplitPDF(files) {
         const url = URL.createObjectURL(blob);
 
         if (typeof showDownloadReady === 'function') {
-            showDownloadReady(url, "kellynepdf_split.pdf");
+            showDownloadReady(url, "KELLYNE PDF_Split.pdf");
         } else {
             const link = document.createElement('a');
             link.href = url;
-            link.download = `kellynepdf_split.pdf`;
+            link.download = `KELLYNE PDF_Split.pdf`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -212,8 +215,10 @@ async function processSplitPDF(files) {
 async function runCompress(files) {
     const file = files[0];
     const statusLabel = document.getElementById('status-label');
-    if (file.type !== "application/pdf") { 
+    const isPdf = file && (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
+    if (!isPdf) { 
         statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: bold;">Invalid PDF!</span>`;
+        setTimeout(window.resetUI, 3000);
         return; 
     }
     try {
@@ -232,11 +237,11 @@ async function runCompress(files) {
         // Wait 1.5s to show the nice green text simulation
         setTimeout(() => {
             if (typeof showDownloadReady === 'function') {
-                showDownloadReady(url, "kellynepdf_compressed.pdf");
+                showDownloadReady(url, "KELLYNE PDF_Compressed.pdf");
             } else {
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = `kellynepdf_compressed.pdf`;
+                link.download = `KELLYNE PDF_Compressed.pdf`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
