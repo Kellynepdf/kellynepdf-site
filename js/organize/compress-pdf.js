@@ -64,7 +64,13 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
             
             // Compress quality set to 0.4 (40%)
             const dataUrl = canvas.toDataURL('image/jpeg', 0.4);
-            const imgBytes = await (await fetch(dataUrl)).arrayBuffer();
+            const base64Data = dataUrl.split(',')[1];
+            const binaryString = atob(base64Data);
+            const len = binaryString.length;
+            const imgBytes = new Uint8Array(len);
+            for (let j = 0; j < len; j++) {
+                imgBytes[j] = binaryString.charCodeAt(j);
+            }
             const img = await newDoc.embedJpg(imgBytes);
             
             const p = newDoc.addPage([viewport.width, viewport.height]);
