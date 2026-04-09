@@ -16,36 +16,11 @@ window.runSplit = async function(files) {
         const sourcePdf = await PDFLib.PDFDocument.load(fileArrayBuffer, { ignoreEncryption: true });
         const pageCount = sourcePdf.getPageCount();
         
-        // Use prompt for range (simple UX as requested initially per existing pattern)
-        // Auto-Trigger: Once the user drops a file AND selects the split range.
-        const range = prompt(`PDF has ${pageCount} pages. Enter numbers to extract/split (e.g., 1, 3-5) or "all" to split every page:`, "all");
-
-        if (!range) {
-            window.resetUI();
-            return;
-        }
-
         btn.innerHTML = `<span style="color: white; font-weight: 900;">SPLITTING PDF</span> <svg class="spinner" viewBox="0 0 50 50" style="width:20px;height:20px;animation:spin 1s linear infinite;vertical-align:middle;margin-left:8px;"><circle cx="25" cy="25" r="20" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="31.4 31.4"></circle></svg>`;
 
         const selectedPages = [];
-        if (range.toLowerCase() === 'all') {
-            for (let i = 1; i <= pageCount; i++) selectedPages.push(i);
-        } else {
-            range.split(',').forEach(p => {
-                if (p.includes('-')) {
-                    const [s, e] = p.split('-').map(Number);
-                    for (let i = s; i <= e; i++) if (i > 0 && i <= pageCount) selectedPages.push(i);
-                } else {
-                    const n = Number(p);
-                    if (n > 0 && n <= pageCount) selectedPages.push(n);
-                }
-            });
-        }
-
-        if (selectedPages.length === 0) {
-            if (statusLabel) statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: bold;">No valid pages selected!</span>`;
-            setTimeout(window.resetUI, 3000);
-            return;
+        for (let i = 1; i <= pageCount; i++) {
+            selectedPages.push(i);
         }
 
         // Create individual PDFs for each selected page
@@ -135,7 +110,6 @@ window.runSplit = async function(files) {
         };
 
     } catch (e) {
-        console.error("Split Error:", e);
         if (titleBox) {
             titleBox.innerText = 'SPLIT FAILED';
             titleBox.style.color = '#e5322d';
