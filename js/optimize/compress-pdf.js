@@ -54,19 +54,44 @@ window.runCompress = async function(files) {
         }
 
         try {
-            // pdf-lib compression
+            if (!window.pdfjsLib) throw new Error('pdfjsLib is not loaded');
+            // pdf.js worker config (global if needed)
+            if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js";
+            }
+            
             const fileArrayBuffer = await file.arrayBuffer();
-            let sourcePdf = await PDFLib.PDFDocument.load(fileArrayBuffer);
+            const pdf = await pdfjsLib.getDocument({ data: fileArrayBuffer }).promise;
             let newPdf = await PDFLib.PDFDocument.create();
-            const copiedPages = await newPdf.copyPages(sourcePdf, sourcePdf.getPageIndices());
-            copiedPages.forEach(page => newPdf.addPage(page));
+            
+            const dpi = 150; // Medium quality compression
+            const scale = dpi / 96;
+
+            for (let i = 1; i <= pdf.numPages; i++) {
+                if (statusLabel) {
+                    statusLabel.innerHTML = `<span style="color: #444; font-weight: bold;">Processing page ${i} / ${pdf.numPages}...</span>`;
+                }
+                const page = await pdf.getPage(i);
+                const viewport = page.getViewport({ scale });
+                const tmp = document.createElement('canvas');
+                tmp.width = Math.round(viewport.width);
+                tmp.height = Math.round(viewport.height);
+                const ctxTmp = tmp.getContext('2d');
+                await page.render({ canvasContext: ctxTmp, viewport }).promise;
+                
+                const dataUrl = tmp.toDataURL('image/jpeg', 0.75);
+                const imgBytes = await (await fetch(dataUrl)).arrayBuffer();
+                const img = await newPdf.embedJpg(imgBytes);
+                
+                const p = newPdf.addPage([viewport.width, viewport.height]);
+                p.drawImage(img, { x: 0, y: 0, width: viewport.width, height: viewport.height });
+            }
 
             const pdfBytes = await newPdf.save({ useObjectStreams: false });
             const finalSizeMB = (pdfBytes.length / (1024 * 1024)).toFixed(2);
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             
             // Memory Management
-            sourcePdf = null;
             newPdf = null;
             
             // 3. Professional Naming & Green Success UI
