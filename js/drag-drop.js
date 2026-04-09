@@ -49,18 +49,24 @@ async function handleGlobalFiles(files) {
     statusLabel.innerHTML = `Processing ${files[0].name}... Please wait.`;
 
     switch(true) {
-        // --- Organize --- //
+        // --- Organize & Default Merge --- //
         case tool.includes("MERGE") || tool === 'SELECT PDF FILES':
+            // Instead of throwing an alert if not loaded, silently try to load and execute
             if (typeof window.runMerge !== 'function') {
-                if (typeof loadToolScript === 'function') loadToolScript('Merge PDF');
-                let retry = 0;
-                while (typeof window.runMerge !== 'function' && retry < 20) {
-                    await new Promise(r => setTimeout(r, 50));
-                    retry++;
+                if (typeof window.loadToolScript === 'function') window.loadToolScript('Merge PDF');
+                // Give it brief time to load script
+                let retries = 0;
+                while (typeof window.runMerge !== 'function' && retries < 30) {
+                    await new Promise(r => setTimeout(r, 100));
+                    retries++;
                 }
             }
+            
             if (typeof window.runMerge === 'function') {
                 await window.runMerge(files);
+            } else {
+                // If STILL not loaded after 3 seconds, just show inline error without annoying alerts
+                statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: bold;">Could not initialize Merge Tool. Please refresh.</span>`;
             }
             break;
         case tool.includes("SPLIT"):
@@ -130,8 +136,13 @@ async function handleGlobalFiles(files) {
             break;
 
         default:
-            statusLabel.innerHTML = `Processing ${tool}...`;
-            setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `kellynepdf_output.pdf`); }, 2000);
+            // Final fallback to merge just in case
+            if (typeof window.runMerge === 'function') {
+                await window.runMerge(files);
+            } else {
+                statusLabel.innerHTML = `Processing ${tool}...`;
+                setTimeout(() => { showDownloadReady(URL.createObjectURL(files[0]), `kellynepdf_output.pdf`); }, 2000);
+            }
             break;
     }
 }
