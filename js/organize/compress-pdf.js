@@ -13,7 +13,7 @@ window.runCompress = async function(files) {
 
     // Display Sizes
     const originalSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-    const estimatedSizeMB = (originalSizeMB * 0.1).toFixed(2); // Estimated 90% reduction
+    const estimatedSizeMB = (originalSizeMB * 0.2).toFixed(2); // Estimated 80% reduction
 
     titleBox.innerHTML = `ORIGINAL: ${originalSizeMB} MB | <span style="color: #e5322d;">ESTIMATED: ${estimatedSizeMB} MB</span>`;
     statusLabel.innerText = "READY TO COMPRESS";
@@ -46,8 +46,8 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
         const newDoc = await PDFLib.PDFDocument.create();
 
-        // Aggressive compression DPI (Scale 0.6)
-        const scale = 0.6; 
+        // 80% reduction target (Scale 0.7)
+        const scale = 0.7; 
 
         for (let i = 1; i <= pdf.numPages; i++) {
             statusLabel.innerText = `Processing page ${i} of ${pdf.numPages}...`;
@@ -62,8 +62,8 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
 
             await page.render({ canvasContext: ctx, viewport }).promise;
             
-            // Extreme jpeg quality set to 0.15 (15%)
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.15);
+            // Compress quality set to 0.2 (20% for High Compression target)
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.2);
             const base64Data = dataUrl.split(',')[1];
             const binaryString = atob(base64Data);
             const len = binaryString.length;
@@ -100,27 +100,33 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
             dropZone.classList.add('success-tool-glow');
         }
 
-        statusLabel.innerHTML = `Final Size: <b>${finalSizeMB} MB</b>. File saved successfully!`;
+        statusLabel.innerHTML = `Original Size: ${originalSizeMB} MB | Final Size: <b>${finalSizeMB} MB</b>. File saved successfully!`;
         statusLabel.style.color = "#008000";
 
         actionBtn.disabled = false;
-        actionBtn.innerHTML = `DOWNLOAD COMPRESSED PDF`;
+        actionBtn.innerHTML = `SUCCESSFUL!`;
         actionBtn.style.backgroundColor = "#008000";
 
-        actionBtn.onclick = (e) => {
-            e.stopPropagation();
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `kellynepdf_compressed.pdf`;
-            link.click();
-            
-            setTimeout(() => {
-                actionBtn.innerHTML = "BACK TO HOME";
-                actionBtn.style.backgroundColor = "#111"; // A sleek dark fallback
-                actionBtn.style.color = "white";
-                actionBtn.onclick = () => window.resetUI();
-            }, 2000);
-        };
+        // Auto Download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `KELLYNE PDF_Compressed.pdf`;
+        link.click();
+        
+        // Transition to BACK TO HOME
+        setTimeout(() => {
+            actionBtn.innerHTML = "BACK TO HOME";
+            actionBtn.style.backgroundColor = "#111"; // sleek dark background
+            actionBtn.style.color = "white";
+            actionBtn.onclick = (e2) => {
+                e2.stopPropagation();
+                if (titleBox) {
+                    titleBox.style.color = ''; 
+                    titleBox.style.fontSize = ''; 
+                }
+                window.resetUI();
+            };
+        }, 2000);
 
     } catch (err) {
         console.error(err);
