@@ -80,8 +80,9 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
         let pdfBytes = await newDoc.save();
         
         // Smart Check: use original if compressed size is worse
-        if (pdfBytes.length >= arrayBuffer.byteLength) {
-            pdfBytes = new Uint8Array(arrayBuffer);
+        if (pdfBytes.length >= file.size) {
+            const freshBuffer = await file.arrayBuffer();
+            pdfBytes = new Uint8Array(freshBuffer);
         }
         
         const blob = new Blob([pdfBytes], { type: 'application/pdf' });
