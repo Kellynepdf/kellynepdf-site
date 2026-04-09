@@ -45,7 +45,7 @@ const toolScriptsMap = {
     'Extract Pages': 'js/organize/extract-pages.js',
     'Rename PDF': 'js/organize/organize-pdf.js',
     'Scan to PDF': 'js/organize/scan-to-pdf.js',
-    'Compress PDF': 'js/optimize/compress-pdf.js',
+    'Compress PDF': 'js/organize/compress-pdf.js',
     'Repair PDF': 'js/optimize/repair-pdf.js',
     'OCR PDF': 'js/optimize/ocr-pdf.js',
     'JPG to PDF': 'js/convert-to-pdf/jpg-to-pdf.js',
