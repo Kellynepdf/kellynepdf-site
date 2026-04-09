@@ -178,6 +178,8 @@ window.resetUI = function() {
     if (titleBox && isSuccessState) {
         titleBox.innerText = 'SELECT PDF FILES';
         window.currentActiveTool = 'SELECT PDF FILES';
+        titleBox.style.fontSize = '';
+        titleBox.style.color = '';
         const dropZone = document.getElementById('drop-zone');
         if (dropZone) {
             dropZone.classList.remove('active-tool', 'success-tool-glow');

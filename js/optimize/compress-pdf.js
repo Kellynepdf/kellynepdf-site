@@ -14,7 +14,7 @@ window.runCompress = async function(files) {
     const estimatedSize = (mbSize * 0.6).toFixed(2); 
 
     if (titleBox) {
-        titleBox.innerText = `Original Size: ${mbSize} MB`;
+        titleBox.innerText = `ORIGINAL: ${mbSize} MB | ESTIMATED: ${estimatedSize} MB`;
         titleBox.style.color = '#e5322d'; 
     }
 
@@ -24,13 +24,13 @@ window.runCompress = async function(files) {
     }
 
     if (statusLabel) {
-        statusLabel.innerHTML = `<span style="color: #444; font-size: 16px; font-weight: 700;">Estimated Size: ${estimatedSize} MB</span><br><br><span style="color: #e5322d; font-weight: 900; font-size: 20px;">READY TO COMPRESS</span>`;
+        statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: bold;">READY TO COMPRESS</span>`;
     }
 
     // Action Button
-    btn.innerHTML = `<span style="color: #e5322d; font-weight: 900; font-size: 16px;">CLICK TO COMPRESS</span>`;
-    btn.style.backgroundColor = "transparent";
-    btn.style.border = "2px solid #e5322d";
+    btn.innerHTML = `<span style="color: white; font-weight: 900; font-size: 16px;">CLICK TO COMPRESS</span>`;
+    btn.style.backgroundColor = "#e5322d";
+    btn.style.border = "none";
     btn.style.padding = "15px 30px";
     btn.style.borderRadius = "25px";
     btn.style.width = "auto";
@@ -40,7 +40,7 @@ window.runCompress = async function(files) {
         e.stopPropagation();
         
         // 2. Execution & Processing State
-        btn.innerHTML = `<span style="color: white; font-weight: 900; font-size: 16px;">KELLYNE COMPRESSING PDF...</span> <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style><svg class="spinner" viewBox="0 0 50 50" style="width:20px;height:20px;animation:spin 1s linear infinite;vertical-align:middle;margin-left:8px;"><circle cx="25" cy="25" r="20" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="31.4 31.4"></circle></svg>`;
+        btn.innerHTML = `<span style="color: white; font-weight: 900; font-size: 16px;">KELLYNE COMPRESSING...</span> <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style><svg class="spinner" viewBox="0 0 50 50" style="width:20px;height:20px;animation:spin 1s linear infinite;vertical-align:middle;margin-left:8px;"><circle cx="25" cy="25" r="20" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="31.4 31.4"></circle></svg>`;
         btn.style.backgroundColor = "#e5322d";
         btn.style.color = "#fff";
         btn.style.border = "none";
@@ -56,14 +56,18 @@ window.runCompress = async function(files) {
         try {
             // pdf-lib compression
             const fileArrayBuffer = await file.arrayBuffer();
-            const sourcePdf = await PDFLib.PDFDocument.load(fileArrayBuffer);
-            const newPdf = await PDFLib.PDFDocument.create();
+            let sourcePdf = await PDFLib.PDFDocument.load(fileArrayBuffer);
+            let newPdf = await PDFLib.PDFDocument.create();
             const copiedPages = await newPdf.copyPages(sourcePdf, sourcePdf.getPageIndices());
             copiedPages.forEach(page => newPdf.addPage(page));
 
             const pdfBytes = await newPdf.save({ useObjectStreams: false });
             const finalSizeMB = (pdfBytes.length / (1024 * 1024)).toFixed(2);
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            
+            // Memory Management
+            sourcePdf = null;
+            newPdf = null;
             
             // 3. Professional Naming & Green Success UI
             const finalName = "KELLYNE PDF_Compressed.pdf";
@@ -79,6 +83,7 @@ window.runCompress = async function(files) {
             if (titleBox) {
                 titleBox.innerText = 'COMPRESSION SUCCESSFULLY COMPLETED';
                 titleBox.style.color = '#008000';
+                titleBox.style.fontSize = '22px';
             }
             if (dropZone) {
                 dropZone.classList.remove('active-tool');
