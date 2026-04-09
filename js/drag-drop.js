@@ -74,7 +74,20 @@ async function handleGlobalFiles(files) {
             const totalSplitBytes = files.reduce((acc, file) => acc + file.size, 0);
             const mbSplitSize = (totalSplitBytes / (1024 * 1024)).toFixed(2);
             statusLabel.innerHTML = `Analyzing ${files[0].name}... <br><span style="font-size: 14px; font-weight: normal; color: #666;">Size: ${mbSplitSize} MB</span>`;
-            await processSplitPDF(files);
+            
+            if (typeof window.runSplit !== 'function') {
+                if (typeof window.loadToolScript === 'function') window.loadToolScript('Split PDF');
+                let retries = 0;
+                while (typeof window.runSplit !== 'function' && retries < 30) {
+                    await new Promise(r => setTimeout(r, 100));
+                    retries++;
+                }
+            }
+            if (typeof window.runSplit === 'function') {
+                await window.runSplit(files);
+            } else {
+                statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: bold;">Could not initialize Split Tool. Please refresh.</span>`;
+            }
             break;
         case tool.includes("REMOVE"):
         case tool.includes("EXTRACT"):
@@ -149,68 +162,6 @@ async function handleGlobalFiles(files) {
 }
 
 
-
-async function processSplitPDF(files) {
-    const file = files[0];
-    const statusLabel = document.getElementById('status-label');
-    const isPdf = file && (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
-    if (!isPdf) { 
-        statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: bold;">Invalid PDF!</span>`;
-        setTimeout(window.resetUI, 3000);
-        return; 
-    }
-    try {
-        const fileArrayBuffer = await file.arrayBuffer();
-        const sourcePdf = await PDFLib.PDFDocument.load(fileArrayBuffer);
-        const pageCount = sourcePdf.getPageCount();
-        const range = prompt(`PDF has ${pageCount} pages. Enter numbers to extract (e.g., 1, 3-5):`, "1");
-
-        if (!range) {
-            statusLabel.innerHTML = "Click or Drag & Drop Files";
-            return;
-        }
-
-        const selectedPages = [];
-        range.split(',').forEach(p => {
-            if (p.includes('-')) {
-                const [s, e] = p.split('-').map(Number);
-                for (let i = s; i <= e; i++) if (i > 0 && i <= pageCount) selectedPages.push(i);
-            } else {
-                const n = Number(p);
-                if (n > 0 && n <= pageCount) selectedPages.push(n);
-            }
-        });
-
-        if (selectedPages.length === 0) {
-            statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: bold;">No valid pages selected!</span>`;
-            setTimeout(() => { statusLabel.innerText = "Click or Drag & Drop Files"; }, 3000);
-            return;
-        }
-
-        const newPdf = await PDFLib.PDFDocument.create();
-        const copiedPages = await newPdf.copyPages(sourcePdf, selectedPages.map(p => p - 1));
-        copiedPages.forEach(page => newPdf.addPage(page));
-        const pdfBytes = await newPdf.save();
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-
-        if (typeof showDownloadReady === 'function') {
-            showDownloadReady(url, "KELLYNE PDF_Split.pdf");
-        } else {
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `KELLYNE PDF_Split.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            statusLabel.innerText = "Click or Drag & Drop Files";
-        }
-    } catch (e) {
-        console.error(e);
-        statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: bold;">Split Error!</span>`;
-        setTimeout(() => { statusLabel.innerText = "Click or Drag & Drop Files"; }, 3000);
-    }
-}
 
 async function runCompress(files) {
     const file = files[0];
