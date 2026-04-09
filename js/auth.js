@@ -4,12 +4,12 @@ function handleCredentialResponse(response) {
     const payload = JSON.parse(atob(response.credential.split('.')[1]));
     localStorage.setItem("userName", payload.given_name);
     localStorage.setItem("userPic", payload.picture);
-    window.location.href = "index.html";
+    window.location.href = "https://kellynepdf.com/index.html";
 }
 
 function handleLogout() {
     localStorage.clear();
-    window.location.href = "index.html";
+    window.location.href = "https://kellynepdf.com/index.html";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
