@@ -10,24 +10,24 @@ window.runCompress = async function(files) {
     const titleBox = document.getElementById('tool-title-box');
     const statusLabel = document.getElementById('status-label');
     const actionBtn = document.getElementById('action-button');
+    const defaultIcon = document.getElementById('default-upload-icon');
+
+    // Hide cloud icon during processing
+    if (defaultIcon) defaultIcon.style.display = 'none';
 
     // Display Sizes
     const originalSizeMB = (file.size / (1024 * 1024)).toFixed(2);
     const estimatedSizeMB = (originalSizeMB * 0.2).toFixed(2); // Estimated 80% reduction
 
     titleBox.innerHTML = `ORIGINAL: ${originalSizeMB} MB | <span style="color: #e5322d;">ESTIMATED: ${estimatedSizeMB} MB</span>`;
-    const defaultIcon = document.getElementById('default-upload-icon');
-    if (defaultIcon) {
-        defaultIcon.style.display = 'none';
-    }
 
     if (statusLabel) {
-        statusLabel.innerText = "READY TO COMPRESS";
+        statusLabel.innerText = "Compressing...";
         statusLabel.style.color = "#e5322d";
         statusLabel.style.fontWeight = "bold";
     }
 
-    actionBtn.style.display = 'flex'; // REVEAL THE BUTTON
+    actionBtn.style.display = 'flex';
     actionBtn.style.flexDirection = 'column';
     actionBtn.style.justifyContent = 'center';
     actionBtn.style.alignItems = 'center';
@@ -36,13 +36,14 @@ window.runCompress = async function(files) {
     actionBtn.style.border = '2px solid transparent';
     
     // ZERO-CLICK FLOW: Start compression automatically
-    await startAdvancedCompression(file, titleBox, statusLabel, actionBtn);
+    await startAdvancedCompression(file, titleBox, statusLabel, actionBtn, originalSizeMB);
 };
 
-async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) {
+async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn, originalSizeMB) {
     try {
-        const originalSizeMB = (file.size / (1024 * 1024)).toFixed(2);
         actionBtn.innerHTML = `KELLYNE COMPRESSING... <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style><svg class="spinner-small" viewBox="0 0 50 50" style="width:20px;height:20px;animation:spin 1s linear infinite;vertical-align:middle;margin-left:8px;"><circle cx="25" cy="25" r="20" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="31.4 31.4"></circle></svg>`;
+        actionBtn.style.backgroundColor = "#e5322d";
+        actionBtn.style.color = "white";
         actionBtn.disabled = true;
 
         if (!window.pdfjsLib) throw new Error('pdfjsLib is not loaded');
@@ -60,7 +61,9 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
         const scale = 0.6; 
 
         for (let i = 1; i <= pdf.numPages; i++) {
-            statusLabel.innerText = `Processing page ${i} of ${pdf.numPages}...`;
+            if (statusLabel) {
+                statusLabel.innerText = `Processing page ${i} of ${pdf.numPages}...`;
+            }
             
             const page = await pdf.getPage(i);
             const viewport = page.getViewport({ scale });
@@ -97,10 +100,13 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
         const finalSizeMB = (blob.size / (1024 * 1024)).toFixed(2);
         const url = URL.createObjectURL(blob);
 
-        // Success UI
-        titleBox.innerHTML = `COMPRESSION SUCCESSFULLY COMPLETED<br><span style="font-size: 16px; color: #444;">Original: ${originalSizeMB} MB | <b style="color: #008000;">Final: ${finalSizeMB} MB</b></span>`;
-        titleBox.style.color = "#008000";
-        titleBox.style.fontSize = "22px";
+        // ✅ Standardized Success UI
+        if (titleBox) {
+            titleBox.innerText = 'COMPRESS SUCCESSFULLY COMPLETED';
+            titleBox.style.color = '#008000';    // Bright Green
+            titleBox.style.fontSize = '22px';    // Strict 22px
+            titleBox.style.fontWeight = '900';
+        }
         
         const dropZone = document.getElementById('drop-zone');
         if (dropZone) {
@@ -108,12 +114,26 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
             dropZone.classList.add('success-tool-glow');
         }
 
-        // Removed statusLabel because it is hidden in default upload icon container
-        
-        // Immediately reveal sleek BACK TO HOME style to match other modules
+        // ✅ Status Label: Show compression details
+        if (statusLabel) {
+            statusLabel.innerHTML = `Original: ${originalSizeMB} MB → Final: ${finalSizeMB} MB`;
+            statusLabel.style.color = '#008000';
+            statusLabel.style.fontWeight = '600';
+            statusLabel.style.fontSize = '15px';
+        }
+
+        // Auto Download with ✅ Strict Naming Convention
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'Kellynepdf_compressed.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // ✅ BACK TO HOME Button — Pill/Rounded, Black #111, White text
         actionBtn.disabled = false;
         actionBtn.innerHTML = `<span style="color: white; font-weight: 700; font-size: 14px; text-transform: uppercase;">BACK TO HOME</span>`;
-        actionBtn.style.backgroundColor = "#000";
+        actionBtn.style.backgroundColor = "#111";
         actionBtn.style.border = "none";
         actionBtn.style.padding = "12px 30px";
         actionBtn.style.borderRadius = "25px";
@@ -122,25 +142,25 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
         actionBtn.style.display = "flex";
         actionBtn.style.justifyContent = "center";
         actionBtn.style.alignItems = "center";
+        actionBtn.style.cursor = "pointer";
         
         actionBtn.onclick = (e2) => {
             e2.stopPropagation();
+            window.currentActiveTool = 'SELECT PDF FILES';
             if (titleBox) {
                 titleBox.style.color = ''; 
                 titleBox.style.fontSize = ''; 
+                titleBox.innerText = 'SELECT PDF FILES';
             }
             window.resetUI();
         };
-
-        // Auto Download
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `KELLYNE PDF_Compressed.pdf`;
-        link.click();
         
     } catch (err) {
-        console.error(err);
-        statusLabel.innerText = "Error during compression. Please try again.";
+        console.error("Compression Error:", err);
+        if (statusLabel) {
+            statusLabel.innerText = "Error during compression. Please try again.";
+            statusLabel.style.color = "#e5322d";
+        }
         actionBtn.disabled = false;
         
         const dropZone = document.getElementById('drop-zone');
@@ -148,9 +168,23 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
             dropZone.classList.remove('active-tool');
             dropZone.classList.remove('success-tool-glow');
         }
-        actionBtn.innerHTML = `BACK TO HOME`;
+
+        actionBtn.innerHTML = `<span style="color: #e5322d; font-weight: 700; font-size: 14px;">RESTORE HOME</span>`;
         actionBtn.style.backgroundColor = "transparent";
         actionBtn.style.border = "1.5px solid #e5322d";
-        actionBtn.onclick = (e2) => { e2.stopPropagation(); window.resetUI(); };
+        actionBtn.style.padding = "10px 25px";
+        actionBtn.style.borderRadius = "25px";
+        actionBtn.style.width = "auto";
+        actionBtn.style.margin = "0 auto";
+        actionBtn.style.cursor = "pointer";
+        actionBtn.onclick = (e2) => {
+            e2.stopPropagation();
+            window.currentActiveTool = 'SELECT PDF FILES';
+            if (titleBox) {
+                titleBox.style.color = ''; 
+                titleBox.style.fontSize = ''; 
+            }
+            window.resetUI();
+        };
     }
 }

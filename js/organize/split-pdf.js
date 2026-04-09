@@ -4,47 +4,57 @@ window.runSplit = async function(files) {
     const file = files[0];
     const btn = document.getElementById('action-button');
     const titleBox = document.getElementById('tool-title-box');
-    const statusLabel = document.getElementById('status-label');
+    const defaultIcon = document.getElementById('default-upload-icon');
+
+    // Hide cloud icon during processing
+    if (defaultIcon) defaultIcon.style.display = 'none';
 
     btn.innerHTML = `<span style="color: white; font-weight: 900;">PREPARING TO SPLIT</span> <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style><svg class="spinner" viewBox="0 0 50 50" style="width:20px;height:20px;animation:spin 1s linear infinite;vertical-align:middle;margin-left:8px;"><circle cx="25" cy="25" r="20" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="31.4 31.4"></circle></svg>`;
     btn.style.backgroundColor = "#e5322d"; 
     btn.style.color = "#fff";
     btn.style.border = "none";
+    btn.style.display = "flex";
 
     try {
         const fileArrayBuffer = await file.arrayBuffer();
         const sourcePdf = await PDFLib.PDFDocument.load(fileArrayBuffer, { ignoreEncryption: true });
         const pageCount = sourcePdf.getPageCount();
         
-        btn.innerHTML = `<span style="color: white; font-weight: 900;">SPLITTING PDF</span> <svg class="spinner" viewBox="0 0 50 50" style="width:20px;height:20px;animation:spin 1s linear infinite;vertical-align:middle;margin-left:8px;"><circle cx="25" cy="25" r="20" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="31.4 31.4"></circle></svg>`;
-
-        const selectedPages = [];
-        for (let i = 1; i <= pageCount; i++) {
-            selectedPages.push(i);
+        // Update status
+        const statusLabel = document.getElementById('status-label');
+        if (statusLabel) {
+            statusLabel.innerHTML = `Splitting ${pageCount} pages...`;
         }
 
-        // Create individual PDFs for each selected page
+        btn.innerHTML = `<span style="color: white; font-weight: 900;">SPLITTING PDF</span> <svg class="spinner" viewBox="0 0 50 50" style="width:20px;height:20px;animation:spin 1s linear infinite;vertical-align:middle;margin-left:8px;"><circle cx="25" cy="25" r="20" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="31.4 31.4"></circle></svg>`;
+
+        // Create individual PDFs for each page
         const generatedPdfs = [];
-        for (let i = 0; i < selectedPages.length; i++) {
-            const pageNum = selectedPages[i];
+        for (let i = 1; i <= pageCount; i++) {
             const newPdf = await PDFLib.PDFDocument.create();
-            const copiedPages = await newPdf.copyPages(sourcePdf, [pageNum - 1]);
+            const copiedPages = await newPdf.copyPages(sourcePdf, [i - 1]);
             newPdf.addPage(copiedPages[0]);
             
             const pdfBytes = await newPdf.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             
+            // ✅ Strict Naming: Kellynepdf_split_page_[number].pdf
             generatedPdfs.push({
-                name: `Kellynepdf_split page ${pageNum}.pdf`,
+                name: `Kellynepdf_split_page_${i}.pdf`,
                 blob: blob
             });
+
+            // Update progress
+            if (statusLabel) {
+                statusLabel.innerHTML = `Processing page ${i} of ${pageCount}...`;
+            }
         }
 
-        btn.innerHTML = `<span class="upload-label-text" id="status-label" style="color: white; font-weight: 900;">Your split files are ready!</span>`;
+        // ✅ Standardized Success UI
         if (titleBox) {
             titleBox.innerText = 'SPLIT SUCCESSFULLY COMPLETED';
-            titleBox.style.color = '#008000';
-            titleBox.style.fontSize = '24px';
+            titleBox.style.color = '#008000';    // Bright Green
+            titleBox.style.fontSize = '22px';    // Strict 22px
             titleBox.style.fontWeight = '900';
         }
         
@@ -52,6 +62,14 @@ window.runSplit = async function(files) {
         if (dropZone) {
             dropZone.classList.remove('active-tool');
             dropZone.classList.add('success-tool-glow');
+        }
+
+        // ✅ Status Label: Show split details
+        if (statusLabel) {
+            statusLabel.innerHTML = `${pageCount} pages split successfully`;
+            statusLabel.style.color = '#008000';
+            statusLabel.style.fontWeight = '600';
+            statusLabel.style.fontSize = '15px';
         }
 
         // ALWAYS BUNDLE AS ZIP (JSZip)
@@ -68,14 +86,14 @@ window.runSplit = async function(files) {
         const zipUrl = URL.createObjectURL(zipBlob);
         const link = document.createElement('a');
         link.href = zipUrl;
-        link.download = `KELLYNE PDF_Split_Bundle.zip`;
+        link.download = `Kellynepdf_split_bundle.zip`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
-        // Reset UI Button to 'BACK TO HOME'
+        // ✅ BACK TO HOME Button — Pill/Rounded, Black #111, White text
         btn.innerHTML = `<span style="color: white; font-weight: 700; font-size: 14px; text-transform: uppercase;">BACK TO HOME</span>`;
-        btn.style.backgroundColor = "#000"; 
+        btn.style.backgroundColor = "#111"; 
         btn.style.border = "none";
         btn.style.padding = "12px 30px";
         btn.style.borderRadius = "25px";
@@ -84,21 +102,25 @@ window.runSplit = async function(files) {
         btn.style.display = "flex";
         btn.style.justifyContent = "center";
         btn.style.alignItems = "center";
+        btn.style.cursor = "pointer";
         
         btn.onclick = (e2) => {
             e2.stopPropagation();
+            window.currentActiveTool = 'SELECT PDF FILES';
             if (titleBox) {
                 titleBox.style.color = ''; 
                 titleBox.style.fontSize = ''; 
+                titleBox.innerText = 'SELECT PDF FILES';
             }
             window.resetUI();
         };
 
     } catch (e) {
+        console.error("Split Error:", e);
         if (titleBox) {
             titleBox.innerText = 'SPLIT FAILED';
             titleBox.style.color = '#e5322d';
-            titleBox.style.fontSize = '24px';
+            titleBox.style.fontSize = '22px';
         }
         
         btn.innerHTML = `<span style="color: #e5322d; font-weight: 700; font-size: 14px;">RESTORE HOME</span>`;
@@ -108,9 +130,11 @@ window.runSplit = async function(files) {
         btn.style.borderRadius = "25px";
         btn.style.width = "auto";
         btn.style.margin = "0 auto";
+        btn.style.cursor = "pointer";
         
         btn.onclick = (e2) => {
             e2.stopPropagation();
+            window.currentActiveTool = 'SELECT PDF FILES';
             if (titleBox) {
                 titleBox.style.color = ''; 
                 titleBox.style.fontSize = ''; 

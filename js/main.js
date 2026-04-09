@@ -77,7 +77,7 @@ const loadedScripts = new Set();
 
 let hideTimeout;
 
-function loadToolScript(name) {
+window.loadToolScript = function loadToolScript(name) {
     if (toolScriptsMap[name] && !loadedScripts.has(name)) {
         console.log(`Lazy loading script for ${name}: ${toolScriptsMap[name]}`);
         const script = document.createElement('script');
@@ -92,7 +92,7 @@ function loadToolScript(name) {
             // Load WASM core when implemented
         }
     }
-}
+};
 
 window.currentActiveTool = 'SELECT PDF FILES';
 
@@ -192,39 +192,37 @@ window.resetUI = function() {
         if (label) {
             label.innerText = "Click or Drag & Drop Files to Begin";
             label.style.color = "#444";
+            label.style.fontWeight = "500";
+            label.style.fontSize = "18px";
         }
     }
 
-    // 2. Hide Action Button By Default
+    // 2. Hide Action Button By Default — full style purge
     if (btn) {
         btn.innerHTML = '';
-        btn.style.display = 'none';
         btn.onclick = null;
+        btn.disabled = false;
         btn.className = ''; // Remove all classes including download-ready
         btn.removeAttribute('style');
         btn.style.display = 'none';
     }
 
-    // 3. Reset Title to Current Tool or Home
+    // 3. Reset Title — always revert to current active tool or home
     if (titleBox) {
-        const successWords = ['SUCCESSFUL', 'COMPLETED', 'READY', 'FAILED', 'NEED'];
-        const currentText = titleBox.innerText.toUpperCase();
-        const isFinishedState = successWords.some(w => currentText.includes(w));
-        
-        if (isFinishedState) {
-            titleBox.style.fontSize = '';
-            titleBox.style.color = '#e5322d';
-            // If it was a success/fail state, reverting home or to the active tool name
-            if (window.currentActiveTool && window.currentActiveTool !== 'SELECT PDF FILES') {
-                titleBox.innerText = window.currentActiveTool;
-            } else {
-                window.currentActiveTool = 'SELECT PDF FILES';
-                titleBox.innerText = 'SELECT PDF FILES';
-            }
+        titleBox.style.fontSize = '';
+        titleBox.style.fontWeight = '';
+        titleBox.style.color = '#e5322d';
+        titleBox.innerHTML = ''; // Clear any innerHTML with spans
+
+        if (window.currentActiveTool && window.currentActiveTool !== 'SELECT PDF FILES') {
+            titleBox.innerText = window.currentActiveTool;
+        } else {
+            window.currentActiveTool = 'SELECT PDF FILES';
+            titleBox.innerText = 'SELECT PDF FILES';
         }
     }
 
-    // 4. Glow Logic
+    // 4. Glow Logic — purge all success glows
     const dropZoneEl = document.getElementById('drop-zone');
     if (dropZoneEl) {
         dropZoneEl.classList.remove('success-tool-glow');

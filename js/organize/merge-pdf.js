@@ -3,6 +3,7 @@
 window.runMerge = async function(files) {
     const titleBox = document.getElementById('tool-title-box');
     const btn = document.getElementById('action-button');
+    const defaultIcon = document.getElementById('default-upload-icon');
 
     if (files.length < 2) {
         if (titleBox) {
@@ -16,11 +17,15 @@ window.runMerge = async function(files) {
         return;
     }
 
+    // Hide the cloud icon during processing
+    if (defaultIcon) defaultIcon.style.display = 'none';
+
     // STEP 2: File Upload (Ready State)
     btn.innerHTML = `<span class="upload-label-text" id="status-label" style="color: white; font-weight: 900;">READY TO MERGE</span>`;
     btn.style.backgroundColor = "#e5322d"; 
     btn.style.color = "#fff";
     btn.style.border = "none";
+    btn.style.display = "flex";
     btn.classList.add('download-ready');
 
     btn.onclick = async (e) => {
@@ -64,12 +69,13 @@ window.runMerge = async function(files) {
 
             let mergedPdfBytes = await mergedPdf.save();
             const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
+            const finalSizeMB = (blob.size / (1024 * 1024)).toFixed(2);
             const url = URL.createObjectURL(blob);
 
-            // Naming Convention
-            const filename = "KELLYNE PDF_Merged.pdf";
+            // ✅ Strict Naming Convention
+            const filename = "Kellynepdf_merged.pdf";
 
-            // Automatically Trigger Download First
+            // Automatically Trigger Download
             const link = document.createElement('a');
             link.href = url;
             link.download = filename;
@@ -77,11 +83,11 @@ window.runMerge = async function(files) {
             link.click();
             document.body.removeChild(link);
 
-            // Dynamic Green Success State
+            // ✅ Standardized Success UI
             if (titleBox) {
                 titleBox.innerText = 'MERGE SUCCESSFULLY COMPLETED';
-                titleBox.style.color = '#008000';
-                titleBox.style.fontSize = '24px'; // Sleek professional font
+                titleBox.style.color = '#008000';    // Bright Green
+                titleBox.style.fontSize = '22px';    // Strict 22px
                 titleBox.style.fontWeight = '900';
             }
             
@@ -91,9 +97,20 @@ window.runMerge = async function(files) {
                 dropZone.classList.add('success-tool-glow');
             }
 
-            // Immediately reveal BACK TO HOME (sleek, chinnaga)
+            // ✅ Status Label: Show file details
+            const statusLabel = document.getElementById('status-label');
+            if (statusLabel) {
+                statusLabel.innerHTML = `${mergedCount} files merged | Final size: ${finalSizeMB} MB`;
+                statusLabel.style.color = '#008000';
+                statusLabel.style.fontWeight = '600';
+                statusLabel.style.fontSize = '15px';
+            } else if (btn) {
+                // Fallback: put status in the button area before transforming
+            }
+
+            // ✅ BACK TO HOME Button — Pill/Rounded, Black #111, White text
             btn.innerHTML = `<span style="color: white; font-weight: 700; font-size: 14px; text-transform: uppercase;">BACK TO HOME</span>`;
-            btn.style.backgroundColor = "#000"; 
+            btn.style.backgroundColor = "#111"; 
             btn.style.border = "none";
             btn.style.padding = "12px 30px";
             btn.style.borderRadius = "25px";
@@ -102,12 +119,16 @@ window.runMerge = async function(files) {
             btn.style.display = "flex";
             btn.style.justifyContent = "center";
             btn.style.alignItems = "center";
+            btn.style.cursor = "pointer";
             
             btn.onclick = (e2) => {
                 e2.stopPropagation();
+                // Reset currentActiveTool back to home
+                window.currentActiveTool = 'SELECT PDF FILES';
                 if (titleBox) {
-                    titleBox.style.color = ''; // Revert core styling
-                    titleBox.style.fontSize = ''; // Revert to base css size
+                    titleBox.style.color = '';
+                    titleBox.style.fontSize = '';
+                    titleBox.innerText = 'SELECT PDF FILES';
                 }
                 window.resetUI();
             };
@@ -121,7 +142,7 @@ window.runMerge = async function(files) {
             if (titleBox) {
                 titleBox.innerText = 'MERGE FAILED';
                 titleBox.style.color = '#e5322d';
-                titleBox.style.fontSize = '24px';
+                titleBox.style.fontSize = '22px';
             }
             
             btn.innerHTML = `<span style="color: #e5322d; font-weight: 700; font-size: 14px;">RESTORE HOME</span>`;
@@ -131,9 +152,11 @@ window.runMerge = async function(files) {
             btn.style.borderRadius = "25px";
             btn.style.width = "auto";
             btn.style.margin = "0 auto";
+            btn.style.cursor = "pointer";
             
             btn.onclick = (e2) => {
                 e2.stopPropagation();
+                window.currentActiveTool = 'SELECT PDF FILES';
                 if (titleBox) {
                     titleBox.style.color = ''; 
                     titleBox.style.fontSize = ''; 
