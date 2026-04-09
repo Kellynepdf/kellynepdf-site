@@ -104,25 +104,26 @@ window.updateTool = function(name) {
         console.warn("history.pushState failed.");
     }
 
-    // Set to h1 as per requirement
+    // Immediately Set DOM without timeouts
     const titleBox = document.getElementById('tool-title-box');
-    window.currentActiveTool = name.toUpperCase();
-    titleBox.innerText = window.currentActiveTool;
-
-    const infoArea = document.getElementById('tool-info-area');
-    infoArea.style.display = 'block';
-    if (toolDocs[name]) {
-        animateText('info-what', toolDocs[name].what);
-        animateText('info-how', toolDocs[name].how);
+    if (titleBox) {
+        window.currentActiveTool = name.toUpperCase();
+        titleBox.innerText = window.currentActiveTool;
+        titleBox.style.color = '#e5322d'; // Force red text for new tool state
+        titleBox.style.fontSize = ''; // Scrub large victory sizes
+        titleBox.style.opacity = '1';
     }
 
-    hideTimeout = setTimeout(() => {
-        document.getElementById('info-what').innerHTML = "";
-        document.getElementById('info-how').innerHTML = "";
-        infoArea.style.display = 'none';
-    }, 10000);
+    const infoArea = document.getElementById('tool-info-area');
+    if (infoArea) {
+        infoArea.style.display = 'block';
+        if (toolDocs[name]) {
+            animateText('info-what', toolDocs[name].what);
+            animateText('info-how', toolDocs[name].how);
+        }
+    }
 
-    // Reset UI styling
+    // Reset UI styling (Action Button, Default Cloud)
     resetUI();
     
     // Hero Box Integration
@@ -210,7 +211,7 @@ window.resetUI = function() {
         
         if (isFinishedState) {
             titleBox.style.fontSize = '';
-            titleBox.style.color = '';
+            titleBox.style.color = '#e5322d';
             window.currentActiveTool = 'SELECT PDF FILES';
             titleBox.innerText = window.currentActiveTool;
         }
