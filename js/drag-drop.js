@@ -99,11 +99,19 @@ async function handleGlobalFiles(files) {
 
         // --- Optimize --- //
         case tool.includes("COMPRESS"):
-            const totalCompressBytes = files.reduce((acc, file) => acc + file.size, 0);
-            const mbCompressSize = (totalCompressBytes / (1024 * 1024));
-            const estimatedSize = (mbCompressSize * 0.4).toFixed(2); // Assume ~60% compression
-            statusLabel.innerHTML = `Compressing ${files[0].name}... <br><span style="font-size: 14px; font-weight: bold; color: #006400;">Estimated Target Size: ~${estimatedSize} MB</span>`;
-            await runCompress(files);
+            if (typeof window.runCompress !== 'function') {
+                if (typeof window.loadToolScript === 'function') window.loadToolScript('Compress PDF');
+                let retries = 0;
+                while (typeof window.runCompress !== 'function' && retries < 30) {
+                    await new Promise(r => setTimeout(r, 100));
+                    retries++;
+                }
+            }
+            if (typeof window.runCompress === 'function') {
+                await window.runCompress(files);
+            } else {
+                statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: bold;">Could not initialize Compress Tool. Please refresh.</span>`;
+            }
             break;
         case tool.includes("REPAIR"):
         case tool.includes("OCR"):
@@ -163,46 +171,3 @@ async function handleGlobalFiles(files) {
 
 
 
-async function runCompress(files) {
-    const file = files[0];
-    const statusLabel = document.getElementById('status-label');
-    const isPdf = file && (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
-    if (!isPdf) { 
-        statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: bold;">Invalid PDF!</span>`;
-        setTimeout(window.resetUI, 3000);
-        return; 
-    }
-    try {
-        // We simulate advanced compression here using pdf-lib (it inherently removes some unused objects on resave)
-        const fileArrayBuffer = await file.arrayBuffer();
-        const sourcePdf = await PDFLib.PDFDocument.load(fileArrayBuffer);
-        const newPdf = await PDFLib.PDFDocument.create();
-        const copiedPages = await newPdf.copyPages(sourcePdf, sourcePdf.getPageIndices());
-        copiedPages.forEach(page => newPdf.addPage(page));
-
-        // Compression simulation (real compression usually requires server-side or complex WASM libraries)
-        const pdfBytes = await newPdf.save({ useObjectStreams: false });
-        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-
-        // Wait 1.5s to show the nice green text simulation
-        setTimeout(() => {
-            if (typeof showDownloadReady === 'function') {
-                showDownloadReady(url, "KELLYNE PDF_Compressed.pdf");
-            } else {
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `KELLYNE PDF_Compressed.pdf`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                statusLabel.innerText = "Click or Drag & Drop Files";
-            }
-        }, 1500);
-
-    } catch (e) {
-        console.error(e);
-        statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: bold;">Compress Error!</span>`;
-        setTimeout(() => { statusLabel.innerText = "Click or Drag & Drop Files"; }, 3000);
-    }
-}
