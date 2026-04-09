@@ -72,6 +72,12 @@ window.runSplit = async function(files) {
             titleBox.style.fontSize = '24px';
             titleBox.style.fontWeight = '900';
         }
+        
+        const dropZone = document.getElementById('drop-zone');
+        if (dropZone) {
+            dropZone.classList.remove('active-tool');
+            dropZone.classList.add('success-tool-glow');
+        }
 
         if (generatedPdfs.length > 10) {
             // BULK PROCESSING (ZIP AUTOMATION)

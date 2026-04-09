@@ -128,12 +128,14 @@ window.updateTool = function(name) {
     // Hero Box Integration
     const dropZone = document.getElementById('drop-zone');
     if (dropZone) {
-        if (name.toUpperCase() === 'MERGE PDF') {
-            dropZone.style.border = "3px dashed #e5322d";
-            dropZone.style.boxShadow = "0 30px 70px rgba(229, 50, 45, 0.15)";
+        if (name.toUpperCase() !== 'SELECT PDF FILES') {
+            dropZone.classList.add('active-tool');
+            dropZone.classList.remove('success-tool-glow');
         } else {
-            dropZone.style.border = "2.5px dashed rgba(229, 50, 45, 0.2)";
-            dropZone.style.boxShadow = "0 30px 70px rgba(0, 0, 0, 0.05)";
+            dropZone.classList.remove('active-tool');
+            dropZone.classList.remove('success-tool-glow');
+            dropZone.style.border = ''; // Revert legacy
+            dropZone.style.boxShadow = ''; // Revert legacy
         }
     }
 
@@ -170,13 +172,18 @@ window.resetUI = function() {
     }
 
     const titleBox = document.getElementById('tool-title-box');
-    if (titleBox && (titleBox.innerText === 'MERGE SUCCESSFUL' || titleBox.innerText === 'MERGE SUCCESSFULLY COMPLETED')) {
+    const successWords = ['SUCCESSFUL', 'COMPLETED', 'READY'];
+    const isSuccessState = titleBox && successWords.some(w => titleBox.innerText.includes(w));
+    
+    if (titleBox && isSuccessState) {
         titleBox.innerText = 'SELECT PDF FILES';
         window.currentActiveTool = 'SELECT PDF FILES';
         const dropZone = document.getElementById('drop-zone');
         if (dropZone) {
-            dropZone.style.border = "2.5px dashed rgba(229, 50, 45, 0.2)";
-            dropZone.style.boxShadow = "0 30px 70px rgba(0, 0, 0, 0.05)";
+            dropZone.classList.remove('active-tool', 'success-tool-glow');
+            // Clean up any old inline styles left around
+            dropZone.style.border = '';
+            dropZone.style.boxShadow = '';
         }
     }
 

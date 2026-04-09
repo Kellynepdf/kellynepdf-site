@@ -84,6 +84,12 @@ window.runMerge = async function(files) {
                 titleBox.style.fontSize = '24px'; // Sleek professional font
                 titleBox.style.fontWeight = '900';
             }
+            
+            const dropZone = document.getElementById('drop-zone');
+            if (dropZone) {
+                dropZone.classList.remove('active-tool');
+                dropZone.classList.add('success-tool-glow');
+            }
 
             // Immediately reveal BACK TO HOME (sleek, chinnaga)
             btn.innerHTML = `<span style="color: #e5322d; font-weight: 700; font-size: 14px; text-transform: uppercase;">BACK TO HOME</span>`;
