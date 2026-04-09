@@ -16,9 +16,25 @@ window.runCompress = async function(files) {
     const estimatedSizeMB = (originalSizeMB * 0.2).toFixed(2); // Estimated 80% reduction
 
     titleBox.innerHTML = `ORIGINAL: ${originalSizeMB} MB | <span style="color: #e5322d;">ESTIMATED: ${estimatedSizeMB} MB</span>`;
-    statusLabel.innerText = "READY TO COMPRESS";
-    statusLabel.style.color = "#e5322d";
+    const defaultIcon = document.getElementById('default-upload-icon');
+    if (defaultIcon) {
+        defaultIcon.style.display = 'none';
+    }
 
+    if (statusLabel) {
+        statusLabel.innerText = "READY TO COMPRESS";
+        statusLabel.style.color = "#e5322d";
+        statusLabel.style.fontWeight = "bold";
+    }
+
+    actionBtn.style.display = 'flex'; // REVEAL THE BUTTON
+    actionBtn.style.flexDirection = 'column';
+    actionBtn.style.justifyContent = 'center';
+    actionBtn.style.alignItems = 'center';
+    actionBtn.style.padding = '15px 40px';
+    actionBtn.style.borderRadius = '20px';
+    actionBtn.style.border = '2px solid transparent';
+    
     actionBtn.innerHTML = `CLICK TO COMPRESS`;
     actionBtn.style.backgroundColor = "#e5322d";
     actionBtn.style.color = "white";
