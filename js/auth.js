@@ -4,12 +4,12 @@ function handleCredentialResponse(response) {
     const payload = JSON.parse(atob(response.credential.split('.')[1]));
     localStorage.setItem("userName", payload.given_name);
     localStorage.setItem("userPic", payload.picture);
-    location.reload();
+    window.location.href = "index.html";
 }
 
 function handleLogout() {
     localStorage.clear();
-    location.reload();
+    window.location.href = "index.html";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
