@@ -161,7 +161,7 @@ window.resetUI = function() {
     let defaultIcon = document.getElementById('default-upload-icon');
     let btn = document.getElementById('action-button');
 
-    // 1. Maintain Cloud Upload Icon (separate from button)
+    // 1. Maintain Cloud Upload Icon
     if (!defaultIcon && dropZone) {
         defaultIcon = document.createElement('div');
         defaultIcon.id = 'default-upload-icon';
@@ -175,7 +175,7 @@ window.resetUI = function() {
                 <path d="M7 10V9C7 6.23858 9.23858 4 12 4C14.7614 4 17 6.23858 17 9V10C19.2091 10 21 11.7909 21 14C21 16.2091 19.2091 18 17 18H7C4.79086 18 3 16.2091 3 14C3 11.7909 4.79086 10 7 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M12 12V15M12 12L10 13.5M12 12L14 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <span class="upload-label-text" id="status-label" style="font-size: 18px; color: #444; font-weight: 500;">Click or Drag & Drop Files to Begin</span>
+            <span class="upload-label-text status-text-reset" style="font-size: 18px; color: #444; font-weight: 500;">Click or Drag & Drop Files to Begin</span>
         `;
         if (btn) {
             dropZone.insertBefore(defaultIcon, btn);
@@ -186,25 +186,19 @@ window.resetUI = function() {
 
     if (defaultIcon) {
         defaultIcon.style.display = 'flex';
-        const statusLabel = document.getElementById('status-label');
-        if (statusLabel) {
-            statusLabel.innerHTML = `Click or Drag & Drop Files to Begin`;
-            statusLabel.style.color = '#444';
-        }
     }
 
     // 2. Hide Action Button By Default
     if (btn) {
         btn.innerHTML = '';
-        btn.removeAttribute('style'); // CRITICAL: Reset any inline styling like colors and padding from previous tools
-        btn.style.display = 'none'; // HIDDEN UNTIL DROP
+        btn.removeAttribute('style');
+        btn.style.display = 'none';
         btn.onclick = null;
         btn.classList.remove('download-ready');
     }
 
     const titleBox = document.getElementById('tool-title-box');
     
-    // Clear legacy inline styles ONLY if trapped in a success/warning state
     if (titleBox) {
         const successWords = ['SUCCESSFUL', 'COMPLETED', 'READY', 'FAILED', 'NEED'];
         const isFinishedState = successWords.some(w => titleBox.innerText.includes(w));
@@ -217,16 +211,16 @@ window.resetUI = function() {
         }
     }
 
-    const dropZone = document.getElementById('drop-zone');
-    if (dropZone) {
-        dropZone.classList.remove('success-tool-glow');
-        dropZone.style.border = '';
-        dropZone.style.boxShadow = '';
+    const dropZoneEl = document.getElementById('drop-zone');
+    if (dropZoneEl) {
+        dropZoneEl.classList.remove('success-tool-glow');
+        dropZoneEl.style.border = '';
+        dropZoneEl.style.boxShadow = '';
         
         if (window.currentActiveTool === 'SELECT PDF FILES') {
-            dropZone.classList.remove('active-tool');
+            dropZoneEl.classList.remove('active-tool');
         } else {
-            dropZone.classList.add('active-tool');
+            dropZoneEl.classList.add('active-tool');
         }
     }
 
