@@ -56,8 +56,8 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
         const newDoc = await PDFLib.PDFDocument.create();
 
-        // 80% reduction target (Scale 0.7)
-        const scale = 0.7; 
+        // High compression target (Scale 0.6)
+        const scale = 0.6; 
 
         for (let i = 1; i <= pdf.numPages; i++) {
             statusLabel.innerText = `Processing page ${i} of ${pdf.numPages}...`;
@@ -73,14 +73,12 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
             await page.render({ canvasContext: ctx, viewport }).promise;
             
             // Compress quality set to 0.2 (20% for High Compression target)
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.2);
-            const base64Data = dataUrl.split(',')[1];
-            const binaryString = atob(base64Data);
-            const len = binaryString.length;
-            const imgBytes = new Uint8Array(len);
-            for (let j = 0; j < len; j++) {
-                imgBytes[j] = binaryString.charCodeAt(j);
-            }
+            const imgBytes = await new Promise(resolve => {
+                canvas.toBlob(async (blob) => {
+                    const buffer = await blob.arrayBuffer();
+                    resolve(new Uint8Array(buffer));
+                }, 'image/jpeg', 0.2);
+            });
             const img = await newDoc.embedJpg(imgBytes);
             
             const p = newDoc.addPage([viewport.width, viewport.height]);
@@ -114,13 +112,16 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
         
         // Immediately reveal sleek BACK TO HOME style to match other modules
         actionBtn.disabled = false;
-        actionBtn.innerHTML = `<span style="color: #e5322d; font-weight: 700; font-size: 14px; text-transform: uppercase;">BACK TO HOME</span>`;
-        actionBtn.style.backgroundColor = "transparent";
-        actionBtn.style.border = "1.5px solid #e5322d";
-        actionBtn.style.padding = "10px 25px";
+        actionBtn.innerHTML = `<span style="color: white; font-weight: 700; font-size: 14px; text-transform: uppercase;">BACK TO HOME</span>`;
+        actionBtn.style.backgroundColor = "#000";
+        actionBtn.style.border = "none";
+        actionBtn.style.padding = "12px 30px";
         actionBtn.style.borderRadius = "25px";
         actionBtn.style.width = "auto";
         actionBtn.style.margin = "0 auto";
+        actionBtn.style.display = "flex";
+        actionBtn.style.justifyContent = "center";
+        actionBtn.style.alignItems = "center";
         
         actionBtn.onclick = (e2) => {
             e2.stopPropagation();

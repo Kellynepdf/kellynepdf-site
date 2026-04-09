@@ -54,51 +54,36 @@ window.runSplit = async function(files) {
             dropZone.classList.add('success-tool-glow');
         }
 
-        if (generatedPdfs.length > 10) {
-            // BULK PROCESSING (ZIP AUTOMATION)
-            if (typeof JSZip === 'undefined') {
-                // Failsafe in case JSZip doesn't load
-                throw new Error("JSZip library not found for bulk split.");
-            }
-            const zip = new JSZip();
-            generatedPdfs.forEach(pdfObj => {
-                zip.file(pdfObj.name, pdfObj.blob);
-            });
-            
-            const zipBlob = await zip.generateAsync({ type: "blob" });
-            const zipUrl = URL.createObjectURL(zipBlob);
-            const link = document.createElement('a');
-            link.href = zipUrl;
-            link.download = `KELLYNE PDF_Bulk_Split.zip`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-        } else {
-            // INDIVIDUAL DOWNLOADS (<= 10 files)
-            for (let i = 0; i < generatedPdfs.length; i++) {
-                const pdfObj = generatedPdfs[i];
-                const url = URL.createObjectURL(pdfObj.blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = pdfObj.name;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                // Small delay to prevent browser from blocking multiple rapid downloads
-                await new Promise(r => setTimeout(r, 200));
-            }
+        // ALWAYS BUNDLE AS ZIP (JSZip)
+        if (typeof JSZip === 'undefined') {
+            throw new Error("JSZip library not found for bundling.");
         }
+        
+        const zip = new JSZip();
+        generatedPdfs.forEach(pdfObj => {
+            zip.file(pdfObj.name, pdfObj.blob);
+        });
+        
+        const zipBlob = await zip.generateAsync({ type: "blob" });
+        const zipUrl = URL.createObjectURL(zipBlob);
+        const link = document.createElement('a');
+        link.href = zipUrl;
+        link.download = `KELLYNE PDF_Split_Bundle.zip`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
 
         // Reset UI Button to 'BACK TO HOME'
-        btn.innerHTML = `<span style="color: #e5322d; font-weight: 700; font-size: 14px; text-transform: uppercase;">BACK TO HOME</span>`;
-        btn.style.backgroundColor = "transparent"; 
-        btn.style.border = "1.5px solid #e5322d";
-        btn.style.padding = "10px 25px";
+        btn.innerHTML = `<span style="color: white; font-weight: 700; font-size: 14px; text-transform: uppercase;">BACK TO HOME</span>`;
+        btn.style.backgroundColor = "#000"; 
+        btn.style.border = "none";
+        btn.style.padding = "12px 30px";
         btn.style.borderRadius = "25px";
         btn.style.width = "auto";
         btn.style.margin = "0 auto";
+        btn.style.display = "flex";
+        btn.style.justifyContent = "center";
+        btn.style.alignItems = "center";
         
         btn.onclick = (e2) => {
             e2.stopPropagation();

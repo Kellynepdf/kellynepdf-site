@@ -297,12 +297,13 @@ window.showDownloadReady = function(urlOrFiles, filename) {
         };
     }
 }
-// js/main.js
 
-// js/main.js
+// Normalization for PDF Libraries
+if (typeof PDFLib === 'undefined' && typeof pdfLib !== 'undefined') {
+    window.PDFLib = pdfLib;
+}
 
-
-
+// Initialization Logics
 document.addEventListener("DOMContentLoaded", () => {
     animateText('sub-heading', "KellynePDF - All-In-One Solution");
 
@@ -311,7 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
         particlesJS("particles-js", {
             "particles": {
                 "number": {
-                    "value": 100,
+                    "value": 120,
                     "density": { "enable": true, "value_area": 800 }
                 },
                 "color": { "value": ["#1a237e", "#90caf9", "#e5322d"] }, // Added brand red
@@ -338,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 },
                 "move": {
                     "enable": true,
-                    "speed": 2.5,
+                    "speed": 1.5,
                     "direction": "none",
                     "random": true,
                     "straight": false,

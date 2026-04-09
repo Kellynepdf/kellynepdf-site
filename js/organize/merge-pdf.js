@@ -92,13 +92,16 @@ window.runMerge = async function(files) {
             }
 
             // Immediately reveal BACK TO HOME (sleek, chinnaga)
-            btn.innerHTML = `<span style="color: #e5322d; font-weight: 700; font-size: 14px; text-transform: uppercase;">BACK TO HOME</span>`;
-            btn.style.backgroundColor = "transparent"; 
-            btn.style.border = "1.5px solid #e5322d";
-            btn.style.padding = "10px 25px";
+            btn.innerHTML = `<span style="color: white; font-weight: 700; font-size: 14px; text-transform: uppercase;">BACK TO HOME</span>`;
+            btn.style.backgroundColor = "#000"; 
+            btn.style.border = "none";
+            btn.style.padding = "12px 30px";
             btn.style.borderRadius = "25px";
             btn.style.width = "auto";
             btn.style.margin = "0 auto";
+            btn.style.display = "flex";
+            btn.style.justifyContent = "center";
+            btn.style.alignItems = "center";
             
             btn.onclick = (e2) => {
                 e2.stopPropagation();
