@@ -300,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize Particles.js correctly (Stars and Dots effect)
     if (typeof particlesJS !== 'undefined') {
-        particlesJS("particle-canvas", {
+        particlesJS("particles-js", {
             "particles": {
                 "number": {
                     "value": 100,
