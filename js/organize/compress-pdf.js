@@ -35,19 +35,13 @@ window.runCompress = async function(files) {
     actionBtn.style.borderRadius = '20px';
     actionBtn.style.border = '2px solid transparent';
     
-    actionBtn.innerHTML = `CLICK TO COMPRESS`;
-    actionBtn.style.backgroundColor = "#e5322d";
-    actionBtn.style.color = "white";
-    actionBtn.disabled = false;
-
-    actionBtn.onclick = async (e) => {
-        e.stopPropagation();
-        await startAdvancedCompression(file, titleBox, statusLabel, actionBtn);
-    };
+    // ZERO-CLICK FLOW: Start compression automatically
+    await startAdvancedCompression(file, titleBox, statusLabel, actionBtn);
 };
 
 async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) {
     try {
+        const originalSizeMB = (file.size / (1024 * 1024)).toFixed(2);
         actionBtn.innerHTML = `KELLYNE COMPRESSING... <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style><svg class="spinner-small" viewBox="0 0 50 50" style="width:20px;height:20px;animation:spin 1s linear infinite;vertical-align:middle;margin-left:8px;"><circle cx="25" cy="25" r="20" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="31.4 31.4"></circle></svg>`;
         actionBtn.disabled = true;
 
@@ -106,7 +100,7 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
         const url = URL.createObjectURL(blob);
 
         // Success UI
-        titleBox.innerText = "COMPRESSION SUCCESSFULLY COMPLETED";
+        titleBox.innerHTML = `COMPRESSION SUCCESSFULLY COMPLETED<br><span style="font-size: 16px; color: #444;">Original: ${originalSizeMB} MB | <b style="color: #008000;">Final: ${finalSizeMB} MB</b></span>`;
         titleBox.style.color = "#008000";
         titleBox.style.fontSize = "22px";
         
@@ -116,12 +110,26 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
             dropZone.classList.add('success-tool-glow');
         }
 
-        statusLabel.innerHTML = `Original Size: ${originalSizeMB} MB | Final Size: <b>${finalSizeMB} MB</b>. File saved successfully!`;
-        statusLabel.style.color = "#008000";
-
+        // Removed statusLabel because it is hidden in default upload icon container
+        
+        // Immediately reveal sleek BACK TO HOME style to match other modules
         actionBtn.disabled = false;
-        actionBtn.innerHTML = `SUCCESSFUL!`;
-        actionBtn.style.backgroundColor = "#008000";
+        actionBtn.innerHTML = `<span style="color: #e5322d; font-weight: 700; font-size: 14px; text-transform: uppercase;">BACK TO HOME</span>`;
+        actionBtn.style.backgroundColor = "transparent";
+        actionBtn.style.border = "1.5px solid #e5322d";
+        actionBtn.style.padding = "10px 25px";
+        actionBtn.style.borderRadius = "25px";
+        actionBtn.style.width = "auto";
+        actionBtn.style.margin = "0 auto";
+        
+        actionBtn.onclick = (e2) => {
+            e2.stopPropagation();
+            if (titleBox) {
+                titleBox.style.color = ''; 
+                titleBox.style.fontSize = ''; 
+            }
+            window.resetUI();
+        };
 
         // Auto Download
         const link = document.createElement('a');
@@ -129,21 +137,6 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
         link.download = `KELLYNE PDF_Compressed.pdf`;
         link.click();
         
-        // Transition to BACK TO HOME
-        setTimeout(() => {
-            actionBtn.innerHTML = "BACK TO HOME";
-            actionBtn.style.backgroundColor = "#111"; // sleek dark background
-            actionBtn.style.color = "white";
-            actionBtn.onclick = (e2) => {
-                e2.stopPropagation();
-                if (titleBox) {
-                    titleBox.style.color = ''; 
-                    titleBox.style.fontSize = ''; 
-                }
-                window.resetUI();
-            };
-        }, 2000);
-
     } catch (err) {
         console.error(err);
         statusLabel.innerText = "Error during compression. Please try again.";
