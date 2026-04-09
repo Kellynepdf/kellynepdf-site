@@ -11,6 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Courier+Prime:wght@700&display=swap');
@@ -251,6 +252,7 @@
             text-align: center;
             position: relative;
             z-index: 1;
+            transition: all 0.3s ease-in-out;
         }
 
         .upload-container {
@@ -316,6 +318,7 @@
             padding: 0;
             min-height: 140px;
             display: none;
+            transition: all 0.3s ease-in-out;
         }
 
         .info-item {
@@ -468,7 +471,7 @@
 
 <body>
 
-    <canvas id="particle-canvas"></canvas>
+    <div id="particle-canvas"></div>
 
     <header class="navbar">
         <div class="nav-left-section">

@@ -203,16 +203,14 @@ window.resetUI = function() {
 
     const titleBox = document.getElementById('tool-title-box');
     
-    // Unconditionally clear legacy inline styles
+    // Clear legacy inline styles ONLY if trapped in a success/warning state
     if (titleBox) {
-        titleBox.style.fontSize = '';
-        titleBox.style.color = '';
-        
         const successWords = ['SUCCESSFUL', 'COMPLETED', 'READY', 'FAILED', 'NEED'];
-        const isSuccessState = successWords.some(w => titleBox.innerText.includes(w));
+        const isFinishedState = successWords.some(w => titleBox.innerText.includes(w));
         
-        // Only override text if it's trapped in a success/error state
-        if (isSuccessState) {
+        if (isFinishedState) {
+            titleBox.style.fontSize = '';
+            titleBox.style.color = '';
             window.currentActiveTool = 'SELECT PDF FILES';
             titleBox.innerText = window.currentActiveTool;
         }
@@ -300,54 +298,62 @@ window.showDownloadReady = function(urlOrFiles, filename) {
 document.addEventListener("DOMContentLoaded", () => {
     animateText('sub-heading', "KellynePDF - All-In-One Solution");
 
-    // JELLYFISH Physics
-    const canvas = document.getElementById('particle-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    const mouse = { x: null, y: null, radius: 180 };
-
-    window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
-    window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-
-    class Particle {
-        constructor() {
-            this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 2 + 0.5; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5;
-            this.isStar = Math.random() > 0.85; this.angle = Math.random() * Math.PI * 2;
-            this.color = ['#1a237e', '#90caf9', '#ef9a9a', '#777'][Math.floor(Math.random() * 4)];
-        }
-        draw() {
-            ctx.fillStyle = this.color; ctx.beginPath();
-            if (this.isStar) {
-                for (let i = 0; i < 5; i++) {
-                    ctx.lineTo(this.x + this.size * Math.cos((18 + i * 72) * Math.PI / 180), this.y + this.size * Math.sin((18 + i * 72) * Math.PI / 180));
-                    ctx.lineTo(this.x + (this.size / 2) * Math.cos((54 + i * 72) * Math.PI / 180), this.y + (this.size / 2) * Math.sin((54 + i * 72) * Math.PI / 180));
+    // Initialize Particles.js correctly (Stars and Dots effect)
+    if (typeof particlesJS !== 'undefined') {
+        particlesJS("particle-canvas", {
+            "particles": {
+                "number": {
+                    "value": 100,
+                    "density": { "enable": true, "value_area": 800 }
+                },
+                "color": { "value": ["#1a237e", "#90caf9", "#e5322d"] }, // Added brand red
+                "shape": {
+                    "type": ["circle", "star"],
+                    "stroke": { "width": 0, "color": "#000000" }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": true,
+                    "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false }
+                },
+                "size": {
+                    "value": 4,
+                    "random": true,
+                    "anim": { "enable": true, "speed": 2, "size_min": 0.1, "sync": false }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#e0e0e0",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2.5,
+                    "direction": "none",
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": { "enable": true, "rotateX": 600, "rotateY": 1200 }
                 }
-            } else { ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); }
-            ctx.fill();
-        }
-        update() {
-            this.angle += 0.01;
-            this.x += this.vx + Math.sin(this.angle) * 0.2;
-            this.y += this.vy + Math.cos(this.angle) * 0.2;
-            if (this.x > canvas.width) this.x = 0; if (this.x < 0) this.x = canvas.width;
-            if (this.y > canvas.height) this.y = 0; if (this.y < 0) this.y = canvas.height;
-            if (mouse.x != null) {
-                let dx = mouse.x - this.x; let dy = mouse.y - this.y;
-                let dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < mouse.radius) {
-                    let force = (mouse.radius - dist) / mouse.radius;
-                    this.x -= dx * force * 0.05;
-                    this.y -= dy * force * 0.05;
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": { "enable": true, "mode": "grab" },
+                    "onclick": { "enable": true, "mode": "push" },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": { "distance": 140, "line_linked": { "opacity": 1 } },
+                    "push": { "particles_nb": 4 }
                 }
-            }
-        }
+            },
+            "retina_detect": true
+        });
     }
-    function init() { particles = []; for (let i = 0; i < 450; i++) particles.push(new Particle()); }
-    function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.draw(); p.update(); }); requestAnimationFrame(animate); }
-    init(); animate();
 
     // Hover Sync & Hero Box Automation
     const titleBox = document.getElementById('tool-title-box');
@@ -370,6 +376,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         titleBox.innerText = newName;
                         titleBox.style.color = '#e5322d';
                         titleBox.style.opacity = '1';
+                        
+                        // Sync Documentation on Hover
+                        const infoArea = document.getElementById('tool-info-area');
+                        if (infoArea && toolDocs[match[1]]) {
+                            infoArea.style.display = 'block';
+                            animateText('info-what', toolDocs[match[1]].what);
+                            animateText('info-how', toolDocs[match[1]].how);
+                        }
                     }, 50); // Fast low latency
                 }
             }
@@ -385,6 +399,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     titleBox.innerText = revertName;
                     titleBox.style.color = '#e5322d';
                     titleBox.style.opacity = '1';
+                    
+                    // Revert Documentation
+                    const infoArea = document.getElementById('tool-info-area');
+                    if (infoArea) {
+                        const originalToolMatch = Object.keys(toolDocs).find(k => k.toUpperCase() === revertName);
+                        if (originalToolMatch && toolDocs[originalToolMatch]) {
+                            infoArea.style.display = 'block';
+                            animateText('info-what', toolDocs[originalToolMatch].what);
+                            animateText('info-how', toolDocs[originalToolMatch].how);
+                        } else {
+                            document.getElementById('info-what').innerHTML = "";
+                            document.getElementById('info-how').innerHTML = "";
+                            infoArea.style.display = 'none';
+                        }
+                    }
                 }, 50);
             }
         });
