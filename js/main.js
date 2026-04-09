@@ -195,26 +195,39 @@ window.resetUI = function() {
     // 2. Hide Action Button By Default
     if (btn) {
         btn.innerHTML = '';
+        btn.removeAttribute('style'); // CRITICAL: Reset any inline styling like colors and padding from previous tools
         btn.style.display = 'none'; // HIDDEN UNTIL DROP
         btn.onclick = null;
         btn.classList.remove('download-ready');
     }
 
     const titleBox = document.getElementById('tool-title-box');
-    const successWords = ['SUCCESSFUL', 'COMPLETED', 'READY'];
-    const isSuccessState = titleBox && successWords.some(w => titleBox.innerText.includes(w));
     
-    if (titleBox && isSuccessState) {
-        titleBox.innerText = 'SELECT PDF FILES';
-        window.currentActiveTool = 'SELECT PDF FILES';
+    // Unconditionally clear legacy inline styles
+    if (titleBox) {
         titleBox.style.fontSize = '';
         titleBox.style.color = '';
-        const dropZone = document.getElementById('drop-zone');
-        if (dropZone) {
-            dropZone.classList.remove('active-tool', 'success-tool-glow');
-            // Clean up any old inline styles left around
-            dropZone.style.border = '';
-            dropZone.style.boxShadow = '';
+        
+        const successWords = ['SUCCESSFUL', 'COMPLETED', 'READY', 'FAILED', 'NEED'];
+        const isSuccessState = successWords.some(w => titleBox.innerText.includes(w));
+        
+        // Only override text if it's trapped in a success/error state
+        if (isSuccessState) {
+            window.currentActiveTool = 'SELECT PDF FILES';
+            titleBox.innerText = window.currentActiveTool;
+        }
+    }
+
+    const dropZone = document.getElementById('drop-zone');
+    if (dropZone) {
+        dropZone.classList.remove('success-tool-glow');
+        dropZone.style.border = '';
+        dropZone.style.boxShadow = '';
+        
+        if (window.currentActiveTool === 'SELECT PDF FILES') {
+            dropZone.classList.remove('active-tool');
+        } else {
+            dropZone.classList.add('active-tool');
         }
     }
 
