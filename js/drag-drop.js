@@ -31,8 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function handleGlobalFiles(files) {
     if (!files || files.length === 0) return;
 
-    const titleBox = document.getElementById('tool-title-box');
-    const tool = titleBox ? titleBox.innerText : 'SELECT PDF FILES';
+    const tool = window.currentActiveTool || 'SELECT PDF FILES';
     const statusLabel = document.getElementById('status-label');
 
     // Error Handling: Quick check if a PDF-centric tool gets non-PDF

@@ -160,8 +160,9 @@ window.resetUI = function() {
     const dropZone = document.getElementById('drop-zone');
     let defaultIcon = document.getElementById('default-upload-icon');
     let btn = document.getElementById('action-button');
+    const titleBox = document.getElementById('tool-title-box');
 
-    // 1. Maintain Cloud Upload Icon
+    // 1. Maintain Cloud Upload Icon & Status Label
     if (!defaultIcon && dropZone) {
         defaultIcon = document.createElement('div');
         defaultIcon.id = 'default-upload-icon';
@@ -170,12 +171,13 @@ window.resetUI = function() {
         defaultIcon.style.alignItems = 'center';
         defaultIcon.style.justifyContent = 'center';
         defaultIcon.style.pointerEvents = 'none';
+        defaultIcon.style.zIndex = '5';
         defaultIcon.innerHTML = `
-            <svg class="cloud-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 85px; margin-bottom: 10px; filter: drop-shadow(0 10px 20px rgba(229, 50, 45, 0.2)); color: #e5322d;">
+            <svg class="cloud-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 85px; margin-bottom: 15px; filter: drop-shadow(0 10px 20px rgba(229, 50, 45, 0.2)); color: #e5322d;">
                 <path d="M7 10V9C7 6.23858 9.23858 4 12 4C14.7614 4 17 6.23858 17 9V10C19.2091 10 21 11.7909 21 14C21 16.2091 19.2091 18 17 18H7C4.79086 18 3 16.2091 3 14C3 11.7909 4.79086 10 7 10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M12 12V15M12 12L10 13.5M12 12L14 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <span class="upload-label-text status-text-reset" style="font-size: 18px; color: #444; font-weight: 500;">Click or Drag & Drop Files to Begin</span>
+            <span class="upload-label-text" id="status-label" style="font-size: 18px; color: #444; font-weight: 500;">Click or Drag & Drop Files to Begin</span>
         `;
         if (btn) {
             dropZone.insertBefore(defaultIcon, btn);
@@ -186,41 +188,52 @@ window.resetUI = function() {
 
     if (defaultIcon) {
         defaultIcon.style.display = 'flex';
+        const label = defaultIcon.querySelector('#status-label');
+        if (label) {
+            label.innerText = "Click or Drag & Drop Files to Begin";
+            label.style.color = "#444";
+        }
     }
 
     // 2. Hide Action Button By Default
     if (btn) {
         btn.innerHTML = '';
-        btn.removeAttribute('style');
         btn.style.display = 'none';
         btn.onclick = null;
-        btn.classList.remove('download-ready');
+        btn.className = ''; // Remove all classes including download-ready
+        btn.removeAttribute('style');
+        btn.style.display = 'none';
     }
 
-    const titleBox = document.getElementById('tool-title-box');
-    
+    // 3. Reset Title to Current Tool or Home
     if (titleBox) {
         const successWords = ['SUCCESSFUL', 'COMPLETED', 'READY', 'FAILED', 'NEED'];
-        const isFinishedState = successWords.some(w => titleBox.innerText.includes(w));
+        const currentText = titleBox.innerText.toUpperCase();
+        const isFinishedState = successWords.some(w => currentText.includes(w));
         
         if (isFinishedState) {
             titleBox.style.fontSize = '';
             titleBox.style.color = '#e5322d';
-            window.currentActiveTool = 'SELECT PDF FILES';
-            titleBox.innerText = window.currentActiveTool;
+            // If it was a success/fail state, reverting home or to the active tool name
+            if (window.currentActiveTool && window.currentActiveTool !== 'SELECT PDF FILES') {
+                titleBox.innerText = window.currentActiveTool;
+            } else {
+                window.currentActiveTool = 'SELECT PDF FILES';
+                titleBox.innerText = 'SELECT PDF FILES';
+            }
         }
     }
 
+    // 4. Glow Logic
     const dropZoneEl = document.getElementById('drop-zone');
     if (dropZoneEl) {
         dropZoneEl.classList.remove('success-tool-glow');
-        dropZoneEl.style.border = '';
-        dropZoneEl.style.boxShadow = '';
-        
-        if (window.currentActiveTool === 'SELECT PDF FILES') {
-            dropZoneEl.classList.remove('active-tool');
-        } else {
+        if (window.currentActiveTool && window.currentActiveTool !== 'SELECT PDF FILES') {
             dropZoneEl.classList.add('active-tool');
+        } else {
+            dropZoneEl.classList.remove('active-tool');
+            dropZoneEl.style.border = '';
+            dropZoneEl.style.boxShadow = '';
         }
     }
 
