@@ -13,7 +13,7 @@ window.runCompress = async function(files) {
 
     // Display Sizes
     const originalSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-    const estimatedSizeMB = (originalSizeMB * 0.5).toFixed(2); // Estimated 50% reduction
+    const estimatedSizeMB = (originalSizeMB * 0.1).toFixed(2); // Estimated 90% reduction
 
     titleBox.innerHTML = `ORIGINAL: ${originalSizeMB} MB | <span style="color: #e5322d;">ESTIMATED: ${estimatedSizeMB} MB</span>`;
     statusLabel.innerText = "READY TO COMPRESS";
@@ -46,8 +46,8 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
         const newDoc = await PDFLib.PDFDocument.create();
 
-        // Moderate compression DPI (96)
-        const scale = 1.0; 
+        // Aggressive compression DPI (Scale 0.6)
+        const scale = 0.6; 
 
         for (let i = 1; i <= pdf.numPages; i++) {
             statusLabel.innerText = `Processing page ${i} of ${pdf.numPages}...`;
@@ -62,8 +62,8 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
 
             await page.render({ canvasContext: ctx, viewport }).promise;
             
-            // Compress quality set to 0.4 (40%)
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.4);
+            // Extreme jpeg quality set to 0.15 (15%)
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.15);
             const base64Data = dataUrl.split(',')[1];
             const binaryString = atob(base64Data);
             const len = binaryString.length;
@@ -111,7 +111,7 @@ async function startAdvancedCompression(file, titleBox, statusLabel, actionBtn) 
             e.stopPropagation();
             const link = document.createElement('a');
             link.href = url;
-            link.download = `KELLYNE PDF_Compressed.pdf`;
+            link.download = `kellynepdf_compressed.pdf`;
             link.click();
             
             setTimeout(() => {
