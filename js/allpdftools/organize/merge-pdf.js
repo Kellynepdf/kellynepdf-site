@@ -35,7 +35,7 @@ async function processMergePDF(files) {
         const link = document.createElement('a');
         
         link.href = url;
-        link.download = `KellynePDF_Merged_${Date.now()}.pdf`;
+        link.download = `kellynepdf_merged.pdf`;
         document.body.appendChild(link);
         link.click();
         
@@ -52,15 +52,3 @@ async function processMergePDF(files) {
         alert("An error occurred during merging. Please ensure the files are valid PDFs.");
     }
 }
-
-// Ippudu handleGlobalFiles ni direct ga Merge logic ki connect chestunnam
-window.handleGlobalFiles = async function(files) {
-    const currentTool = document.getElementById('tool-title-box').innerText;
-    
-    if (currentTool === "MERGE PDF") {
-        await processMergePDF(files);
-    } else {
-        // Vere tools inka build chestunnam ani alert
-        alert(`${currentTool} logic is being integrated. Please try Merge PDF for now.`);
-    }
-};

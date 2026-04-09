@@ -54,7 +54,7 @@ async function processSplitPDF(files) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `KellynePDF_Split_${Date.now()}.pdf`;
+        link.download = `kellynepdf_split.pdf`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);

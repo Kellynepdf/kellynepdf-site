@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KellynePDF - Professional PDF Solution</title>
-    
+
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
@@ -14,86 +15,445 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Courier+Prime:wght@700&display=swap');
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        
-        body { 
-            background-color: #fdfdfd; color: #111; 
-            overflow-x: hidden; min-height: 100vh; 
-            display: flex; flex-direction: column; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
-        
-        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        body {
+            background-color: #fdfdfd;
+            color: #111;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
 
         /* Navigation Bar */
-        .navbar { display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 110px; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px); border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 5000; }
-        .nav-left-section { display: flex; align-items: center; gap: 50px; flex: 1; }
-        .logo-container { display: flex; align-items: center; text-decoration: none; gap: 12px; }
-        .logo-img { height: 65px; width: auto; }
-        .logo-text { font-size: 24px; font-weight: 900; color: #e5322d; text-transform: uppercase; letter-spacing: 1px; }
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            height: 110px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 5000;
+        }
 
-        .nav-menu { display: flex; list-style: none; gap: 25px; height: 100%; align-items: center; }
-        .nav-menu li { position: relative; height: 100%; display: flex; align-items: center; }
-        .nav-menu li > a { text-decoration: none; color: #111; font-size: 15px; font-weight: 800; text-transform: uppercase; transition: color 0.2s; cursor: pointer; padding: 40px 5px; }
-        
+        .nav-left-section {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            flex: 1;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            gap: 12px;
+        }
+
+        .logo-img {
+            height: 65px;
+            width: auto;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 900;
+            color: #e5322d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+            height: 100%;
+            align-items: center;
+        }
+
+        .nav-menu li {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-menu li>a {
+            text-decoration: none;
+            color: #111;
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            transition: color 0.2s;
+            cursor: pointer;
+            padding: 40px 5px;
+        }
+
         /* Dropdowns */
-        .dropdown-content { display: none; position: absolute; top: 95px; left: 0; background-color: #fff; box-shadow: 0px 15px 40px rgba(0,0,0,0.15); border-radius: 16px; padding: 30px; z-index: 9999; border: 1px solid #eee; animation: fadeIn 0.3s ease; }
-        .nav-menu li:hover .dropdown-content { display: grid; }
-        .mega-dropdown { min-width: 1100px; grid-template-columns: repeat(5, 1fr); gap: 20px; left: 50%; transform: translateX(-65%); }
-        .esign-dropdown { min-width: 420px; flex-direction: column; gap: 12px; padding: 20px; }
-        .convert-dropdown { min-width: 580px; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 95px;
+            left: 0;
+            background-color: #fff;
+            box-shadow: 0px 15px 40px rgba(0, 0, 0, 0.15);
+            border-radius: 16px;
+            padding: 30px;
+            z-index: 9999;
+            border: 1px solid #eee;
+            animation: fadeIn 0.3s ease;
+        }
 
-        .dropdown-column h3 { font-size: 14px; color: #8B0000; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px solid #f5f5f5; padding-bottom: 8px; font-weight: 900; }
-        .dropdown-column ul { list-style: none; }
-        .dropdown-column ul li a, .esign-link { font-size: 13.5px; font-weight: 700; color: #333; display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 10px; transition: 0.2s; text-decoration: none; cursor: pointer; }
-        .dropdown-column ul li a:hover { background: #fff5f5; color: #e5322d; }
+        .nav-menu li:hover .dropdown-content {
+            display: grid;
+        }
 
-        .tag { font-size: 9px; padding: 6px 16px; border-radius: 25px; font-weight: 800; margin-left: auto; text-transform: uppercase; min-width: 80px; text-align: center; }
-        .tag-any { background-color: #ffffff; color: #000; border: 1px solid #ddd; }
-        .tag-india { background-color: #006400; color: #fff; }
-        .tag-global { background-color: #00008b; color: #fff; }
-        .tool-icon { width: 22px; height: 22px; object-fit: contain; }
+        .mega-dropdown {
+            min-width: 1100px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            left: 50%;
+            transform: translateX(-65%);
+        }
+
+        .esign-dropdown {
+            min-width: 420px;
+            flex-direction: column;
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .convert-dropdown {
+            min-width: 580px;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .dropdown-column h3 {
+            font-size: 14px;
+            color: #8B0000;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f5f5f5;
+            padding-bottom: 8px;
+            font-weight: 900;
+        }
+
+        .dropdown-column ul {
+            list-style: none;
+        }
+
+        .dropdown-column ul li a,
+        .esign-link {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            transition: 0.2s;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .dropdown-column ul li a:hover {
+            background: #fff5f5;
+            color: #e5322d;
+        }
+
+        .tag {
+            font-size: 9px;
+            padding: 6px 16px;
+            border-radius: 25px;
+            font-weight: 800;
+            margin-left: auto;
+            text-transform: uppercase;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .tag-any {
+            background-color: #ffffff;
+            color: #000;
+            border: 1px solid #ddd;
+        }
+
+        .tag-india {
+            background-color: #006400;
+            color: #fff;
+        }
+
+        .tag-global {
+            background-color: #00008b;
+            color: #fff;
+        }
+
+        .tool-icon {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+        }
 
         /* Main Wrapper */
-        .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; align-items: center; }
-        .wish-container { margin-top: 60px; text-align: center; }
-        .wish-text { font-size: 48px; font-weight: 900; color: #000; letter-spacing: -2px; margin-bottom: 10px; }
-        .type-heading { font-family: 'Courier Prime', monospace; font-size: 28px; font-weight: 700; color: #111; height: 40px; margin-bottom: 30px; }
-        
-        .hero { width: 100%; max-width: 1000px; text-align: center; position: relative; z-index: 1; }
-        .upload-container { 
-            position: relative; width: 100%; max-width: 600px; height: 350px; margin: 0 auto; 
-            border-radius: 40px; display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; border: 2.5px dashed rgba(229, 50, 45, 0.2); 
-            background: #ffffff; box-shadow: 0 30px 70px rgba(0,0,0,0.05); cursor: pointer;
-            animation: floatBox 6s ease-in-out infinite; overflow: hidden;
+        .main-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .box-tool-name { position: relative; z-index: 5; color: #e5322d; font-size: 28px; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; }
-        .floating-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; background: linear-gradient(135deg, #fffafa 0%, #f8faff 100%); opacity: 0.9; }
-        .cloud-icon-svg { width: 85px; z-index: 5; margin-bottom: 10px; filter: drop-shadow(0 10px 20px rgba(229,50,45,0.2)); }
-        .upload-label-text { font-size: 20px; font-weight: 800; color: #444; z-index: 5; }
+
+        .wish-container {
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .wish-text {
+            font-size: 48px;
+            font-weight: 900;
+            color: #000;
+            letter-spacing: -2px;
+            margin-bottom: 10px;
+        }
+
+        .type-heading {
+            font-family: 'Courier Prime', monospace;
+            font-size: 28px;
+            font-weight: 700;
+            color: #111;
+            height: 40px;
+            margin-bottom: 30px;
+        }
+
+        .hero {
+            width: 100%;
+            max-width: 1000px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .upload-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 350px;
+            margin: 0 auto;
+            border-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2.5px dashed rgba(229, 50, 45, 0.2);
+            background: #ffffff;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            animation: floatBox 6s ease-in-out infinite;
+            overflow: hidden;
+        }
+
+        .box-tool-name {
+            position: relative;
+            z-index: 5;
+            color: #e5322d;
+            font-size: 28px;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .floating-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background: linear-gradient(135deg, #fffafa 0%, #f8faff 100%);
+            opacity: 0.9;
+        }
+
+        .cloud-icon-svg {
+            width: 85px;
+            z-index: 5;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 10px 20px rgba(229, 50, 45, 0.2));
+        }
+
+        .upload-label-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: #444;
+            z-index: 5;
+        }
 
         /* Documentation UI */
-        .info-floating-wrap { width: 100%; max-width: 600px; margin: 30px auto; text-align: left; padding: 0; min-height: 140px; display: none; }
-        .info-item { margin-bottom: 15px; }
-        .info-item h4 { font-size: 14px; color: #e5322d; font-weight: 900; text-transform: uppercase; margin-bottom: 5px; }
-        .char-anim { display: inline-block; opacity: 0; transform: translateX(-10px); animation: charIn 0.3s forwards; color: #111; font-weight: 600; font-size: 16px; line-height: 1.6; }
+        .info-floating-wrap {
+            width: 100%;
+            max-width: 600px;
+            margin: 30px auto;
+            text-align: left;
+            padding: 0;
+            min-height: 140px;
+            display: none;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+        }
+
+        .info-item h4 {
+            font-size: 14px;
+            color: #e5322d;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .char-anim {
+            display: inline-block;
+            opacity: 0;
+            transform: translateX(-10px);
+            animation: charIn 0.3s forwards;
+            color: #111;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 1.6;
+        }
 
         /* Auth UI */
-        .nav-right { display: flex; align-items: center; min-width: 300px; justify-content: flex-end; }
-        .user-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 10px 15px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .user-info { display: flex; align-items: center; gap: 10px; }
-        .user-pic { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #eee; }
-        .user-name-text { font-size: 14px; font-weight: 800; color: #333; }
-        .logout-btn-blue { width: 100%; background: #0073b1; color: #fff; border: none; padding: 8px 0; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 700; transition: 0.3s; }
+        .nav-right {
+            display: flex;
+            align-items: center;
+            min-width: 300px;
+            justify-content: flex-end;
+        }
+
+        .user-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 10px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #eee;
+        }
+
+        .user-name-text {
+            font-size: 14px;
+            font-weight: 800;
+            color: #333;
+        }
+
+        .logout-btn-blue {
+            width: 100%;
+            background: #0073b1;
+            color: #fff;
+            border: none;
+            padding: 8px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            transition: 0.3s;
+        }
 
         /* Footer */
-        .taskbar-bottom { width: 100%; height: 60px; background: #fff; display: flex; align-items: center; justify-content: center; border-top: 1px solid #eee; font-size: 13px; font-weight: 700; color: #777; margin-top: auto; }
+        .taskbar-bottom {
+            width: 100%;
+            height: 60px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+            font-weight: 700;
+            color: #777;
+            margin-top: auto;
+        }
 
-        @keyframes charIn { to { opacity: 1; transform: translateX(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes floatBox { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
+        @keyframes charIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes floatBox {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        body.drag-active::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 5px dashed #e5322d;
+            background: rgba(229, 50, 45, 0.05);
+            z-index: 9999;
+            pointer-events: none;
+            box-sizing: border-box;
+        }
     </style>
 </head>
+
 <body>
 
     <canvas id="particle-canvas"></canvas>
@@ -115,22 +475,44 @@
                             <div class="dropdown-column">
                                 <h3>To PDF</h3>
                                 <ul>
-                                    <li><a onclick="updateTool('JPG to PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337940.png" class="tool-icon"> JPG to PDF</a></li>
-                                    <li><a onclick="updateTool('WORD to PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337948.png" class="tool-icon"> WORD to PDF</a></li>
-                                    <li><a onclick="updateTool('EXCEL to PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337941.png" class="tool-icon"> EXCEL to PDF</a></li>
-                                    <li><a onclick="updateTool('PPT to PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337947.png" class="tool-icon"> PPT to PDF</a></li>
-                                    <li><a onclick="updateTool('HTML to PDF')"><img src="https://cdn-icons-png.flaticon.com/512/2165/2165000.png" class="tool-icon"> HTML to PDF</a></li>
+                                    <li><a onclick="updateTool('JPG to PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337940.png"
+                                                class="tool-icon"> JPG to PDF</a></li>
+                                    <li><a onclick="updateTool('WORD to PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337948.png"
+                                                class="tool-icon"> WORD to PDF</a></li>
+                                    <li><a onclick="updateTool('EXCEL to PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337941.png"
+                                                class="tool-icon"> EXCEL to PDF</a></li>
+                                    <li><a onclick="updateTool('PPT to PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337947.png"
+                                                class="tool-icon"> PPT to PDF</a></li>
+                                    <li><a onclick="updateTool('HTML to PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/2165/2165000.png"
+                                                class="tool-icon"> HTML to PDF</a></li>
                                 </ul>
                             </div>
                             <div class="dropdown-column">
                                 <h3>From PDF</h3>
                                 <ul>
-                                    <li><a onclick="updateTool('PDF to JPG')"><img src="https://cdn-icons-png.flaticon.com/512/337/337940.png" class="tool-icon"> PDF to JPG</a></li>
-                                    <li><a onclick="updateTool('PDF to WORD')"><img src="https://cdn-icons-png.flaticon.com/512/337/337948.png" class="tool-icon"> PDF to WORD</a></li>
-                                    <li><a onclick="updateTool('PDF to EXCEL')"><img src="https://cdn-icons-png.flaticon.com/512/337/337941.png" class="tool-icon"> PDF to EXCEL</a></li>
-                                    <li><a onclick="updateTool('PDF to PPT')"><img src="https://cdn-icons-png.flaticon.com/512/337/337947.png" class="tool-icon"> PDF to PPT</a></li>
-                                    <li><a onclick="updateTool('PDF to HTML')"><img src="https://cdn-icons-png.flaticon.com/512/2165/2165000.png" class="tool-icon"> PDF to HTML</a></li>
-                                    <li><a onclick="updateTool('PDF to PDF/A')"><img src="https://cdn-icons-png.flaticon.com/512/8242/8242253.png" class="tool-icon"> PDF to PDF/A</a></li>
+                                    <li><a onclick="updateTool('PDF to JPG')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337940.png"
+                                                class="tool-icon"> PDF to JPG</a></li>
+                                    <li><a onclick="updateTool('PDF to WORD')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337948.png"
+                                                class="tool-icon"> PDF to WORD</a></li>
+                                    <li><a onclick="updateTool('PDF to EXCEL')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337941.png"
+                                                class="tool-icon"> PDF to EXCEL</a></li>
+                                    <li><a onclick="updateTool('PDF to PPT')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337947.png"
+                                                class="tool-icon"> PDF to PPT</a></li>
+                                    <li><a onclick="updateTool('PDF to HTML')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/2165/2165000.png"
+                                                class="tool-icon"> PDF to HTML</a></li>
+                                    <li><a onclick="updateTool('PDF to PDF/A')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/8242/8242253.png"
+                                                class="tool-icon"> PDF to PDF/A</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -138,9 +520,13 @@
                     <li>
                         <a>eSign PDF ▾</a>
                         <div class="esign-dropdown dropdown-content">
-                            <a class="esign-link" onclick="updateTool('Digital Sign')">🖋️ Digital Sign <span class="tag tag-any">Anyone</span></a>
-                            <a class="esign-link" onclick="updateTool('Aadhar eSign')"><img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/cf/Aadhaar_Logo.svg/1200px-Aadhaar_Logo.svg.png" style="width:20px"> Aadhaar eSign <span class="tag tag-india">Indians</span></a>
-                            <a class="esign-link" onclick="updateTool('Global eSign')">🌐 Global eSign <span class="tag tag-global">Global</span></a>
+                            <a class="esign-link" onclick="updateTool('Digital Sign')">🖋️ Digital Sign <span
+                                    class="tag tag-any">Anyone</span></a>
+                            <a class="esign-link" onclick="updateTool('Aadhar eSign')"><img
+                                    src="https://upload.wikimedia.org/wikipedia/en/thumb/c/cf/Aadhaar_Logo.svg/1200px-Aadhaar_Logo.svg.png"
+                                    style="width:20px"> Aadhaar eSign <span class="tag tag-india">Indians</span></a>
+                            <a class="esign-link" onclick="updateTool('Global eSign')">🌐 Global eSign <span
+                                    class="tag tag-global">Global</span></a>
                         </div>
                     </li>
                     <li>
@@ -149,46 +535,86 @@
                             <div class="dropdown-column">
                                 <h3>Organize</h3>
                                 <ul>
-                                    <li><a onclick="updateTool('Merge PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337944.png" class="tool-icon"> Merge</a></li>
-                                    <li><a onclick="updateTool('Split PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337949.png" class="tool-icon"> Split</a></li>
-                                    <li><a onclick="updateTool('Remove Pages')"><img src="https://cdn-icons-png.flaticon.com/512/6861/6861362.png" class="tool-icon"> Remove</a></li>
-                                    <li><a onclick="updateTool('Extract Pages')"><img src="https://cdn-icons-png.flaticon.com/512/2991/2991108.png" class="tool-icon"> Extract</a></li>
-                                    <li><a onclick="updateTool('Rename PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1250/1250615.png" class="tool-icon"> Rename</a></li>
-                                    <li><a onclick="updateTool('Scan to PDF')"><img src="https://cdn-icons-png.flaticon.com/512/2685/2685048.png" class="tool-icon"> Scan</a></li>
+                                    <li><a onclick="updateTool('Merge PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337944.png"
+                                                class="tool-icon"> Merge</a></li>
+                                    <li><a onclick="updateTool('Split PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337949.png"
+                                                class="tool-icon"> Split</a></li>
+                                    <li><a onclick="updateTool('Remove Pages')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/6861/6861362.png"
+                                                class="tool-icon"> Remove</a></li>
+                                    <li><a onclick="updateTool('Extract Pages')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/2991/2991108.png"
+                                                class="tool-icon"> Extract</a></li>
+                                    <li><a onclick="updateTool('Rename PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/1250/1250615.png"
+                                                class="tool-icon"> Rename</a></li>
+                                    <li><a onclick="updateTool('Scan to PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/2685/2685048.png"
+                                                class="tool-icon"> Scan</a></li>
                                 </ul>
                             </div>
                             <div class="dropdown-column">
                                 <h3>Optimize</h3>
                                 <ul>
-                                    <li><a onclick="updateTool('Compress PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337936.png" class="tool-icon"> Compress</a></li>
-                                    <li><a onclick="updateTool('Repair PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1055/1055681.png" class="tool-icon"> Repair</a></li>
-                                    <li><a onclick="updateTool('OCR PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1150/1150621.png" class="tool-icon"> OCR</a></li>
+                                    <li><a onclick="updateTool('Compress PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337936.png"
+                                                class="tool-icon"> Compress</a></li>
+                                    <li><a onclick="updateTool('Repair PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/1055/1055681.png"
+                                                class="tool-icon"> Repair</a></li>
+                                    <li><a onclick="updateTool('OCR PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/1150/1150621.png"
+                                                class="tool-icon"> OCR</a></li>
                                 </ul>
                             </div>
                             <div class="dropdown-column">
                                 <h3>Edit</h3>
                                 <ul>
-                                    <li><a onclick="updateTool('Rotate PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" class="tool-icon"> Rotate</a></li>
-                                    <li><a onclick="updateTool('Add Numbers')"><img src="https://cdn-icons-png.flaticon.com/512/337/337943.png" class="tool-icon"> Add Numbers</a></li>
-                                    <li><a onclick="updateTool('Add Watermark')"><img src="https://cdn-icons-png.flaticon.com/512/337/337942.png" class="tool-icon"> Watermark</a></li>
-                                    <li><a onclick="updateTool('Crop PDF')"><img src="https://cdn-icons-png.flaticon.com/512/9135/9135965.png" class="tool-icon"> Crop</a></li>
-                                    <li><a onclick="updateTool('Edit PDF')"><img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" class="tool-icon"> Edit PDF</a></li>
+                                    <li><a onclick="updateTool('Rotate PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337946.png"
+                                                class="tool-icon"> Rotate</a></li>
+                                    <li><a onclick="updateTool('Add Numbers')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337943.png"
+                                                class="tool-icon"> Add Numbers</a></li>
+                                    <li><a onclick="updateTool('Add Watermark')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337942.png"
+                                                class="tool-icon"> Watermark</a></li>
+                                    <li><a onclick="updateTool('Crop PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/9135/9135965.png"
+                                                class="tool-icon"> Crop</a></li>
+                                    <li><a onclick="updateTool('Edit PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png"
+                                                class="tool-icon"> Edit PDF</a></li>
                                 </ul>
                             </div>
                             <div class="dropdown-column">
                                 <h3>Security</h3>
                                 <ul>
-                                    <li><a onclick="updateTool('Unlock PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337951.png" class="tool-icon"> Unlock</a></li>
-                                    <li><a onclick="updateTool('Protect PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337945.png" class="tool-icon"> Protect</a></li>
-                                    <li><a onclick="updateTool('Redact PDF')"><img src="https://cdn-icons-png.flaticon.com/512/2360/2360171.png" class="tool-icon"> Redact</a></li>
-                                    <li><a onclick="updateTool('Compare PDF')"><img src="https://cdn-icons-png.flaticon.com/512/337/337938.png" class="tool-icon"> Compare</a></li>
+                                    <li><a onclick="updateTool('Unlock PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337951.png"
+                                                class="tool-icon"> Unlock</a></li>
+                                    <li><a onclick="updateTool('Protect PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337945.png"
+                                                class="tool-icon"> Protect</a></li>
+                                    <li><a onclick="updateTool('Redact PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/2360/2360171.png"
+                                                class="tool-icon"> Redact</a></li>
+                                    <li><a onclick="updateTool('Compare PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/337/337938.png"
+                                                class="tool-icon"> Compare</a></li>
                                 </ul>
                             </div>
                             <div class="dropdown-column">
                                 <h3>AI</h3>
                                 <ul>
-                                    <li><a onclick="updateTool('AI Summarizer')"><img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" class="tool-icon"> AI Summarizer</a></li>
-                                    <li><a onclick="updateTool('Translate PDF')"><img src="https://cdn-icons-png.flaticon.com/512/3269/3269819.png" class="tool-icon"> Translate</a></li>
+                                    <li><a onclick="updateTool('AI Summarizer')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png"
+                                                class="tool-icon"> AI Summarizer</a></li>
+                                    <li><a onclick="updateTool('Translate PDF')"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/3269/3269819.png"
+                                                class="tool-icon"> Translate</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -199,8 +625,11 @@
 
         <div class="nav-right">
             <div id="login-section">
-                <div id="g_id_onload" data-client_id="YOUR_GOOGLE_ID" data-callback="handleCredentialResponse"></div>
-                <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline" data-text="continue_with"></div>
+                <div id="g_id_onload"
+                    data-client_id="1056519552768-qis2jrnm3fokkrmpr3teoid1lqvgvplh.apps.googleusercontent.com"
+                    data-callback="handleCredentialResponse"></div>
+                <div class="g_id_signin" data-type="standard" data-shape="pill" data-theme="outline"
+                    data-text="continue_with"></div>
             </div>
             <div id="user-section" style="display:none;">
                 <div class="user-card">
@@ -221,14 +650,22 @@
         </div>
 
         <main class="hero">
+            <h1 class="type-heading" style="display:none;"></h1>
+            <!-- semantic H1 but we use tool-title-box as primary visual -->
             <div class="upload-container" id="drop-zone" onclick="document.getElementById('file-input').click()">
                 <div class="floating-bg"></div>
-                <div id="tool-title-box" class="box-tool-name">SELECT PDF FILES</div>
-                <svg class="cloud-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M7 10V9C7 6.23858 9.23858 4 12 4C14.7614 4 17 6.23858 17 9V10C19.2091 10 21 11.7909 21 14C21 16.2091 19.2091 18 17 18H7C4.79086 18 3 16.2091 3 14C3 11.7909 4.79086 10 7 10Z" stroke="#e5322d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M12 12V15M12 12L10 13.5M12 12L14 13.5" stroke="#e5322d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <div class="upload-label-text" id="status-label">Click or Drag & Drop Files</div>
+                <h1 id="tool-title-box" class="box-tool-name">SELECT PDF FILES</h1>
+                <div id="action-button"
+                    style="display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5; padding: 15px 40px; border-radius: 20px; transition: all 0.3s; cursor: pointer; border: 2px solid transparent;">
+                    <svg class="cloud-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M7 10V9C7 6.23858 9.23858 4 12 4C14.7614 4 17 6.23858 17 9V10C19.2091 10 21 11.7909 21 14C21 16.2091 19.2091 18 17 18H7C4.79086 18 3 16.2091 3 14C3 11.7909 4.79086 10 7 10Z"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M12 12V15M12 12L10 13.5M12 12L14 13.5" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span class="upload-label-text" id="status-label">Click or Drag & Drop Files</span>
+                </div>
                 <input type="file" id="file-input" hidden multiple>
             </div>
 
@@ -249,270 +686,9 @@
         Copyright © 2026 - Kellynepdf.com • Made with ❤️
     </footer>
 
-    <script>
-        const toolDocs = {
-            'Merge PDF': { what: 'Combine multiple PDF files into one professional document instantly.', how: 'Upload 2 or more PDFs, arrange them in order, and click Merge.' },
-            'Split PDF': { what: 'Divide a large PDF into smaller parts or extract individual pages.', how: 'Upload your file, specify the page ranges, and download segments.' },
-            'Compress PDF': { what: 'Reduce file size while maintaining the highest possible quality.', how: 'Select a heavy PDF and let our optimization engine shrink it.' },
-            'JPG to PDF': { what: 'Convert images into high-quality PDF files.', how: 'Upload images, adjust settings, and generate PDF.' },
-            'WORD to PDF': { what: 'Transform Word documents into readable PDF format.', how: 'Upload Word file and download the converted PDF.' },
-            'EXCEL to PDF': { what: 'Convert spreadsheets into organized PDF tables.', how: 'Select your .xlsx file and download PDF version.' },
-            'PPT to PDF': { what: 'Transform PowerPoint slides into portable PDF documents.', how: 'Upload slides and get a PDF version.' },
-            'HTML to PDF': { what: 'Save web pages as offline PDF documents with one click.', how: 'Paste URL or upload HTML to generate PDF.' },
-            'PDF to JPG': { what: 'Extract every single page of your PDF as high-resolution images.', how: 'Upload PDF and receive a ZIP of images.' },
-            'PDF to WORD': { what: 'Convert PDF back into editable Microsoft Word documents.', how: 'Upload PDF and rebuild the layout.' },
-            'PDF to EXCEL': { what: 'Extract PDF tables directly into Excel spreadsheets.', how: 'Select PDF with tables and download .xlsx.' },
-            'PDF to PPT': { what: 'Convert PDF pages back into editable PowerPoint slides.', how: 'Upload file and receive .pptx slides.' },
-            'PDF to HTML': { what: 'Turn your PDF document into a responsive HTML web page.', how: 'Upload file and create HTML code.' },
-            'PDF to PDF/A': { what: 'Standardize PDF for long-term ISO digital archiving.', how: 'Upload file and convert it.' },
-            'Remove Pages': { what: 'Permanently delete unwanted pages from your document.', how: 'Select pages you want to discard and save.' },
-            'Extract Pages': { what: 'Save specific pages as a brand new PDF.', how: 'Check required pages and click extract.' },
-            'Rename PDF': { what: 'Professionally rename your PDF document filename instantly.', how: 'Type the new name and click update.' },
-            'Scan to PDF': { what: 'Create PDF documents instantly using your camera.', how: 'Grant camera permissions and capture.' },
-            'Repair PDF': { what: 'Recover data from corrupted or broken PDF files.', how: 'Upload damaged file; we will fix the structure.' },
-            'OCR PDF': { what: 'Convert scanned non-selectable PDFs into searchable text.', how: 'Upload scan and let OCR recognize text.' },
-            'Rotate PDF': { what: 'Correct the orientation of upside-down pages.', how: 'Use rotation icons to fix alignment.' },
-            'Add Numbers': { what: 'Add automatic numbering to headers or footers.', how: 'Choose style and position, then apply.' },
-            'Add Watermark': { what: 'Protect your property with text or image stamp.', how: 'Enter text/logo and set transparency.' },
-            'Crop PDF': { what: 'Trim margins or specific areas of PDF pages.', how: 'Select crop area and apply changes.' },
-            'Edit PDF': { what: 'Directly add text or shapes to PDF content.', how: 'Use online editor tools to type on pages.' },
-            'Unlock PDF': { what: 'Remove password security and printing restrictions.', how: 'Enter password to permanently remove encryption.' },
-            'Protect PDF': { what: 'Encrypt PDF documents with a strong password.', how: 'Set secure password and download.' },
-            'Sign PDF': { what: 'Apply digital signatures to any page of your PDF.', how: 'Draw signature and place it on document.' },
-            'Redact PDF': { what: 'Permanently black out sensitive text or images.', how: 'Select private areas to hide forever.' },
-            'Compare PDF': { what: 'Identify differences between two versions of a PDF.', how: 'Upload both files and see highlights.' },
-            'AI Summarizer': { what: 'Summarize long PDF documents into key points using AI.', how: 'Upload PDF and get instant summary.' },
-            'Translate PDF': { what: 'Translate the entire PDF into multiple languages.', how: 'Upload file and select target language.' },
-            'Digital Sign': { what: 'Fast electronic signature for any user or document.', how: 'Draw or type your sign and place it.' },
-            'Aadhar eSign': { what: 'Official Indian electronic signature using Aadhaar OTP.', how: 'Verify via UIDAI and sign legally.' },
-            'Global eSign': { what: 'Enterprise-grade digital signature for global business.', how: 'Verify global ID and sign securely.' }
-        };
-
-        let hideTimeout;
-
-        function updateTool(name) {
-            clearTimeout(hideTimeout);
-            document.getElementById('tool-title-box').innerText = name.toUpperCase();
-            const infoArea = document.getElementById('tool-info-area');
-            infoArea.style.display = 'block';
-            if(toolDocs[name]) {
-                animateText('info-what', toolDocs[name].what);
-                animateText('info-how', toolDocs[name].how);
-            }
-            hideTimeout = setTimeout(() => { 
-                document.getElementById('info-what').innerHTML = "";
-                document.getElementById('info-how').innerHTML = "";
-                infoArea.style.display = 'none'; 
-            }, 10000);
-        }
-
-        function animateText(id, text) {
-            const el = document.getElementById(id);
-            el.innerHTML = "";
-            text.split("").forEach((char, i) => {
-                const span = document.createElement("span");
-                span.innerText = char === " " ? "\u00A0" : char;
-                span.className = "char-anim";
-                span.style.animationDelay = `${i * 0.012}s`;
-                el.appendChild(span);
-            });
-        }
-
-        /* ACTUAL MERGE LOGIC */
-        async function runMerge(files) {
-            if (files.length < 2) { alert("Select at least 2 PDFs!"); return; }
-            try {
-                document.getElementById('status-label').innerText = "Merging... Please wait.";
-                const mergedPdf = await PDFLib.PDFDocument.create();
-                for (const file of files) {
-                    if (file.type !== "application/pdf") continue;
-                    const fileArrayBuffer = await file.arrayBuffer();
-                    const sourcePdf = await PDFLib.PDFDocument.load(fileArrayBuffer);
-                    const copiedPages = await mergedPdf.copyPages(sourcePdf, sourcePdf.getPageIndices());
-                    copiedPages.forEach((page) => mergedPdf.addPage(page));
-                }
-                const mergedPdfBytes = await mergedPdf.save();
-                const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `Merged_${Date.now()}.pdf`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                document.getElementById('status-label').innerText = "Click or Drag & Drop Files";
-            } catch (e) { alert("Merge Error!"); }
-        }
-
-        /* ACTUAL SPLIT LOGIC */
-        async function processSplitPDF(files) {
-            if (files.length === 0) return;
-            const file = files[0];
-            if (file.type !== "application/pdf") { alert("Invalid PDF!"); return; }
-            try {
-                const statusLabel = document.getElementById('status-label');
-                statusLabel.innerText = "Analyzing PDF...";
-                const fileArrayBuffer = await file.arrayBuffer();
-                const sourcePdf = await PDFLib.PDFDocument.load(fileArrayBuffer);
-                const pageCount = sourcePdf.getPageCount();
-                const range = prompt(`PDF has ${pageCount} pages. Enter numbers (e.g., 1, 3-5):`, "1");
-                if (!range) { statusLabel.innerText = "Click or Drag & Drop Files"; return; }
-                
-                const selectedPages = [];
-                range.split(',').forEach(p => {
-                    if (p.includes('-')) {
-                        const [s, e] = p.split('-').map(Number);
-                        for (let i = s; i <= e; i++) if (i > 0 && i <= pageCount) selectedPages.push(i);
-                    } else {
-                        const n = Number(p);
-                        if (n > 0 && n <= pageCount) selectedPages.push(n);
-                    }
-                });
-
-                const newPdf = await PDFLib.PDFDocument.create();
-                const copiedPages = await newPdf.copyPages(sourcePdf, selectedPages.map(p => p - 1));
-                copiedPages.forEach(page => newPdf.addPage(page));
-                const pdfBytes = await newPdf.save();
-                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = url; link.download = `Split_${Date.now()}.pdf`;
-                document.body.appendChild(link); link.click(); document.body.removeChild(link);
-                statusLabel.innerText = "Click or Drag & Drop Files";
-            } catch (e) { alert("Split Error!"); }
-        }
-
-        /* GLOBAL HANDLER ROUTING */
-        window.handleGlobalFiles = async function(files) {
-            const tool = document.getElementById('tool-title-box').innerText;
-            if (tool.includes("MERGE")) { await runMerge(files); }
-            else if (tool.includes("SPLIT")) { await processSplitPDF(files); }
-            else { alert(`${tool} processing is active!`); }
-        };
-
-        function handleCredentialResponse(r) {
-            const p = JSON.parse(atob(r.credential.split('.')[1]));
-            localStorage.setItem("userName", p.given_name);
-            localStorage.setItem("userPic", p.picture);
-            location.reload();
-        }
-        function handleLogout() { localStorage.clear(); location.reload(); }
-        
-        window.onload = () => {
-            const user = localStorage.getItem("userName") || "Guest";
-            const pic = localStorage.getItem("userPic");
-            const h = new Date().getHours();
-            const wish = h<12?"Good Morning":h<17?"Good Afternoon":"Good Evening";
-            if(user !== "Guest") {
-                document.getElementById('login-section').style.display='none';
-                document.getElementById('user-section').style.display='block';
-                document.getElementById('display-name').innerText = user;
-                document.getElementById('user-avatar').src = pic || "";
-            }
-            document.getElementById('greeting').innerText = `Hello ${user}, ${wish}!`;
-            animateText('sub-heading', "KellynePDF - All-In-One Solution");
-        };
-
-        /* JELLYFISH Physics */
-        const canvas = document.getElementById('particle-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        const mouse = { x: null, y: null, radius: 180 };
-        window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
-        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
-        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-
-        class Particle {
-            constructor() {
-                this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height;
-                this.size = Math.random()*2+0.5; this.vx = (Math.random()-0.5)*0.5; this.vy = (Math.random()-0.5)*0.5;
-                this.isStar = Math.random()>0.85; this.angle = Math.random()*Math.PI*2;
-                this.color = ['#1a237e', '#90caf9', '#ef9a9a', '#777'][Math.floor(Math.random()*4)];
-            }
-            draw() {
-                ctx.fillStyle = this.color; ctx.beginPath();
-                if(this.isStar) {
-                    for(let i=0;i<5;i++){
-                        ctx.lineTo(this.x + this.size * Math.cos((18+i*72)*Math.PI/180), this.y + this.size * Math.sin((18+i*72)*Math.PI/180));
-                        ctx.lineTo(this.x + (this.size/2) * Math.cos((54+i*72)*Math.PI/180), this.y + (this.size/2) * Math.sin((54+i*72)*Math.PI/180));
-                    }
-                } else { ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); }
-                ctx.fill();
-            }
-            update() {
-                this.angle += 0.01;
-                this.x += this.vx + Math.sin(this.angle)*0.2;
-                this.y += this.vy + Math.cos(this.angle)*0.2;
-                if(this.x>canvas.width) this.x=0; if(this.x<0) this.x=canvas.width;
-                if(this.y>canvas.height) this.y=0; if(this.y<0) this.y=canvas.height;
-                if(mouse.x!=null){
-                    let dx = mouse.x - this.x; let dy = mouse.y - this.y;
-                    let dist = Math.sqrt(dx*dx + dy*dy);
-                    if(dist < mouse.radius){
-                        let force = (mouse.radius - dist) / mouse.radius;
-                        this.x -= dx * force * 0.05;
-                        this.y -= dy * force * 0.05;
-                    }
-                }
-            }
-        }
-        function init() { particles=[]; for(let i=0;i<450;i++) particles.push(new Particle()); }
-        function animate() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.draw();p.update();}); requestAnimationFrame(animate); }
-        init(); animate();
-
-        /* Drop Zone Logic */
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-
-        // Prevent default browser behaviors
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); });
-        });
-
-        // Triggered when files are dropped into the zone
-        dropZone.addEventListener('drop', (e) => {
-            const files = Array.from(e.dataTransfer.files);
-            window.handleGlobalFiles(files); 
-        });
-
-        // Triggered when files are selected manually via click
-        fileInput.addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            window.handleGlobalFiles(files); 
-        });
-    </script>
-
-    <script src="js/allpdftools/organize/merge-pdf.js"></script>
-    <script src="js/allpdftools/organize/split-pdf.js"></script>
-    <script src="js/allpdftools/organize/remove-pages.js"></script>
-    <script src="js/allpdftools/organize/extract-pages.js"></script>
-    <script src="js/allpdftools/organize/rename-pdf.js"></script>
-    <script src="js/allpdftools/organize/scan-to-pdf.js"></script>
-    <script src="js/allpdftools/optimize/compress-pdf.js"></script>
-    <script src="js/allpdftools/optimize/repair-pdf.js"></script>
-    <script src="js/allpdftools/optimize/ocr-pdf.js"></script>
-    <script src="js/allpdftools/edit/rotate-pdf.js"></script>
-    <script src="js/allpdftools/edit/page-numbers.js"></script>
-    <script src="js/allpdftools/edit/watermark.js"></script>
-    <script src="js/allpdftools/edit/crop-pdf.js"></script>
-    <script src="js/allpdftools/edit/edit-pdf.js"></script>
-    <script src="js/allpdftools/security/unlock-pdf.js"></script>
-    <script src="js/allpdftools/security/protect-pdf.js"></script>
-    <script src="js/allpdftools/security/redact-pdf.js"></script>
-    <script src="js/allpdftools/security/compare-pdf.js"></script>
-    <script src="js/converters/from-pdf/pdf-to-word.js"></script>
-    <script src="js/converters/from-pdf/pdf-to-excel.js"></script>
-    <script src="js/converters/from-pdf/pdf-to-jpg.js"></script>
-    <script src="js/converters/from-pdf/pdf-to-ppt.js"></script>
-    <script src="js/converters/from-pdf/pdf-to-html.js"></script>
-    <script src="js/converters/from-pdf/pdf-to-pdfa.js"></script>
-    <script src="js/converters/to-pdf/word-to-pdf.js"></script>
-    <script src="js/converters/to-pdf/jpg-to-pdf.js"></script>
-    <script src="js/converters/to-pdf/excel-to-pdf.js"></script>
-    <script src="js/converters/to-pdf/ppt-to-pdf.js"></script>
-    <script src="js/converters/to-pdf/html-to-pdf.js"></script>
-    <script src="js/esign/aadhar-sign.js"></script>
-    <script src="js/esign/digital-sign.js"></script>
-    <script src="js/esign/global-sign.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/drag-drop.js"></script>
 </body>
+
 </html>
