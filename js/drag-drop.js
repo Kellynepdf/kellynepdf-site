@@ -57,9 +57,9 @@ async function handleGlobalFiles(files) {
             if (typeof window.runMerge !== 'function') {
                 console.log("runMerge not found, loading script...");
                 if (typeof window.loadToolScript === 'function') window.loadToolScript('Merge PDF');
-                // Give it brief time to load script
+                // Give it brief time to load script (5 seconds max)
                 let retries = 0;
-                while (typeof window.runMerge !== 'function' && retries < 30) {
+                while (typeof window.runMerge !== 'function' && retries < 50) {
                     await new Promise(r => setTimeout(r, 100));
                     retries++;
                 }
