@@ -189,9 +189,8 @@ window.runMerge = async function(files) {
                 e2.stopPropagation();
                 e2.stopImmediatePropagation();
                 e2.preventDefault();
-                // Full reset — NO folder/file dialog opens, only resetUI
-                window.currentActiveTool = 'SELECT PDF FILES';
-                window.resetUI();
+                // Full logic restoration: Fast Page Refresh as requested
+                window.location.reload();
             };
 
             // Memory cleanup

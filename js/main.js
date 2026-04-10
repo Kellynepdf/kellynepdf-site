@@ -177,16 +177,17 @@ window.resetUI = function() {
     if (statusLabel) {
         statusLabel.innerText = "Click or Drag & Drop Files to Begin";
         statusLabel.style.color = "#444";
-        statusLabel.style.fontWeight = "500";
-        statusLabel.style.fontSize = "18px";
+        // Reset text if it was modified
+        if (statusLabel) {
+            statusLabel.innerText = "Click or Drag & Drop Files";
+            statusLabel.style.color = "";
+            statusLabel.style.fontSize = "";
+        }
     }
 
-    // 2. Hide Action Button — Clean all states
     if (btn) {
-        btn.innerHTML = '';
-        btn.onclick = null;
-        btn.disabled = false;
-        btn.className = ''; 
+        btn.innerHTML = "";
+        btn.className = "";
         btn.removeAttribute('style');
         btn.style.setProperty('display', 'none', 'important');
     }
@@ -229,10 +230,16 @@ window.resetUI = function() {
 window.showDownloadReady = function(urlOrFiles, filename) {
     const btn = document.getElementById('action-button');
     if (btn) {
+        const defaultIcon = document.getElementById('default-upload-icon');
+        if (defaultIcon) defaultIcon.style.display = 'none';
+
         btn.innerHTML = `<span class="upload-label-text" id="status-label" style="color: white">Download File${Array.isArray(urlOrFiles) ? 's' : ''}</span>`;
+        btn.style.display = "flex";
         btn.style.backgroundColor = "#e5322d"; // Brand Red
         btn.style.color = "#fff";
         btn.style.border = "none";
+        btn.style.padding = "15px 40px";
+        btn.style.borderRadius = "30px";
         btn.classList.add('download-ready');
 
         btn.onclick = async (e) => {
