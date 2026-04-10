@@ -88,13 +88,10 @@ window.loadToolScript = function loadToolScript(name) {
         };
         script.onerror = () => {
             console.error(`Error loading script: ${toolScriptsMap[name]}`);
-            // Don't add to loadedScripts so it can retry
         };
         document.body.appendChild(script);
-    }
-};
-        
-        // Bonus Tip 3: WASM Support - check for High-end tools
+
+        // WASM Support - check for High-end tools
         if (name === "OCR PDF" || name === "Repair PDF") {
             console.log("WASM Support Enabled: Instructing WebAssembly core load for High-end PDF manipulation...");
             // Load WASM core when implemented
@@ -154,6 +151,7 @@ window.updateTool = function(name) {
 
 window.animateText = function(id, text) {
     const el = document.getElementById(id);
+    if (!el) return;
     el.innerHTML = "";
     text.split("").forEach((char, i) => {
         const span = document.createElement("span");
@@ -295,16 +293,21 @@ if (typeof PDFLib === 'undefined' && typeof pdfLib !== 'undefined') {
 // Initialization Logics
 document.addEventListener("DOMContentLoaded", () => {
     animateText('sub-heading', "KellynePDF - All-In-One Solution");
+    
+    // Configure pdf.js worker
+    if (typeof pdfjsLib !== 'undefined') {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    }
 
     // Initialize Particles.js correctly (Stars and Dots effect)
     if (typeof particlesJS !== 'undefined') {
         particlesJS("particles-js", {
             "particles": {
                 "number": {
-                    "value": 120,
+                    "value": 500,
                     "density": { "enable": true, "value_area": 800 }
                 },
-                "color": { "value": ["#1a237e", "#90caf9", "#e5322d"] }, // Added brand red
+                "color": { "value": ["#bdc3c7", "#e5322d"] }, // Grey and Brand Red
                 "shape": {
                     "type": ["circle", "star"],
                     "stroke": { "width": 0, "color": "#000000" }
@@ -369,20 +372,17 @@ document.addEventListener("DOMContentLoaded", () => {
             if (match && match[1]) {
                 const newName = match[1].toUpperCase();
                 if (titleBox.innerText !== newName) {
-                    titleBox.style.opacity = '0';
-                    setTimeout(() => {
-                        titleBox.innerText = newName;
-                        titleBox.style.color = '#e5322d';
-                        titleBox.style.opacity = '1';
-                        
-                        // Sync Documentation on Hover
-                        const infoArea = document.getElementById('tool-info-area');
-                        if (infoArea && toolDocs[match[1]]) {
-                            infoArea.style.display = 'block';
-                            animateText('info-what', toolDocs[match[1]].what);
-                            animateText('info-how', toolDocs[match[1]].how);
-                        }
-                    }, 50); // Fast low latency
+                    titleBox.innerText = newName;
+                    titleBox.style.color = '#e5322d';
+                    titleBox.style.opacity = '1';
+                    
+                    // Sync Documentation on Hover
+                    const infoArea = document.getElementById('tool-info-area');
+                    if (infoArea && toolDocs[match[1]]) {
+                        infoArea.style.display = 'block';
+                        document.getElementById('info-what').innerText = toolDocs[match[1]].what;
+                        document.getElementById('info-how').innerText = toolDocs[match[1]].how;
+                    }
                 }
             }
         });
