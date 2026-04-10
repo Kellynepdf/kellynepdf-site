@@ -2,6 +2,7 @@
 // KELLYNE PDF - Professional Merge Engine
 
 window.runMerge = async function(files) {
+    console.log("window.runMerge triggered with files:", files);
     const titleBox = document.getElementById('tool-title-box');
     const btn = document.getElementById('action-button');
     const defaultIcon = document.getElementById('default-upload-icon');
@@ -9,6 +10,7 @@ window.runMerge = async function(files) {
 
     // ── Validation: Require 2+ PDFs ──
     if (!files || files.length < 2) {
+        console.warn("Merge requires 2+ files, but received:", files ? files.length : 0);
         if (titleBox) {
             titleBox.innerText = 'NEED 2+ PDFS';
             titleBox.style.color = '#e5322d';
@@ -59,6 +61,7 @@ window.runMerge = async function(files) {
 
     // ── STEP 2: On Click — Execute Merge ──
     btn.onclick = async (e) => {
+        console.log("CLICK TO MERGE button pressed.");
         e.stopPropagation();
         e.stopImmediatePropagation();
         e.preventDefault();
@@ -79,8 +82,15 @@ window.runMerge = async function(files) {
         }
 
         try {
+            console.log("Starting PDF merging process...");
             // ── pdf-lib Merge Logic ──
-            let mergedPdf = await PDFLib.PDFDocument.create();
+            const lib = window.PDFLib || window.pdfLib;
+            if (!lib) {
+                console.error("PDF processing engine (pdf-lib) not found. Checking window:", window);
+                throw new Error("PDF processing engine not found.");
+            }
+            let mergedPdf = await lib.PDFDocument.create();
+            console.log("Merged document created successfully.");
             let mergedCount = 0;
 
             for (let i = 0; i < files.length; i++) {
@@ -94,7 +104,7 @@ window.runMerge = async function(files) {
 
                 try {
                     let fileArrayBuffer = await file.arrayBuffer();
-                    let sourcePdf = await PDFLib.PDFDocument.load(fileArrayBuffer, { ignoreEncryption: true });
+                    let sourcePdf = await lib.PDFDocument.load(fileArrayBuffer, { ignoreEncryption: true });
                     let copiedPages = await mergedPdf.copyPages(sourcePdf, sourcePdf.getPageIndices());
                     copiedPages.forEach((page) => mergedPdf.addPage(page));
 

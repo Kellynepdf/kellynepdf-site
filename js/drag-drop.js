@@ -46,13 +46,16 @@ async function handleGlobalFiles(files) {
     }
 
     // Universal Tool Router
+    console.log(`Routing files to tool: ${tool}`);
     statusLabel.innerHTML = `Processing ${files[0].name}... Please wait.`;
 
     switch(true) {
         // --- Organize & Default Merge --- //
         case tool.includes("MERGE") || tool === 'SELECT PDF FILES':
+            console.log("Merge tool triggered...");
             // Instead of throwing an alert if not loaded, silently try to load and execute
             if (typeof window.runMerge !== 'function') {
+                console.log("runMerge not found, loading script...");
                 if (typeof window.loadToolScript === 'function') window.loadToolScript('Merge PDF');
                 // Give it brief time to load script
                 let retries = 0;
@@ -63,8 +66,10 @@ async function handleGlobalFiles(files) {
             }
             
             if (typeof window.runMerge === 'function') {
+                console.log("Calling window.runMerge(files)...");
                 await window.runMerge(files);
             } else {
+                console.error("Failed to load runMerge after retries.");
                 // If STILL not loaded after 3 seconds, just show inline error without annoying alerts
                 statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: bold;">Could not initialize Merge Tool. Please refresh.</span>`;
             }

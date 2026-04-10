@@ -39,38 +39,38 @@ const toolDocs = {
 };
 
 const toolScriptsMap = {
-    'Merge PDF': 'js/organize/merge-pdf.js',
-    'Split PDF': 'js/organize/split-pdf.js',
-    'Remove Pages': 'js/organize/remove-pages.js',
-    'Extract Pages': 'js/organize/extract-pages.js',
-    'Rename PDF': 'js/organize/organize-pdf.js',
-    'Scan to PDF': 'js/organize/scan-to-pdf.js',
-    'Compress PDF': 'js/organize/compress-pdf.js',
-    'Repair PDF': 'js/optimize/repair-pdf.js',
-    'OCR PDF': 'js/optimize/ocr-pdf.js',
-    'JPG to PDF': 'js/convert-to-pdf/jpg-to-pdf.js',
-    'WORD to PDF': 'js/convert-to-pdf/word-to-pdf.js',
-    'EXCEL to PDF': 'js/convert-to-pdf/excel-to-pdf.js',
-    'PPT to PDF': 'js/convert-to-pdf/powerpoint-to-pdf.js',
-    'HTML to PDF': 'js/convert-to-pdf/html-to-pdf.js',
-    'PDF to JPG': 'js/convert-from-pdf/pdf-to-jpg.js',
-    'PDF to WORD': 'js/convert-from-pdf/pdf-to-word.js',
-    'PDF to EXCEL': 'js/convert-from-pdf/pdf-to-excel.js',
-    'PDF to PPT': 'js/convert-from-pdf/pdf-to-powerpoint.js',
-    'PDF to PDF/A': 'js/convert-from-pdf/pdf-to-pdfa.js',
-    'PDF to HTML': 'js/convert-from-pdf/pdf-to-html.js',
-    'Rotate PDF': 'js/edit/rotate-pdf.js',
-    'Add Numbers': 'js/edit/add-page-numbers.js',
-    'Add Watermark': 'js/edit/add-watermark.js',
-    'Crop PDF': 'js/edit/crop-pdf.js',
-    'Edit PDF': 'js/edit/edit-pdf.js',
-    'Unlock PDF': 'js/security/unlock-pdf.js',
-    'Protect PDF': 'js/security/protect-pdf.js',
-    'Sign PDF': 'js/security/sign-pdf.js',
-    'Redact PDF': 'js/security/redact-pdf.js',
-    'Compare PDF': 'js/security/compare-pdf.js',
-    'AI Summarizer': 'js/intelligence/ai-summarizer.js',
-    'Translate PDF': 'js/intelligence/translate-pdf.js'
+    'Merge PDF': './js/organize/merge-pdf.js',
+    'Split PDF': './js/organize/split-pdf.js',
+    'Remove Pages': './js/organize/remove-pages.js',
+    'Extract Pages': './js/organize/extract-pages.js',
+    'Rename PDF': './js/organize/organize-pdf.js',
+    'Scan to PDF': './js/organize/scan-to-pdf.js',
+    'Compress PDF': './js/organize/compress-pdf.js',
+    'Repair PDF': './js/optimize/repair-pdf.js',
+    'OCR PDF': './js/optimize/ocr-pdf.js',
+    'JPG to PDF': './js/convert-to-pdf/jpg-to-pdf.js',
+    'WORD to PDF': './js/convert-to-pdf/word-to-pdf.js',
+    'EXCEL to PDF': './js/convert-to-pdf/excel-to-pdf.js',
+    'PPT to PDF': './js/convert-to-pdf/powerpoint-to-pdf.js',
+    'HTML to PDF': './js/convert-to-pdf/html-to-pdf.js',
+    'PDF to JPG': './js/convert-from-pdf/pdf-to-jpg.js',
+    'PDF to WORD': './js/convert-from-pdf/pdf-to-word.js',
+    'PDF to EXCEL': './js/convert-from-pdf/pdf-to-excel.js',
+    'PDF to PPT': './js/convert-from-pdf/pdf-to-powerpoint.js',
+    'PDF to PDF/A': './js/convert-from-pdf/pdf-to-pdfa.js',
+    'PDF to HTML': './js/convert-from-pdf/pdf-to-html.js',
+    'Rotate PDF': './js/edit/rotate-pdf.js',
+    'Add Numbers': './js/edit/add-page-numbers.js',
+    'Add Watermark': './js/edit/add-watermark.js',
+    'Crop PDF': './js/edit/crop-pdf.js',
+    'Edit PDF': './js/edit/edit-pdf.js',
+    'Unlock PDF': './js/security/unlock-pdf.js',
+    'Protect PDF': './js/security/protect-pdf.js',
+    'Sign PDF': './js/security/sign-pdf.js',
+    'Redact PDF': './js/security/redact-pdf.js',
+    'Compare PDF': './js/security/compare-pdf.js',
+    'AI Summarizer': './js/intelligence/ai-summarizer.js',
+    'Translate PDF': './js/intelligence/translate-pdf.js'
 };
 
 const loadedScripts = new Set();
@@ -79,12 +79,20 @@ let hideTimeout;
 
 window.loadToolScript = function loadToolScript(name) {
     if (toolScriptsMap[name] && !loadedScripts.has(name)) {
-        console.log(`Lazy loading script for ${name}: ${toolScriptsMap[name]}`);
+        console.log(`Lazy loading script: ${toolScriptsMap[name]}`);
         const script = document.createElement('script');
         script.src = toolScriptsMap[name];
-        script.onerror = () => console.warn(`Could not load script ${toolScriptsMap[name]}`);
+        script.onload = () => {
+            console.log(`Successfully loaded ${name}`);
+            loadedScripts.add(name);
+        };
+        script.onerror = () => {
+            console.error(`Error loading script: ${toolScriptsMap[name]}`);
+            // Don't add to loadedScripts so it can retry
+        };
         document.body.appendChild(script);
-        loadedScripts.add(name);
+    }
+};
         
         // Bonus Tip 3: WASM Support - check for High-end tools
         if (name === "OCR PDF" || name === "Repair PDF") {
@@ -280,6 +288,8 @@ window.showDownloadReady = function(urlOrFiles, filename) {
 // Normalization for PDF Libraries
 if (typeof PDFLib === 'undefined' && typeof pdfLib !== 'undefined') {
     window.PDFLib = pdfLib;
+} else if (typeof PDFLib === 'undefined' && typeof window.jspdf !== 'undefined') {
+    // Some tools might use jspdf as fallback, but for pdf-lib it's specific
 }
 
 // Initialization Logics
