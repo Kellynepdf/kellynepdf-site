@@ -465,6 +465,20 @@
             box-shadow: 0 0 20px rgba(0, 128, 0, 0.2) !important;
             transition: all 0.3s ease;
         }
+
+        /* Action Button States — always bold and fully visible */
+        #action-button.download-ready {
+            opacity: 1 !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+            z-index: 50;
+            position: relative;
+            font-weight: 900 !important;
+        }
+
+        #action-button span {
+            font-weight: 900 !important;
+        }
     </style>
 </head>
 
@@ -599,7 +613,7 @@
 
         <main class="hero">
             <h1 class="type-heading" style="display:none;"></h1>
-            <div class="upload-container" id="drop-zone" onclick="document.getElementById('file-input').click()">
+            <div class="upload-container" id="drop-zone" onclick="if(!event.target.closest('#action-button.download-ready') && !document.getElementById('action-button').classList.contains('download-ready')){document.getElementById('file-input').click()}">
                 <div class="floating-bg"></div>
                 <h1 id="tool-title-box" class="box-tool-name">SELECT PDF FILES</h1>
                 <div id="action-button"

@@ -23,32 +23,45 @@ window.runMerge = async function(files) {
     // Hide cloud icon during processing
     if (defaultIcon) defaultIcon.style.display = 'none';
 
-    // ── STEP 1: "CLICK TO MERGE" — Red Background Button ──
+    // ── STEP 1: Status Label → "READY TO MERGE" in Bold Red ──
     if (statusLabel) {
-        statusLabel.innerHTML = `${files.length} PDF files selected — Ready to merge`;
-        statusLabel.style.color = '#444';
-        statusLabel.style.fontWeight = '500';
+        statusLabel.innerHTML = `READY TO MERGE`;
+        statusLabel.style.color = '#e5322d';
+        statusLabel.style.fontWeight = '900';
+        statusLabel.style.fontSize = '18px';
     }
 
-    btn.innerHTML = `<span style="color: white; font-weight: 900; font-size: 15px; letter-spacing: 1px;">CLICK TO MERGE</span>`;
-    btn.style.backgroundColor = '#e5322d';
-    btn.style.color = '#fff';
-    btn.style.border = 'none';
-    btn.style.display = 'flex';
-    btn.style.justifyContent = 'center';
-    btn.style.alignItems = 'center';
-    btn.style.padding = '15px 40px';
-    btn.style.borderRadius = '25px';
-    btn.style.cursor = 'pointer';
-    btn.style.width = 'auto';
-    btn.style.margin = '0 auto';
-    btn.style.transition = 'background-color 0.3s ease, transform 0.15s ease';
+    // ── "CLICK TO MERGE" Button — Solid Red (#e5322d), White text, fully opaque ──
+    btn.innerHTML = `<span style="color: white; font-weight: 900; font-size: 15px; letter-spacing: 1.5px;">CLICK TO MERGE</span>`;
+    btn.style.cssText = `
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        background-color: #e5322d !important;
+        color: #fff !important;
+        border: none;
+        padding: 18px 45px;
+        border-radius: 30px;
+        cursor: pointer;
+        width: auto;
+        margin: 20px auto 0;
+        opacity: 1 !important;
+        visibility: visible !important;
+        z-index: 50;
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        font-size: 16px;
+        font-weight: 900;
+        box-shadow: 0 10px 25px rgba(229, 50, 45, 0.3);
+    `;
     btn.disabled = false;
     btn.classList.add('download-ready');
 
     // ── STEP 2: On Click — Execute Merge ──
     btn.onclick = async (e) => {
-        e.stopPropagation(); // Prevent file-input modal from firing
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        e.preventDefault();
 
         // ── STEP 3: "KELLYNE MERGING..." with Spinner ──
         btn.disabled = true;
@@ -60,7 +73,7 @@ window.runMerge = async function(files) {
             </svg>`;
 
         if (statusLabel) {
-            statusLabel.innerText = 'Processing your files, please wait...';
+            statusLabel.innerText = 'KELLYNE MERGING...';
             statusLabel.style.color = '#e5322d';
             statusLabel.style.fontWeight = 'bold';
         }
@@ -76,12 +89,11 @@ window.runMerge = async function(files) {
                 if (!isPdf) continue;
 
                 if (statusLabel) {
-                    statusLabel.innerText = `Merging file ${i + 1} of ${files.length}...`;
+                    statusLabel.innerText = `Adding: ${file.name}...`;
                 }
 
                 try {
                     let fileArrayBuffer = await file.arrayBuffer();
-                    // ignoreEncryption: bypass minor metadata/encryption issues
                     let sourcePdf = await PDFLib.PDFDocument.load(fileArrayBuffer, { ignoreEncryption: true });
                     let copiedPages = await mergedPdf.copyPages(sourcePdf, sourcePdf.getPageIndices());
                     copiedPages.forEach((page) => mergedPdf.addPage(page));
@@ -106,8 +118,8 @@ window.runMerge = async function(files) {
             const finalSizeMB = (blob.size / (1024 * 1024)).toFixed(2);
             const url = URL.createObjectURL(blob);
 
-            // ✅ CRITICAL: Strict filename = KELLYNE_MERGED.pdf
-            const filename = 'KELLYNE_MERGED.pdf';
+            // ✅ CRITICAL: Strict filename = KELLYNEPDF_MERGED.pdf
+            const filename = 'KELLYNEPDF_MERGED.pdf';
 
             // Auto-download merged file
             const link = document.createElement('a');
@@ -131,39 +143,44 @@ window.runMerge = async function(files) {
                 dropZone.classList.add('success-tool-glow');
             }
 
-            // Status: Show merge details
+            // Status: Show merge details in green
             if (statusLabel) {
-                statusLabel.innerHTML = `${mergedCount} files merged successfully | Final size: ${finalSizeMB} MB`;
+                statusLabel.innerHTML = `${mergedCount} PDFs Merged | Final: ${finalSizeMB} MB`;
                 statusLabel.style.color = '#008000';
-                statusLabel.style.fontWeight = '600';
-                statusLabel.style.fontSize = '15px';
+                statusLabel.style.fontWeight = '900';
+                statusLabel.style.fontSize = '16px';
             }
 
-            // ── STEP 5: "BACK TO HOME" Button — Solid Black #111, White text ──
+            // ── STEP 5: "BACK TO HOME" Button — Solid Black (#111), White text ──
             btn.disabled = false;
-            btn.style.cursor = 'pointer';
-            btn.innerHTML = `<span style="color: white; font-weight: 700; font-size: 14px; text-transform: uppercase;">BACK TO HOME</span>`;
-            btn.style.backgroundColor = '#111';
-            btn.style.border = 'none';
-            btn.style.padding = '12px 30px';
-            btn.style.borderRadius = '25px';
-            btn.style.width = 'auto';
-            btn.style.margin = '0 auto';
-            btn.style.display = 'flex';
-            btn.style.justifyContent = 'center';
-            btn.style.alignItems = 'center';
-            btn.style.transition = 'background-color 0.3s ease, transform 0.15s ease';
+            btn.innerHTML = `<span style="color: white; font-weight: 800; font-size: 15px; text-transform: uppercase; letter-spacing: 1px;">BACK TO HOME</span>`;
+            btn.style.cssText = `
+                display: flex !important;
+                justify-content: center;
+                align-items: center;
+                background-color: #111 !important;
+                color: #fff !important;
+                border: none;
+                padding: 15px 35px;
+                border-radius: 30px;
+                width: auto;
+                margin: 20px auto 0;
+                cursor: pointer;
+                opacity: 1 !important;
+                visibility: visible !important;
+                z-index: 50;
+                position: relative;
+                transition: all 0.3s ease;
+                font-weight: 800;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            `;
 
             btn.onclick = (e2) => {
                 e2.stopPropagation();
-                // Full reset back to home
+                e2.stopImmediatePropagation();
+                e2.preventDefault();
+                // Full reset — NO folder/file dialog opens, only resetUI
                 window.currentActiveTool = 'SELECT PDF FILES';
-                if (titleBox) {
-                    titleBox.style.color = '';
-                    titleBox.style.fontSize = '';
-                    titleBox.style.fontWeight = '';
-                    titleBox.innerText = 'SELECT PDF FILES';
-                }
                 window.resetUI();
             };
 
@@ -194,24 +211,28 @@ window.runMerge = async function(files) {
             }
 
             btn.disabled = false;
-            btn.style.cursor = 'pointer';
             btn.innerHTML = `<span style="color: #e5322d; font-weight: 700; font-size: 14px;">RESTORE HOME</span>`;
-            btn.style.backgroundColor = 'transparent';
-            btn.style.border = '1.5px solid #e5322d';
-            btn.style.padding = '10px 25px';
-            btn.style.borderRadius = '25px';
-            btn.style.width = 'auto';
-            btn.style.margin = '0 auto';
-            btn.style.cursor = 'pointer';
+            btn.style.cssText = `
+                display: flex !important;
+                justify-content: center;
+                align-items: center;
+                background-color: transparent;
+                border: 1.5px solid #e5322d;
+                padding: 10px 25px;
+                border-radius: 25px;
+                width: auto;
+                margin: 15px auto 0;
+                cursor: pointer;
+                opacity: 1 !important;
+                z-index: 50;
+                position: relative;
+            `;
 
             btn.onclick = (e2) => {
                 e2.stopPropagation();
+                e2.stopImmediatePropagation();
+                e2.preventDefault();
                 window.currentActiveTool = 'SELECT PDF FILES';
-                if (titleBox) {
-                    titleBox.style.color = '';
-                    titleBox.style.fontSize = '';
-                    titleBox.style.fontWeight = '';
-                }
                 window.resetUI();
             };
         }
