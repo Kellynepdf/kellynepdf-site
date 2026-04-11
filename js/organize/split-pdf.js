@@ -41,7 +41,7 @@ window.runSplit = async function(files) {
             newPdf.addPage(copiedPages[0]);
             const pdfBytes = await newPdf.save();
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-            generatedPdfs.push({ name: `KELLYNEPDF_SPLIT_${i}.pdf`, blob: blob });
+            generatedPdfs.push({ name: `KELLYNEPDF_SPLIT_PAGE_${i}.pdf`, blob: blob });
             if (statusLabel) statusLabel.innerText = `Extracting page ${i} of ${pageCount}...`;
         }
 
@@ -116,7 +116,7 @@ window.runSplit = async function(files) {
 
         btn.onclick = (e2) => {
             e2.preventDefault();
-            window.location.reload();
+            window.location.reload(true);
         };
 
     } catch (e) {
