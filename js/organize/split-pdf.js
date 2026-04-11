@@ -93,34 +93,47 @@ window.runSplit = async function(files) {
 
         // --- BACK TO HOME ---
         btn.disabled = false;
+        btn.classList.add('download-ready');
         btn.style.cursor = 'pointer';
-        btn.innerHTML = `<span style="color: white; font-weight: 800; font-size: 15px;">BACK TO HOME</span>`;
-        btn.style.cssText = `
-            display: inline-block !important;
-            background-color: #111 !important;
-            color: #fff !important;
-            border: none;
-            padding: 15px 35px;
-            border-radius: 30px;
-            width: auto;
-            margin: 20px auto 0;
-            cursor: pointer;
-            opacity: 1 !important;
-            visibility: visible !important;
-            transition: all 0.3s ease;
-            font-weight: 800;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            text-align: center;
-            text-decoration: none;
-        `;
+        btn.innerHTML = `<span style="color: white; font-weight: 900; font-size: 15px; text-transform: uppercase;">BACK TO HOME</span>`;
+        
+        // Force styling with high precision
+        const styles = {
+            'display': 'inline-block',
+            'background-color': '#111111',
+            'color': '#ffffff',
+            'border': 'none',
+            'padding': '18px 45px',
+            'border-radius': '35px',
+            'width': 'auto',
+            'margin': '25px auto 0',
+            'cursor': 'pointer',
+            'opacity': '1',
+            'visibility': 'visible',
+            'font-weight': '900',
+            'box-shadow': '0 10px 25px rgba(0,0,0,0.2)',
+            'text-align': 'center',
+            'text-decoration': 'none',
+            'z-index': '9999',
+            'position': 'relative',
+            'pointer-events': 'all'
+        };
 
+        Object.keys(styles).forEach(key => {
+            btn.style.setProperty(key, styles[key], 'important');
+        });
+
+        // Robust Click Handling
         btn.onclick = (e2) => {
+            e2.stopPropagation();
+            e2.stopImmediatePropagation();
             e2.preventDefault();
-            window.location.reload(true);
+            console.log("KELLYNE: Hard Refreshing to Home...");
+            window.location.href = window.location.pathname + "?reset=" + Date.now();
         };
 
     } catch (e) {
         console.error("Split Error:", e);
-        window.location.assign('index.html');
+        window.location.reload();
     }
 };
