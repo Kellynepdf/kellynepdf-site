@@ -188,7 +188,7 @@ window.runMerge = async function(files) {
 
             btn.onclick = (e2) => {
                 e2.preventDefault();
-                window.location.assign(window.location.pathname);
+                window.location.assign('index.html');
             };
 
             // Memory cleanup

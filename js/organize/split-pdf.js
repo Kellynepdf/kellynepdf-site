@@ -111,15 +111,16 @@ window.runSplit = async function(files) {
             visibility: visible !important;
             transition: all 0.3s ease;
             font-weight: 800;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         `;
 
         btn.onclick = (e2) => {
             e2.preventDefault();
-            window.location.assign(window.location.pathname);
+            window.location.assign('index.html');
         };
 
     } catch (e) {
         console.error("Split Error:", e);
-        window.location.assign(window.location.pathname);
+        window.location.assign('index.html');
     }
 };

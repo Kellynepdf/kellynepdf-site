@@ -614,7 +614,7 @@
 
         <main class="hero">
             <h1 class="type-heading" style="display:none;"></h1>
-            <div class="upload-container" id="drop-zone" onclick="if(!event.target.closest('#action-button') && !document.getElementById('action-button').classList.contains('download-ready')){document.getElementById('file-input').click()}">
+            <div class="upload-container" id="drop-zone" onclick="if(!this.querySelector('#action-button').classList.contains('download-ready')){this.querySelector('input[type=file]').click()}">
                 <div class="floating-bg"></div>
                 <h1 id="tool-title-box" class="box-tool-name">MERGE PDF</h1>
                 
@@ -631,7 +631,7 @@
 
                 <div id="action-button" style="display: none; z-index: 50; position: relative;"></div>
                 
-                <input type="file" id="file-input" hidden multiple>
+                <input type="file" id="file-input" style="position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0;" multiple>
             </div>
 
             <div id="tool-info-area" class="info-floating-wrap">

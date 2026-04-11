@@ -174,14 +174,14 @@ window.runCompress = async function(files) {
 
             actionBtn.onclick = (e2) => {
                 e2.preventDefault();
-                window.location.assign(window.location.pathname);
+                window.location.assign('index.html');
             };
 
             URL.revokeObjectURL(url);
 
         } catch (err) {
             console.error("Compression Error:", err);
-            window.location.assign(window.location.pathname);
+            window.location.assign('index.html');
         }
     };
 };

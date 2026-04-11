@@ -39,38 +39,38 @@ const toolDocs = {
 };
 
 const toolScriptsMap = {
-    'Merge PDF': '/js/organize/merge-pdf.js',
-    'Split PDF': '/js/organize/split-pdf.js',
-    'Remove Pages': '/js/organize/remove-pages.js',
-    'Extract Pages': '/js/organize/extract-pages.js',
-    'Rename PDF': '/js/organize/organize-pdf.js',
-    'Scan to PDF': '/js/organize/scan-to-pdf.js',
-    'Compress PDF': '/js/organize/compress-pdf.js',
-    'Repair PDF': '/js/optimize/repair-pdf.js',
-    'OCR PDF': '/js/optimize/ocr-pdf.js',
-    'JPG to PDF': '/js/convert-to-pdf/jpg-to-pdf.js',
-    'WORD to PDF': '/js/convert-to-pdf/word-to-pdf.js',
-    'EXCEL to PDF': '/js/convert-to-pdf/excel-to-pdf.js',
-    'PPT to PDF': '/js/convert-to-pdf/powerpoint-to-pdf.js',
-    'HTML to PDF': '/js/convert-to-pdf/html-to-pdf.js',
-    'PDF to JPG': '/js/convert-from-pdf/pdf-to-jpg.js',
-    'PDF to WORD': '/js/convert-from-pdf/pdf-to-word.js',
-    'PDF to EXCEL': '/js/convert-from-pdf/pdf-to-excel.js',
-    'PDF to PPT': '/js/convert-from-pdf/pdf-to-powerpoint.js',
-    'PDF to PDF/A': '/js/convert-from-pdf/pdf-to-pdfa.js',
-    'PDF to HTML': '/js/convert-from-pdf/pdf-to-html.js',
-    'Rotate PDF': '/js/edit/rotate-pdf.js',
-    'Add Numbers': '/js/edit/add-page-numbers.js',
-    'Add Watermark': '/js/edit/add-watermark.js',
-    'Crop PDF': '/js/edit/crop-pdf.js',
-    'Edit PDF': '/js/edit/edit-pdf.js',
-    'Unlock PDF': '/js/security/unlock-pdf.js',
-    'Protect PDF': '/js/security/protect-pdf.js',
-    'Sign PDF': '/js/security/sign-pdf.js',
-    'Redact PDF': '/js/security/redact-pdf.js',
-    'Compare PDF': '/js/security/compare-pdf.js',
-    'AI Summarizer': '/js/intelligence/ai-summarizer.js',
-    'Translate PDF': '/js/intelligence/translate-pdf.js'
+    'Merge PDF': 'js/organize/merge-pdf.js',
+    'Split PDF': 'js/organize/split-pdf.js',
+    'Remove Pages': 'js/organize/remove-pages.js',
+    'Extract Pages': 'js/organize/extract-pages.js',
+    'Rename PDF': 'js/organize/organize-pdf.js',
+    'Scan to PDF': 'js/organize/scan-to-pdf.js',
+    'Compress PDF': 'js/organize/compress-pdf.js',
+    'Repair PDF': 'js/optimize/repair-pdf.js',
+    'OCR PDF': 'js/optimize/ocr-pdf.js',
+    'JPG to PDF': 'js/convert-to-pdf/jpg-to-pdf.js',
+    'WORD to PDF': 'js/convert-to-pdf/word-to-pdf.js',
+    'EXCEL to PDF': 'js/convert-to-pdf/excel-to-pdf.js',
+    'PPT to PDF': 'js/convert-to-pdf/powerpoint-to-pdf.js',
+    'HTML to PDF': 'js/convert-to-pdf/html-to-pdf.js',
+    'PDF to JPG': 'js/convert-from-pdf/pdf-to-jpg.js',
+    'PDF to WORD': 'js/convert-from-pdf/pdf-to-word.js',
+    'PDF to EXCEL': 'js/convert-from-pdf/pdf-to-excel.js',
+    'PDF to PPT': 'js/convert-from-pdf/pdf-to-powerpoint.js',
+    'PDF to PDF/A': 'js/convert-from-pdf/pdf-to-pdfa.js',
+    'PDF to HTML': 'js/convert-from-pdf/pdf-to-html.js',
+    'Rotate PDF': 'js/edit/rotate-pdf.js',
+    'Add Numbers': 'js/edit/add-page-numbers.js',
+    'Add Watermark': 'js/edit/add-watermark.js',
+    'Crop PDF': 'js/edit/crop-pdf.js',
+    'Edit PDF': 'js/edit/edit-pdf.js',
+    'Unlock PDF': 'js/security/unlock-pdf.js',
+    'Protect PDF': 'js/security/protect-pdf.js',
+    'Sign PDF': 'js/security/sign-pdf.js',
+    'Redact PDF': 'js/security/redact-pdf.js',
+    'Compare PDF': 'js/security/compare-pdf.js',
+    'AI Summarizer': 'js/intelligence/ai-summarizer.js',
+    'Translate PDF': 'js/intelligence/translate-pdf.js'
 };
 
 const loadedScripts = new Set();
@@ -87,7 +87,7 @@ window.loadToolScript = function loadToolScript(name) {
 
 window.updateTool = function(name) {
     try {
-        history.pushState(null, '', '/' + name.toLowerCase().replace(/ /g, '-'));
+        history.pushState(null, '', '#' + name.toLowerCase().replace(/ /g, '-'));
     } catch (e) {}
 
     const titleBox = document.getElementById('tool-title-box');
@@ -170,7 +170,8 @@ window.resetUI = function() {
 }
 
 // --- GLOBAL FILE HANDLING (Architectural Fix) ---
-async function handleGlobalFiles(files) {
+window.handleGlobalFiles = async function(files) {
+    console.log("handleGlobalFiles triggered with", files.length, "files");
     if (!files || files.length === 0) return;
     const tool = window.currentActiveTool || 'MERGE PDF';
     const statusLabel = document.getElementById('status-label');
@@ -191,6 +192,7 @@ async function handleGlobalFiles(files) {
     // Tool Script Waiter
     const waitForTool = async (funcName, scriptName) => {
         if (typeof window[funcName] !== 'function') {
+            console.log("Lazy loading tool engine:", scriptName);
             loadToolScript(scriptName);
             let retries = 0;
             while (typeof window[funcName] !== 'function' && retries < 40) {
@@ -237,7 +239,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Bind Global Listeners
     const fileInput = document.getElementById('file-input');
     if (fileInput) {
-        fileInput.addEventListener('change', (e) => handleGlobalFiles(Array.from(e.target.files)));
+        fileInput.addEventListener('change', (e) => {
+            if (window.handleGlobalFiles) {
+                window.handleGlobalFiles(Array.from(e.target.files));
+            }
+        });
     }
 
     // Universal Drag & Drop Listeners
@@ -263,7 +269,9 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault(); e.stopPropagation();
         document.body.classList.remove('drag-active');
         const files = Array.from(e.dataTransfer.files);
-        handleGlobalFiles(files);
+        if (window.handleGlobalFiles) {
+            window.handleGlobalFiles(files);
+        }
     });
 
     // Default Tool Init
