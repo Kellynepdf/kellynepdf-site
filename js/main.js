@@ -210,6 +210,8 @@ window.handleGlobalFiles = async function(files) {
         if (await waitForTool('runSplit', 'Split PDF')) await window.runSplit(files);
     } else if (tool.includes("COMPRESS")) {
         if (await waitForTool('runCompress', 'Compress PDF')) await window.runCompress(files);
+    } else if (tool.includes("JPG TO PDF")) {
+        if (await waitForTool('runJpgToPdf', 'JPG to PDF')) await window.runJpgToPdf(files);
     } else {
         console.log("No specific engine for:", tool);
     }
