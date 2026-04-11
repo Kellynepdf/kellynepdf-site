@@ -50,19 +50,23 @@ window.runWordToPdf = async function(files) {
         actionBtn.style.opacity = "0.7";
 
         try {
-            // Create a hidden container for rendering docx
+            // 1. Create a visible but non-disruptive container for rendering
             const container = document.createElement('div');
-            container.id = 'docx-preview-container';
-            container.style.position = 'fixed';
-            container.style.left = '-9999px';
+            container.id = 'docx-preview-output';
+            // Use absolute positioning but keep it in the DOM flow to ensure visibility
+            container.style.position = 'absolute';
             container.style.top = '0';
-            container.style.width = '800px'; // Consistent width for rendering
+            container.style.left = '0';
+            container.style.width = '800px'; 
             container.style.backgroundColor = '#fff';
+            container.style.zIndex = '-1'; // Behind everything
+            container.style.visibility = 'visible';
+            container.style.opacity = '1';
             document.body.appendChild(container);
 
             const arrayBuffer = await file.arrayBuffer();
             
-            // Render docx to HTML using docx-preview
+            // 2. Render docx to HTML using docx-preview
             await docx.renderAsync(arrayBuffer, container, container, {
                 inWrapper: false,
                 ignoreWidth: false,
@@ -70,7 +74,24 @@ window.runWordToPdf = async function(files) {
                 debug: false
             });
 
-            // Conversion Options for html2pdf
+            // 3. CRITICAL: Wait for all images in the rendered document to load
+            const images = container.querySelectorAll('img');
+            const imageLoadingPromises = Array.from(images).map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => {
+                    img.onload = resolve;
+                    img.onerror = resolve; // Resolve anyway to not block the whole process
+                });
+            });
+            
+            if (imageLoadingPromises.length > 0) {
+                console.log(`Waiting for ${imageLoadingPromises.length} images to load...`);
+                await Promise.all(imageLoadingPromises);
+                // Extra buffer time for layout stability
+                await new Promise(r => setTimeout(r, 500));
+            }
+
+            // 4. Conversion Options for html2pdf
             const opt = {
                 margin: 0.5,
                 filename: 'KELLYNEPDF_WORD_TO_PDF.pdf',
@@ -78,13 +99,14 @@ window.runWordToPdf = async function(files) {
                 html2canvas: { 
                     scale: 2, 
                     useCORS: true,
-                    logging: false,
-                    letterRendering: true
+                    logging: true, // Enable logging for debugging
+                    letterRendering: true,
+                    allowTaint: false
                 },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
 
-            // Trigger PDF generation and download
+            // 5. Trigger PDF generation and download
             await html2pdf().set(opt).from(container).save();
 
             // Cleanup container
@@ -113,7 +135,7 @@ window.runWordToPdf = async function(files) {
             setTimeout(window.resetUI, 3000);
             
             // Cleanup on error
-            const container = document.getElementById('docx-preview-container');
+            const container = document.getElementById('docx-preview-output');
             if (container) document.body.removeChild(container);
         }
     };
