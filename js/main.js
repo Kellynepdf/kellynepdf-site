@@ -212,6 +212,8 @@ window.handleGlobalFiles = async function(files) {
         if (await waitForTool('runCompress', 'Compress PDF')) await window.runCompress(files);
     } else if (tool.includes("JPG TO PDF")) {
         if (await waitForTool('runJpgToPdf', 'JPG to PDF')) await window.runJpgToPdf(files);
+    } else if (tool.includes("WORD TO PDF")) {
+        if (await waitForTool('runWordToPdf', 'WORD to PDF')) await window.runWordToPdf(files);
     } else {
         console.log("No specific engine for:", tool);
     }
