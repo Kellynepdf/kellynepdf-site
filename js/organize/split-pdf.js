@@ -96,9 +96,7 @@ window.runSplit = async function(files) {
         btn.style.cursor = 'pointer';
         btn.innerHTML = `<span style="color: white; font-weight: 800; font-size: 15px;">BACK TO HOME</span>`;
         btn.style.cssText = `
-            display: flex !important;
-            justify-content: center;
-            align-items: center;
+            display: inline-block !important;
             background-color: #111 !important;
             color: #fff !important;
             border: none;
@@ -112,11 +110,13 @@ window.runSplit = async function(files) {
             transition: all 0.3s ease;
             font-weight: 800;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            text-align: center;
+            text-decoration: none;
         `;
 
         btn.onclick = (e2) => {
             e2.preventDefault();
-            window.location.assign('index.html');
+            window.location.reload();
         };
 
     } catch (e) {
