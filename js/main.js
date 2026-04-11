@@ -1,4 +1,4 @@
-// js/ui-manager.js
+// js/main.js - KELLYNE PDF Architectural Hub
 
 const toolDocs = {
     'Merge PDF': { what: 'Combine multiple PDF files into one professional document instantly.', how: 'Upload 2 or more PDFs, arrange them in order, and click Merge.' },
@@ -74,78 +74,46 @@ const toolScriptsMap = {
 };
 
 const loadedScripts = new Set();
-
-let hideTimeout;
+window.currentActiveTool = 'MERGE PDF'; // Default tool state
 
 window.loadToolScript = function loadToolScript(name) {
     if (toolScriptsMap[name] && !loadedScripts.has(name)) {
-        console.log(`Lazy loading script: ${toolScriptsMap[name]}`);
         const script = document.createElement('script');
         script.src = toolScriptsMap[name];
-        script.onload = () => {
-            console.log(`Successfully loaded ${name}`);
-            loadedScripts.add(name);
-        };
-        script.onerror = () => {
-            console.error(`Error loading script: ${toolScriptsMap[name]}`);
-        };
+        script.onload = () => { loadedScripts.add(name); };
         document.body.appendChild(script);
-
-        // WASM Support - check for High-end tools
-        if (name === "OCR PDF" || name === "Repair PDF") {
-            console.log("WASM Support Enabled: Instructing WebAssembly core load for High-end PDF manipulation...");
-            // Load WASM core when implemented
-        }
     }
 };
 
-window.currentActiveTool = 'SELECT PDF FILES';
-
 window.updateTool = function(name) {
-    clearTimeout(hideTimeout);
     try {
         history.pushState(null, '', '/' + name.toLowerCase().replace(/ /g, '-'));
-    } catch (e) {
-        console.warn("history.pushState failed.");
-    }
+    } catch (e) {}
 
-    // Immediately Set DOM without timeouts
     const titleBox = document.getElementById('tool-title-box');
     if (titleBox) {
         window.currentActiveTool = name.toUpperCase();
         titleBox.innerText = window.currentActiveTool;
-        titleBox.style.color = '#e5322d'; // Force red text for new tool state
-        titleBox.style.fontSize = ''; // Scrub large victory sizes
+        titleBox.style.color = '#e5322d';
+        titleBox.style.fontSize = '';
         titleBox.style.opacity = '1';
     }
 
     const infoArea = document.getElementById('tool-info-area');
-    if (infoArea) {
+    if (infoArea && toolDocs[name]) {
         infoArea.style.display = 'block';
-        if (toolDocs[name]) {
-            animateText('info-what', toolDocs[name].what);
-            animateText('info-how', toolDocs[name].how);
-        }
+        animateText('info-what', toolDocs[name].what);
+        animateText('info-how', toolDocs[name].how);
     }
 
-    // Reset UI styling (Action Button, Default Cloud)
     resetUI();
     
-    // Hero Box Integration
     const dropZone = document.getElementById('drop-zone');
     if (dropZone) {
-        if (name.toUpperCase() !== 'SELECT PDF FILES') {
-            dropZone.classList.add('active-tool');
-            dropZone.classList.remove('success-tool-glow');
-        } else {
-            dropZone.classList.remove('active-tool');
-            dropZone.classList.remove('success-tool-glow');
-            dropZone.style.border = ''; // Revert legacy
-            dropZone.style.boxShadow = ''; // Revert legacy
-        }
+        dropZone.classList.add('active-tool');
+        dropZone.classList.remove('success-tool-glow');
     }
 
-    // Lazy Load the appropriate JS file
     loadToolScript(name);
 }
 
@@ -164,15 +132,12 @@ window.animateText = function(id, text) {
 
 window.resetUI = function() {
     const dropZone = document.getElementById('drop-zone');
-    let defaultIcon = document.getElementById('default-upload-icon');
-    let btn = document.getElementById('action-button');
+    const defaultIcon = document.getElementById('default-upload-icon');
+    const btn = document.getElementById('action-button');
     const titleBox = document.getElementById('tool-title-box');
     const statusLabel = document.getElementById('status-label');
 
-    // 1. Re-show Cloud Upload Icon & Text
-    if (defaultIcon) {
-        defaultIcon.style.display = 'flex';
-    }
+    if (defaultIcon) defaultIcon.style.display = 'flex';
     
     if (statusLabel) {
         statusLabel.innerText = "Click or Drag & Drop Files";
@@ -188,236 +153,119 @@ window.resetUI = function() {
         btn.style.setProperty('display', 'none', 'important');
     }
 
-    // 3. Clear Title Area — Reset colors and sizes
     if (titleBox) {
         titleBox.style.color = '#e5322d';
         titleBox.style.fontSize = '';
         titleBox.style.fontWeight = '';
-        
-        if (window.currentActiveTool && window.currentActiveTool !== 'SELECT PDF FILES') {
-            titleBox.innerText = window.currentActiveTool;
-        } else {
-            window.currentActiveTool = 'SELECT PDF FILES';
-            titleBox.innerText = 'SELECT PDF FILES';
-        }
+        titleBox.innerText = window.currentActiveTool || 'MERGE PDF';
     }
 
-    // 4. Glow Reset
-    const dropZoneEl = document.getElementById('drop-zone');
-    if (dropZoneEl) {
-        dropZoneEl.classList.remove('success-tool-glow');
-        if (window.currentActiveTool && window.currentActiveTool !== 'SELECT PDF FILES') {
-            dropZoneEl.classList.add('active-tool');
-        } else {
-            dropZoneEl.classList.remove('active-tool');
-        }
+    if (dropZone) {
+        dropZone.classList.remove('success-tool-glow');
+        dropZone.classList.add('active-tool');
     }
 
-    // 5. Cleanup Inputs & URL
     const fileInput = document.getElementById('file-input');
     if (fileInput) fileInput.value = "";
-    
-    try { 
-        window.location.hash = ''; 
-        // Force refresh only if specifically needed, usually hash clear is enough
-    } catch(e) {}
 }
 
-window.showDownloadReady = function(urlOrFiles, filename) {
-    const btn = document.getElementById('action-button');
-    if (btn) {
-        const defaultIcon = document.getElementById('default-upload-icon');
-        if (defaultIcon) defaultIcon.style.display = 'none';
+// --- GLOBAL FILE HANDLING (Architectural Fix) ---
+async function handleGlobalFiles(files) {
+    if (!files || files.length === 0) return;
+    const tool = window.currentActiveTool || 'MERGE PDF';
+    const statusLabel = document.getElementById('status-label');
 
-        btn.innerHTML = `<span class="upload-label-text" style="color: white; font-weight: 800;">Download File${Array.isArray(urlOrFiles) ? 's' : ''}</span>`;
-        btn.style.display = "flex";
-        btn.style.backgroundColor = "#e5322d"; // Brand Red
-        btn.style.color = "#fff";
-        btn.style.border = "none";
-        btn.style.padding = "15px 40px";
-        btn.style.borderRadius = "30px";
-        btn.classList.add('download-ready');
-
-        btn.onclick = async (e) => {
-            e.stopPropagation(); // prevent file input dialog
-
-            if (Array.isArray(urlOrFiles) && urlOrFiles.length >= 10) {
-                // Zip 10+ files
-                const zip = new JSZip();
-                for (let i = 0; i < urlOrFiles.length; i++) {
-                    const fileObj = urlOrFiles[i];
-                    // Fetch blob if necessary or use array buffer
-                    const response = await fetch(fileObj.url);
-                    const blob = await response.blob();
-                    zip.file(`kellynepdf_file_${i + 1}.pdf`, blob);
-                }
-                const zipBlob = await zip.generateAsync({ type: "blob" });
-                const zipUrl = URL.createObjectURL(zipBlob);
-                const link = document.createElement('a');
-                link.href = zipUrl;
-                link.download = `kellynepdf_bulk_processed.zip`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
-            } else if (Array.isArray(urlOrFiles)) {
-                // Download multiple files individually if < 10
-                for (const fileObj of urlOrFiles) {
-                    const link = document.createElement('a');
-                    link.href = fileObj.url;
-                    link.download = `kellynepdf_${filename}_${fileObj.id}.pdf`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }
-            } else {
-                // Single file download
-                const link = document.createElement('a');
-                link.href = urlOrFiles;
-                link.download = filename;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-
-            // Revert after 5 seconds to select file
-            setTimeout(resetUI, 5000);
-        };
+    // PDF Validation
+    const requirePdfTools = ['MERGE PDF', 'SPLIT PDF', 'COMPRESS PDF', 'REPAIR PDF', 'ROTATE PDF'];
+    if (requirePdfTools.includes(tool)) {
+        const isPdf = files[0] && (files[0].type === 'application/pdf' || files[0].name.toLowerCase().endsWith('.pdf'));
+        if (!isPdf) {
+            statusLabel.innerHTML = `<span style="color: #ff0000; font-weight: 900;">ERROR: INVALID FILE TYPE</span>`;
+            setTimeout(resetUI, 2500);
+            return;
+        }
     }
-}
 
-// Normalization for PDF Libraries
-if (typeof PDFLib === 'undefined' && typeof pdfLib !== 'undefined') {
-    window.PDFLib = pdfLib;
-} else if (typeof PDFLib === 'undefined' && typeof window.jspdf !== 'undefined') {
-    // Some tools might use jspdf as fallback, but for pdf-lib it's specific
+    statusLabel.innerText = `Analyzing ${files[0].name}...`;
+
+    // Tool Script Waiter
+    const waitForTool = async (funcName, scriptName) => {
+        if (typeof window[funcName] !== 'function') {
+            loadToolScript(scriptName);
+            let retries = 0;
+            while (typeof window[funcName] !== 'function' && retries < 40) {
+                await new Promise(r => setTimeout(r, 100));
+                retries++;
+            }
+        }
+        return typeof window[funcName] === 'function';
+    };
+
+    // Tool Router
+    if (tool.includes("MERGE")) {
+        if (await waitForTool('runMerge', 'Merge PDF')) await window.runMerge(files);
+    } else if (tool.includes("SPLIT")) {
+        if (await waitForTool('runSplit', 'Split PDF')) await window.runSplit(files);
+    } else if (tool.includes("COMPRESS")) {
+        if (await waitForTool('runCompress', 'Compress PDF')) await window.runCompress(files);
+    } else {
+        console.log("No specific engine for:", tool);
+    }
 }
 
 // Initialization Logics
 document.addEventListener("DOMContentLoaded", () => {
     animateText('sub-heading', "KellynePDF - All-In-One Solution");
     
-    // Configure pdf.js worker
-    if (typeof pdfjsLib !== 'undefined') {
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-    }
-
-    // Initialize Particles.js correctly (Stars and Dots effect)
+    // Core Background Logic (500 Stars/Dots)
     if (typeof particlesJS !== 'undefined') {
         particlesJS("particles-js", {
             "particles": {
-                "number": {
-                    "value": 500,
-                    "density": { "enable": true, "value_area": 800 }
-                },
-                "color": { "value": ["#bdc3c7", "#e5322d"] }, // Grey and Brand Red
-                "shape": {
-                    "type": ["circle", "star"],
-                    "stroke": { "width": 0, "color": "#000000" }
-                },
-                "opacity": {
-                    "value": 0.5,
-                    "random": true,
-                    "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false }
-                },
-                "size": {
-                    "value": 4,
-                    "random": true,
-                    "anim": { "enable": true, "speed": 2, "size_min": 0.1, "sync": false }
-                },
-                "line_linked": {
-                    "enable": true,
-                    "distance": 150,
-                    "color": "#e0e0e0",
-                    "opacity": 0.4,
-                    "width": 1
-                },
-                "move": {
-                    "enable": true,
-                    "speed": 1.5,
-                    "direction": "none",
-                    "random": true,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false,
-                    "attract": { "enable": true, "rotateX": 600, "rotateY": 1200 }
-                }
+                "number": { "value": 500, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": ["#bdc3c7", "#e5322d"] },
+                "shape": { "type": ["circle", "star"] },
+                "opacity": { "value": 0.5, "random": true },
+                "size": { "value": 4, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#e0e0e0", "opacity": 0.4, "width": 1 },
+                "move": { "enable": true, "speed": 1.5, "direction": "none", "random": true, "out_mode": "out" }
             },
-            "interactivity": {
-                "detect_on": "canvas",
-                "events": {
-                    "onhover": { "enable": true, "mode": "grab" },
-                    "onclick": { "enable": true, "mode": "push" },
-                    "resize": true
-                },
-                "modes": {
-                    "grab": { "distance": 140, "line_linked": { "opacity": 1 } },
-                    "push": { "particles_nb": 4 }
-                }
-            },
+            "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } } },
             "retina_detect": true
         });
     }
 
-    // Hover Sync & Hero Box Automation
-    const titleBox = document.getElementById('tool-title-box');
-    if (titleBox) {
-        titleBox.style.transition = 'opacity 0.15s ease, color 0.15s ease';
+    // Bind Global Listeners
+    const fileInput = document.getElementById('file-input');
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => handleGlobalFiles(Array.from(e.target.files)));
     }
 
-    const toolLinks = document.querySelectorAll('a[onclick^="updateTool"]');
-    const navbar = document.querySelector('.navbar');
-
-    toolLinks.forEach(link => {
-        link.addEventListener('mouseenter', () => {
-            if (!titleBox) return;
-            const match = link.getAttribute('onclick')?.match(/updateTool\('([^']+)'\)/);
-            if (match && match[1]) {
-                const newName = match[1].toUpperCase();
-                if (titleBox.innerText !== newName) {
-                    titleBox.innerText = newName;
-                    titleBox.style.color = '#e5322d';
-                    titleBox.style.opacity = '1';
-                    
-                    // Sync Documentation on Hover
-                    const infoArea = document.getElementById('tool-info-area');
-                    if (infoArea && toolDocs[match[1]]) {
-                        infoArea.style.display = 'block';
-                        document.getElementById('info-what').innerText = toolDocs[match[1]].what;
-                        document.getElementById('info-how').innerText = toolDocs[match[1]].how;
-                    }
-                }
-            }
-        });
+    // Universal Drag & Drop Listeners
+    window.addEventListener('dragenter', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        document.body.classList.add('drag-active');
     });
 
-    if (navbar && titleBox) {
-        navbar.addEventListener('mouseleave', () => {
-            const revertName = window.currentActiveTool || 'SELECT PDF FILES';
-            if (titleBox.innerText !== revertName) {
-                titleBox.style.opacity = '0';
-                setTimeout(() => {
-                    titleBox.innerText = revertName;
-                    titleBox.style.color = '#e5322d';
-                    titleBox.style.opacity = '1';
-                    
-                    // Revert Documentation
-                    const infoArea = document.getElementById('tool-info-area');
-                    if (infoArea) {
-                        const originalToolMatch = Object.keys(toolDocs).find(k => k.toUpperCase() === revertName);
-                        if (originalToolMatch && toolDocs[originalToolMatch]) {
-                            infoArea.style.display = 'block';
-                            animateText('info-what', toolDocs[originalToolMatch].what);
-                            animateText('info-how', toolDocs[originalToolMatch].how);
-                        } else {
-                            document.getElementById('info-what').innerHTML = "";
-                            document.getElementById('info-how').innerHTML = "";
-                            infoArea.style.display = 'none';
-                        }
-                    }
-                }, 50);
-            }
-        });
-    }
+    window.addEventListener('dragover', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        e.dataTransfer.dropEffect = 'copy';
+        document.body.classList.add('drag-active');
+    });
 
+    window.addEventListener('dragleave', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        if (e.clientX === 0 && e.clientY === 0) {
+            document.body.classList.remove('drag-active');
+        }
+    });
+
+    window.addEventListener('drop', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        document.body.classList.remove('drag-active');
+        const files = Array.from(e.dataTransfer.files);
+        handleGlobalFiles(files);
+    });
+
+    // Default Tool Init
+    updateTool('Merge PDF');
 });

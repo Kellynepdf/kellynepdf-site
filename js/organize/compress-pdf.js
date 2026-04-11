@@ -17,37 +17,37 @@ window.runCompress = async function(files) {
 
     // ── STEP 1: Instant Size Estimation — 90% Reduction Target ──
     const originalSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-    const estimatedSizeMB = (originalSizeMB * 0.1).toFixed(2); // 10% of original = 90% reduction
+    const estimatedSizeMB = (originalSizeMB * 0.1).toFixed(2); // strictly 10% of original
 
     if (titleBox) {
-        titleBox.innerHTML = `ORIGINAL: ${originalSizeMB} MB | <span style="color: #e5322d;">ESTIMATED: ${estimatedSizeMB} MB</span>`;
-        titleBox.style.color = '';
-        titleBox.style.fontSize = '';
+        titleBox.innerHTML = `ORIGINAL SIZE: ${originalSizeMB} MB | <span style="color: #ff0000;">ESTIMATED SIZE: ${estimatedSizeMB} MB</span>`;
+        titleBox.style.color = '#333';
+        titleBox.style.fontSize = '20px';
         titleBox.style.fontWeight = '900';
     }
 
-    // ── Status Label → "READY TO COMPRESS" in Bold Red ──
+    // ── Status Label UI ──
     if (statusLabel) {
-        statusLabel.innerHTML = `<strong>READY TO COMPRESS</strong>`;
-        statusLabel.style.color = '#ff0000'; // Bold Red
+        statusLabel.innerHTML = `READY FOR HIGH-POWER COMPRESSION`;
+        statusLabel.style.color = '#ff0000';
         statusLabel.style.fontWeight = '900';
-        statusLabel.style.fontSize = '20px';
+        statusLabel.style.fontSize = '18px';
     }
 
-    // ── "CLICK TO COMPRESS" Button — Solid Red, White text ──
+    // ── "CLICK TO COMPRESS" Button — Solid Red (#ff0000) ──
     actionBtn.innerHTML = `<span style="color: white; font-weight: 900; font-size: 15px; letter-spacing: 1.5px;">CLICK TO COMPRESS</span>`;
     actionBtn.style.cssText = `
         display: flex !important;
         justify-content: center;
         align-items: center;
-        background-color: #e5322d !important;
+        background-color: #ff0000 !important;
         color: #fff !important;
         border: none;
-        padding: 18px 45px;
-        border-radius: 30px;
+        padding: 20px 50px;
+        border-radius: 35px;
         cursor: pointer;
         width: auto;
-        margin: 20px auto 0;
+        margin: 25px auto 0;
         opacity: 1 !important;
         visibility: visible !important;
         z-index: 100;
@@ -55,7 +55,7 @@ window.runCompress = async function(files) {
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         font-size: 16px;
         font-weight: 900;
-        box-shadow: 0 10px 25px rgba(229, 50, 45, 0.3);
+        box-shadow: 0 12px 30px rgba(255, 0, 0, 0.3);
     `;
     actionBtn.disabled = false;
     actionBtn.classList.add('download-ready');
@@ -66,7 +66,7 @@ window.runCompress = async function(files) {
         e.stopImmediatePropagation();
         e.preventDefault();
 
-        // ── STEP 3: "KELLYNE COMPRESSING..." with Spinner ──
+        // ── "KELLYNE COMPRESSING..." with Spinner ──
         actionBtn.disabled = true;
         actionBtn.style.cursor = 'not-allowed';
         actionBtn.innerHTML = `<span style="color: white; font-weight: 900; font-size: 14px; letter-spacing: 0.5px;">KELLYNE COMPRESSING...</span>
@@ -76,9 +76,8 @@ window.runCompress = async function(files) {
             </svg>`;
 
         if (statusLabel) {
-            statusLabel.innerText = 'KELLYNE COMPRESSING...';
+            statusLabel.innerText = 'OPTIMIZING ENGINE ACTIVE...';
             statusLabel.style.color = '#e5322d';
-            statusLabel.style.fontWeight = 'bold';
         }
 
         try {
@@ -91,11 +90,11 @@ window.runCompress = async function(files) {
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
             const newDoc = await PDFLib.PDFDocument.create();
 
-            // ── 90% Compression: scale 0.5, quality 0.1 ──
-            const scale = 0.5;
+            // ── Target 90% Reduction: Aggressive scale 0.3, quality 0.1 ──
+            const scale = 0.3;
 
             for (let i = 1; i <= pdf.numPages; i++) {
-                if (statusLabel) statusLabel.innerText = `Compressing page ${i} of ${pdf.numPages}...`;
+                if (statusLabel) statusLabel.innerText = `Shrinking page ${i} of ${pdf.numPages}...`;
                 
                 const page = await pdf.getPage(i);
                 const viewport = page.getViewport({ scale });
@@ -111,7 +110,7 @@ window.runCompress = async function(files) {
                     canvas.toBlob(async (blob) => {
                         const buffer = await blob.arrayBuffer();
                         resolve(new Uint8Array(buffer));
-                    }, 'image/jpeg', 0.1); // Quality 0.1 for 90% reduction
+                    }, 'image/jpeg', 0.1); // High-power compression (10% quality)
                 });
                 const img = await newDoc.embedJpg(imgBytes);
                 
@@ -121,28 +120,21 @@ window.runCompress = async function(files) {
             }
 
             let pdfBytes = await newDoc.save();
-            
-            // Auto-fallback if somehow larger
-            if (pdfBytes.length >= file.size) {
-                const freshBuffer = await file.arrayBuffer();
-                pdfBytes = new Uint8Array(freshBuffer);
-            }
-            
             const blob = new Blob([pdfBytes], { type: 'application/pdf' });
             const finalSizeMB = (blob.size / (1024 * 1024)).toFixed(2);
             const url = URL.createObjectURL(blob);
 
-            // ── STEP 4: Success UI & Auto Download ──
+            // ── SUCCESS UI & DOWNLOAD ──
             const link = document.createElement('a');
             link.href = url;
-            link.download = 'Kellynepdf_compressed.pdf';
+            link.download = 'KELLYNEPDF_COMPRESSED.pdf';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
 
             if (titleBox) {
                 titleBox.innerText = 'COMPRESSION SUCCESSFULLY COMPLETED';
-                titleBox.style.color = '#008000'; // Bright Green
+                titleBox.style.color = '#008000';
                 titleBox.style.fontSize = '22px';
                 titleBox.style.fontWeight = '900';
             }
@@ -150,14 +142,12 @@ window.runCompress = async function(files) {
             if (statusLabel) {
                 statusLabel.innerHTML = `Original: ${originalSizeMB} MB → Final: ${finalSizeMB} MB`;
                 statusLabel.style.color = '#008000';
-                statusLabel.style.fontWeight = '900';
-                statusLabel.style.fontSize = '18px';
             }
 
             const dropZone = document.getElementById('drop-zone');
             if (dropZone) dropZone.classList.add('success-tool-glow');
 
-            // ── Transform to "BACK TO HOME" — Black #111 ──
+            // ── "BACK TO HOME" — Solid Black (#111), White text ──
             actionBtn.disabled = false;
             actionBtn.style.cursor = 'pointer';
             actionBtn.innerHTML = `<span style="color: white; font-weight: 800; font-size: 15px; text-transform: uppercase;">BACK TO HOME</span>`;
@@ -184,24 +174,14 @@ window.runCompress = async function(files) {
 
             actionBtn.onclick = (e2) => {
                 e2.preventDefault();
-                window.location.reload();
+                window.location.assign(window.location.pathname);
             };
 
             URL.revokeObjectURL(url);
 
         } catch (err) {
             console.error("Compression Error:", err);
-            if (titleBox) {
-                titleBox.innerText = 'COMPRESSION FAILED';
-                titleBox.style.color = '#e5322d';
-            }
-            if (statusLabel) {
-                statusLabel.innerText = 'An error occurred during compression.';
-                statusLabel.style.color = '#e5322d';
-            }
-            actionBtn.disabled = false;
-            actionBtn.innerHTML = `<span>RETRY</span>`;
-            actionBtn.onclick = () => window.location.reload();
+            window.location.assign(window.location.pathname);
         }
     };
 };

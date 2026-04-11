@@ -163,7 +163,8 @@ window.runMerge = async function(files) {
 
             // ── STEP 5: "BACK TO HOME" Button — Solid Black (#111), White text ──
             btn.disabled = false;
-            btn.innerHTML = `<span style="color: white; font-weight: 800; font-size: 15px; text-transform: uppercase; letter-spacing: 1px;">BACK TO HOME</span>`;
+            btn.style.cursor = 'pointer';
+            btn.innerHTML = `<span style="color: white; font-weight: 800; font-size: 15px; text-transform: uppercase;">BACK TO HOME</span>`;
             btn.style.cssText = `
                 display: flex !important;
                 justify-content: center;
@@ -178,7 +179,7 @@ window.runMerge = async function(files) {
                 cursor: pointer;
                 opacity: 1 !important;
                 visibility: visible !important;
-                z-index: 50;
+                z-index: 100;
                 position: relative;
                 transition: all 0.3s ease;
                 font-weight: 800;
@@ -186,11 +187,8 @@ window.runMerge = async function(files) {
             `;
 
             btn.onclick = (e2) => {
-                e2.stopPropagation();
-                e2.stopImmediatePropagation();
                 e2.preventDefault();
-                // Full logic restoration: Fast Page Refresh as requested
-                window.location.reload();
+                window.location.assign(window.location.pathname);
             };
 
             // Memory cleanup
