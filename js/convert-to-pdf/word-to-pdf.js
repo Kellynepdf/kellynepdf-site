@@ -50,48 +50,50 @@ window.runWordToPdf = async function(files) {
         actionBtn.style.opacity = "0.7";
 
         try {
-            // 1. Create a visible but non-disruptive container for rendering
-            const container = document.createElement('div');
-            container.id = 'docx-preview-output';
-            // Use absolute positioning but keep it in the DOM flow to ensure visibility
-            container.style.position = 'absolute';
-            container.style.top = '0';
-            container.style.left = '0';
-            container.style.width = '800px'; 
-            container.style.backgroundColor = '#fff';
-            container.style.zIndex = '-1'; // Behind everything
-            container.style.visibility = 'visible';
-            container.style.opacity = '1';
-            document.body.appendChild(container);
+            // 1. THE OFF-SCREEN CONTAINER STRATEGY
+            // Create a temporary div dynamically
+            const tempDiv = document.createElement('div');
+            tempDiv.id = 'off-screen-docx-container';
+            // Apply CSS styles to render in DOM but invisible to user
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.top = '0';
+            tempDiv.style.left = '-9999px'; // Off-screen positioning
+            tempDiv.style.width = '800px'; 
+            tempDiv.style.background = 'white';
+            tempDiv.style.zIndex = '-100';
+            // Important: visibility: visible and opacity: 1 are required for capture
+            tempDiv.style.visibility = 'visible';
+            tempDiv.style.opacity = '1';
+            
+            document.body.appendChild(tempDiv);
 
             const arrayBuffer = await file.arrayBuffer();
             
-            // 2. Render docx to HTML using docx-preview
-            await docx.renderAsync(arrayBuffer, container, container, {
+            // 2. CORRECT RENDERING SEQUENCE
+            // Render the docx file into the temporary off-screen div
+            await docx.renderAsync(arrayBuffer, tempDiv, tempDiv, {
                 inWrapper: false,
                 ignoreWidth: false,
                 ignoreHeight: false,
                 debug: false
             });
 
-            // 3. CRITICAL: Wait for all images in the rendered document to load
-            const images = container.querySelectorAll('img');
+            // 3. WAIT FOR IMAGES (Best practice to ensure visibility)
+            const images = tempDiv.querySelectorAll('img');
             const imageLoadingPromises = Array.from(images).map(img => {
                 if (img.complete) return Promise.resolve();
                 return new Promise(resolve => {
                     img.onload = resolve;
-                    img.onerror = resolve; // Resolve anyway to not block the whole process
+                    img.onerror = resolve;
                 });
             });
             
             if (imageLoadingPromises.length > 0) {
-                console.log(`Waiting for ${imageLoadingPromises.length} images to load...`);
                 await Promise.all(imageLoadingPromises);
-                // Extra buffer time for layout stability
-                await new Promise(r => setTimeout(r, 500));
+                await new Promise(r => setTimeout(r, 1000)); // Slightly longer wait for off-screen stability
             }
 
-            // 4. Conversion Options for html2pdf
+            // 4. CONVERSION OPTIONS
             const opt = {
                 margin: 0.5,
                 filename: 'KELLYNEPDF_WORD_TO_PDF.pdf',
@@ -99,18 +101,22 @@ window.runWordToPdf = async function(files) {
                 html2canvas: { 
                     scale: 2, 
                     useCORS: true,
-                    logging: true, // Enable logging for debugging
+                    logging: true,
                     letterRendering: true,
                     allowTaint: false
                 },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             };
 
-            // 5. Trigger PDF generation and download
-            await html2pdf().set(opt).from(container).save();
+            // 5. TRIGGER PDF GENERATION
+            // Pass ONLY the temporary div into html2pdf
+            await html2pdf().set(opt).from(tempDiv).save();
 
-            // Cleanup container
-            document.body.removeChild(container);
+            // 6. CLEANUP PHASE
+            // Remove the temporary div from the DOM
+            if (tempDiv.parentNode) {
+                document.body.removeChild(tempDiv);
+            }
 
             // Success State
             if (titleBox) {
