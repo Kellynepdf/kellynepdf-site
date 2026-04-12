@@ -45,14 +45,13 @@ window.runWordToPdf = async function(files) {
         actionBtn.style.opacity = "0.7";
 
         try {
-            const results = [];
             const zip = docxFiles.length > 1 ? new JSZip() : null;
 
             for (let i = 0; i < docxFiles.length; i++) {
                 const file = docxFiles[i];
                 statusLabel.innerText = `Processing (${i + 1}/${docxFiles.length}): ${file.name}`;
 
-                // 1. THE WRAPPER STRUCTURE (Zero-Size Parent trick)
+                // 1. THE WRAPPER STRUCTURE
                 const wrapper = document.createElement('div');
                 wrapper.style.cssText = 'position: absolute; top: 0; left: 0; width: 0px; height: 0px; overflow: hidden; z-index: -1; pointer-events: none;';
 
@@ -60,6 +59,7 @@ window.runWordToPdf = async function(files) {
                 tempDiv.id = 'render-container';
                 tempDiv.style.cssText = `
                     width: 800px; 
+                    height: auto;
                     min-height: 1122px; 
                     background-color: #ffffff; 
                     color: #000000; 
@@ -72,19 +72,52 @@ window.runWordToPdf = async function(files) {
 
                 const arrayBuffer = await file.arrayBuffer();
                 
-                // 2. RENDER & WAIT FOR REPAINT (2 SECONDS)
-                await docx.renderAsync(arrayBuffer, tempDiv, tempDiv, {
-                    inWrapper: false,
-                    ignoreWidth: false,
-                    ignoreHeight: false
+                // 2. BULLETPROOF RENDERING (Try-Catch)
+                try {
+                    await docx.renderAsync(arrayBuffer, tempDiv, tempDiv, {
+                        inWrapper: false,
+                        ignoreWidth: false,
+                        ignoreHeight: false
+                    });
+                } catch (renderError) {
+                    console.error("Rendering Failed for:", file.name, renderError);
+                    if (titleBox) {
+                        titleBox.innerText = "UNSUPPORTED FILE FORMAT";
+                        titleBox.style.color = "#e5322d";
+                        titleBox.style.fontWeight = "900";
+                    }
+                    statusLabel.innerText = `Error processing ${file.name}. Conversion Aborted.`;
+                    
+                    actionBtn.innerHTML = `<span>BACK TO HOME</span>`;
+                    actionBtn.style.backgroundColor = "#111";
+                    actionBtn.style.opacity = "1";
+                    actionBtn.style.pointerEvents = "auto";
+                    actionBtn.onclick = () => window.location.reload(true);
+                    
+                    wrapper.remove();
+                    return; // ABORT entire process
+                }
+
+                // 3. WAIT FOR INNER IMAGES (Promise.all + Fallback)
+                const imgs = tempDiv.querySelectorAll('img');
+                const imgPromises = Array.from(imgs).map(img => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise(r => {
+                        img.onload = r;
+                        img.onerror = r;
+                    });
                 });
 
-                // Wait for images and DOM paint
-                const imgs = tempDiv.querySelectorAll('img');
-                await Promise.all(Array.from(imgs).map(img => img.complete ? Promise.resolve() : new Promise(r => img.onload = img.onerror = r)));
-                await new Promise(r => setTimeout(r, 2000)); // Repaint wait
+                // Race against a 2.5s timeout fallback
+                await Promise.race([
+                    Promise.all(imgPromises),
+                    new Promise(r => setTimeout(r, 2500))
+                ]);
+                
+                // Extra repaint wait
+                await new Promise(r => setTimeout(r, 800));
 
-                // 3. BLANK PAGE SCROLL FIX
+                // 4. DYNAMIC DIMENSIONS FOR html2canvas
                 const opt = {
                     margin: 10,
                     filename: file.name.replace(/\.docx$/i, '.pdf'),
@@ -94,21 +127,21 @@ window.runWordToPdf = async function(files) {
                         useCORS: true, 
                         scrollY: 0, 
                         scrollX: 0, 
-                        logging: true 
+                        logging: true,
+                        windowWidth: tempDiv.scrollWidth,
+                        windowHeight: tempDiv.scrollHeight,
+                        height: tempDiv.scrollHeight
                     },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
                 if (zip) {
-                    // Pass tempDiv, NOT the wrapper
                     const blob = await html2pdf().set(opt).from(tempDiv).output('blob');
                     zip.file(opt.filename, blob);
                 } else {
-                    // Pass tempDiv, NOT the wrapper
                     await html2pdf().set(opt).from(tempDiv).save();
                 }
 
-                // 4. SAFE CLEANUP
                 wrapper.remove();
             }
 
@@ -127,7 +160,6 @@ window.runWordToPdf = async function(files) {
                 titleBox.style.fontSize = "22px";
             }
 
-            // BACK TO HOME
             actionBtn.innerHTML = `<span>BACK TO HOME</span>`;
             actionBtn.style.backgroundColor = "#111";
             actionBtn.style.color = "#fff";
@@ -136,7 +168,7 @@ window.runWordToPdf = async function(files) {
             actionBtn.onclick = () => window.location.reload(true);
 
         } catch (error) {
-            console.error("Conversion Error:", error);
+            console.error("General Error:", error);
             statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: 900;">FAILED. PLEASE REFRESH.</span>`;
             setTimeout(window.resetUI, 3000);
         }
