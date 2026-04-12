@@ -5,17 +5,11 @@
  */
 
 window.runDigitalSign = async function(files) {
-    if (!files || files.length === 0) return;
-    const file = files[0];
     const statusLabel = document.getElementById('status-label');
-    const actionBtn = document.getElementById('action-button');
-    const toolTitle = document.getElementById('tool-title-box');
     const toolContainer = document.querySelector('.tool-box-container');
+    const actionBtn = document.getElementById('action-button');
 
-    // 1. CLEAR VIEW & PREPARE PDF CANVAS
-    statusLabel.innerText = "Loading PDF Viewer...";
-    
-    // Create a container for the viewer if it doesn't exist
+    // 1. INITIALIZE VIEWER UI (EMPTY STATE)
     let viewerContainer = document.getElementById('esign-viewer-container');
     if (!viewerContainer) {
         viewerContainer = document.createElement('div');
@@ -24,47 +18,112 @@ window.runDigitalSign = async function(files) {
             position: relative;
             margin: 20px auto;
             max-width: 100%;
-            height: auto;
+            width: 800px;
+            height: 500px;
             border: 2px dashed #ddd;
+            border-radius: 12px;
             background: #f9f9f9;
-            overflow: visible;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            overflow: visible;
+            transition: all 0.3s ease;
         `;
+        
+        const placeholder = document.createElement('div');
+        placeholder.id = 'esign-placeholder';
+        placeholder.innerHTML = `
+            <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" style="width:60px; opacity:0.3; margin-bottom:15px;">
+            <p style="color:#888; font-weight:700;">No PDF uploaded. Drag or select a file to begin.</p>
+        `;
+        placeholder.style.textAlign = 'center';
+        viewerContainer.appendChild(placeholder);
+        
         toolContainer.appendChild(viewerContainer);
     }
-    viewerContainer.innerHTML = ''; // Clear previous
 
-    // Load PDF Page 1
-    const arrayBuffer = await file.arrayBuffer();
-    const pdfjs = window['pdfjs-dist/build/pdf'];
-    if (!pdfjs.GlobalWorkerOptions.workerSrc) {
-        pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    // 2. ROBUST UPLOAD BINDING
+    const fileInput = document.getElementById('file-input');
+    const dropZone = document.getElementById('drop-zone');
+
+    const handleFile = async (file) => {
+        if (!file || file.type !== 'application/pdf') {
+            statusLabel.innerHTML = `<span style="color:#e5322d;">ERROR: PLEASE UPLOAD A VALID PDF</span>`;
+            return;
+        }
+
+        try {
+            statusLabel.innerText = "Rendering PDF...";
+            const buffer = await file.arrayBuffer();
+            window.originalPdfBuffer = buffer; // Store globally for pdf-lib later
+
+            const pdfjs = window['pdfjs-dist/build/pdf'];
+            pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+            const loadingTask = pdfjs.getDocument({ data: buffer });
+            const pdf = await loadingTask.promise;
+            const page = await pdf.getPage(1);
+            
+            const viewport = page.getViewport({ scale: 1.5 });
+            const canvas = document.createElement('canvas');
+            canvas.id = 'pdf-render-canvas';
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+            // Update Viewer UI
+            viewerContainer.innerHTML = ''; 
+            viewerContainer.style.width = viewport.width + 'px';
+            viewerContainer.style.height = viewport.height + 'px';
+            viewerContainer.style.border = "none";
+            viewerContainer.style.background = "#fff";
+            viewerContainer.appendChild(canvas);
+
+            statusLabel.innerText = "PDF Loaded. You can now Add Signature.";
+            
+            // Enable 'ADD SIGNATURE' buttons
+            if (window.showEsignControls) window.showEsignControls();
+
+        } catch (err) {
+            console.error(err);
+            statusLabel.innerText = "Failed to render PDF.";
+        }
+    };
+
+    // If initial call has files, process them
+    if (files && files.length > 0) {
+        handleFile(files[0]);
     }
 
-    const loadingTask = pdfjs.getDocument({ data: arrayBuffer });
-    const pdf = await loadingTask.promise;
-    const page = await pdf.getPage(1);
-    
-    const viewport = page.getViewport({ scale: 1.5 });
-    const canvas = document.createElement('canvas');
-    canvas.id = 'pdf-render-canvas';
-    const context = canvas.getContext('2d');
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-
-    const renderContext = {
-        canvasContext: context,
-        viewport: viewport
+    // Attach listeners for subsequent uploads (Specific to Digital Sign)
+    fileInput.onchange = (e) => {
+        if (window.currentActiveTool.includes('DIGITAL SIGN')) handleFile(e.target.files[0]);
     };
-    await page.render(renderContext).promise;
-    
-    viewerContainer.style.width = viewport.width + 'px';
-    viewerContainer.style.height = viewport.height + 'px';
-    viewerContainer.appendChild(canvas);
 
-    statusLabel.innerText = "PDF Loaded. Ready for Signing.";
+    dropZone.ondragover = dropZone.ondragenter = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (window.currentActiveTool.includes('DIGITAL SIGN')) dropZone.classList.add('drag-active');
+    };
+
+    dropZone.ondragleave = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('drag-active');
+    };
+
+    dropZone.ondrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('drag-active');
+        if (window.currentActiveTool.includes('DIGITAL SIGN')) {
+            const file = e.dataTransfer.files[0];
+            handleFile(file);
+        }
+    };
 
     // 2. SIGNATURE MODAL UI (DocuSign Style)
     function createModal() {
@@ -326,9 +385,10 @@ window.runDigitalSign = async function(files) {
         }, { passive: false });
     }
 
-    // 4. ACTION UI
+    // 4. ACTION UI & CONTROLS
     const controls = document.createElement('div');
-    controls.style.cssText = 'display:flex; justify-content:center; gap:15px; margin-top:20px;';
+    controls.id = 'esign-controls';
+    controls.style.cssText = 'display:none; justify-content:center; gap:15px; margin-top:20px;';
     
     const addSignBtn = document.createElement('button');
     addSignBtn.innerText = 'ADD SIGNATURE / STAMP';
@@ -341,17 +401,26 @@ window.runDigitalSign = async function(files) {
     controls.appendChild(addSignBtn);
     viewerContainer.after(controls);
 
-    actionBtn.style.display = 'block';
-    actionBtn.className = 'download-ready';
-    actionBtn.innerHTML = '<span>APPLY & DOWNLOAD</span>';
-    actionBtn.style.backgroundColor = '#e5322d';
+    // Global toggle to show controls
+    window.showEsignControls = () => {
+        controls.style.display = 'flex';
+        actionBtn.style.display = 'block';
+        actionBtn.className = 'download-ready';
+        actionBtn.innerHTML = '<span>APPLY & DOWNLOAD</span>';
+        actionBtn.style.backgroundColor = '#e5322d';
+    };
+
     actionBtn.onclick = async () => {
+        if (!window.originalPdfBuffer) {
+            statusLabel.innerText = "No PDF buffer found. Please upload again.";
+            return;
+        }
         actionBtn.innerText = "BAKING PDF...";
         actionBtn.style.pointerEvents = 'none';
 
         try {
             const { PDFDocument } = window.PDFLib;
-            const pdfDoc = await PDFDocument.load(arrayBuffer);
+            const pdfDoc = await PDFDocument.load(window.originalPdfBuffer);
             const pages = pdfDoc.getPages();
             const firstPage = pages[0];
             const { width, height } = firstPage.getSize();
