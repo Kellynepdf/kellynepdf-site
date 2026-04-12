@@ -1,148 +1,142 @@
 /**
  * js/convert-to-pdf/word-to-pdf.js
- * High-Quality Word to PDF Conversion Logic
- * KELLYNEPDF Standardized Implementation
+ * Professional Word to PDF Engine with Bulk Support & Scroll Fixes
  */
 
 window.runWordToPdf = async function(files) {
     if (!files || files.length === 0) return;
     
-    const file = files[0];
     const statusLabel = document.getElementById('status-label');
     const actionBtn = document.getElementById('action-button');
     const defaultIcon = document.getElementById('default-upload-icon');
     const titleBox = document.getElementById('tool-title-box');
 
-    // Validation
-    const fileName = file.name.toLowerCase();
-    if (!fileName.endsWith('.docx')) {
-        statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: 900;">ERROR: PLEASE UPLOAD A .DOCX FILE</span>`;
-        if (fileName.endsWith('.doc')) {
-            statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: 900;">ERROR: .DOC NOT SUPPORTED. PLEASE CONVERT TO .DOCX FIRST.</span>`;
-        }
+    // Filter valid .docx files
+    const docxFiles = Array.from(files).filter(f => f.name.toLowerCase().endsWith('.docx'));
+    
+    if (docxFiles.length === 0) {
+        statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: 900;">ERROR: PLEASE UPLOAD .DOCX FILES</span>`;
         setTimeout(window.resetUI, 3000);
         return;
     }
 
     // UI Update - Ready to Convert
     if (defaultIcon) defaultIcon.style.display = 'none';
-    statusLabel.innerText = "Word Document Prepared: " + file.name;
+    statusLabel.innerText = docxFiles.length > 1 ? `${docxFiles.length} FILES SELECTED` : `FILE: ${docxFiles[0].name}`;
     
     actionBtn.style.setProperty('display', 'block', 'important');
     actionBtn.className = "download-ready";
     actionBtn.innerHTML = `<span>CLICK TO CONVERT</span>`;
-    actionBtn.style.backgroundColor = "#e5322d"; // Solid Red
-    actionBtn.style.color = "#fff"; // White text
+    actionBtn.style.backgroundColor = "#e5322d"; 
+    actionBtn.style.color = "#fff"; 
     actionBtn.style.padding = "15px 40px";
     actionBtn.style.borderRadius = "50px";
     actionBtn.style.cursor = "pointer";
     actionBtn.style.fontSize = "18px";
     actionBtn.style.fontWeight = "900";
     actionBtn.style.border = "none";
-    actionBtn.style.transition = "all 0.3s ease";
     actionBtn.style.opacity = "1";
     actionBtn.style.pointerEvents = "auto";
 
     // Action Logic
     actionBtn.onclick = async () => {
-        actionBtn.innerHTML = `<span>PROCESSING...</span>`;
+        actionBtn.innerHTML = `<span>CONVERTING...</span>`;
         actionBtn.style.pointerEvents = "none";
         actionBtn.style.opacity = "0.7";
 
         try {
-            // 1. THE OFF-SCREEN CONTAINER STRATEGY
-            // Create a temporary div dynamically
-            const tempDiv = document.createElement('div');
-            tempDiv.id = 'off-screen-docx-container';
-            // Apply CSS styles to render in DOM but invisible to user
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.top = '0';
-            tempDiv.style.left = '-9999px'; // Off-screen positioning
-            tempDiv.style.width = '800px'; 
-            tempDiv.style.background = 'white';
-            tempDiv.style.zIndex = '-100';
-            // Important: visibility: visible and opacity: 1 are required for capture
-            tempDiv.style.visibility = 'visible';
-            tempDiv.style.opacity = '1';
-            
-            document.body.appendChild(tempDiv);
+            const results = [];
+            const zip = docxFiles.length > 1 ? new JSZip() : null;
 
-            const arrayBuffer = await file.arrayBuffer();
-            
-            // 2. CORRECT RENDERING SEQUENCE
-            // Render the docx file into the temporary off-screen div
-            await docx.renderAsync(arrayBuffer, tempDiv, tempDiv, {
-                inWrapper: false,
-                ignoreWidth: false,
-                ignoreHeight: false,
-                debug: false
-            });
+            for (let i = 0; i < docxFiles.length; i++) {
+                const file = docxFiles[i];
+                statusLabel.innerText = `Processing (${i + 1}/${docxFiles.length}): ${file.name}`;
 
-            // 3. WAIT FOR IMAGES (Best practice to ensure visibility)
-            const images = tempDiv.querySelectorAll('img');
-            const imageLoadingPromises = Array.from(images).map(img => {
-                if (img.complete) return Promise.resolve();
-                return new Promise(resolve => {
-                    img.onload = resolve;
-                    img.onerror = resolve;
+                // 1. OFF-SCREEN CONTAINER WITH FONT ENFORCEMENT
+                const tempDiv = document.createElement('div');
+                tempDiv.id = 'render-container';
+                tempDiv.style.cssText = `
+                    position: absolute; 
+                    top: 0; 
+                    left: 0; 
+                    width: 800px; 
+                    z-index: -1; 
+                    background-color: #ffffff; 
+                    color: #000000 !important; 
+                    font-family: Arial, sans-serif; 
+                    min-height: 1122px;
+                    visibility: visible;
+                    opacity: 1;
+                `;
+                document.body.appendChild(tempDiv);
+
+                const arrayBuffer = await file.arrayBuffer();
+                
+                // 2. RENDER & WAIT FOR REPAINT (2 SECONDS)
+                await docx.renderAsync(arrayBuffer, tempDiv, tempDiv, {
+                    inWrapper: false,
+                    ignoreWidth: false,
+                    ignoreHeight: false
                 });
-            });
-            
-            if (imageLoadingPromises.length > 0) {
-                await Promise.all(imageLoadingPromises);
-                await new Promise(r => setTimeout(r, 1000)); // Slightly longer wait for off-screen stability
-            }
 
-            // 4. CONVERSION OPTIONS
-            const opt = {
-                margin: 0.5,
-                filename: 'KELLYNEPDF_WORD_TO_PDF.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 2, 
-                    useCORS: true,
-                    logging: true,
-                    letterRendering: true,
-                    allowTaint: false
-                },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
+                // Wait for images and DOM paint
+                const imgs = tempDiv.querySelectorAll('img');
+                await Promise.all(Array.from(imgs).map(img => img.complete ? Promise.resolve() : new Promise(r => img.onload = img.onerror = r)));
+                await new Promise(r => setTimeout(r, 2000)); // Repaint wait
 
-            // 5. TRIGGER PDF GENERATION
-            // Pass ONLY the temporary div into html2pdf
-            await html2pdf().set(opt).from(tempDiv).save();
+                // 3. BLANK PAGE SCROLL FIX
+                const opt = {
+                    margin: 10,
+                    filename: file.name.replace(/\.docx$/i, '.pdf'),
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true, 
+                        scrollY: 0, 
+                        scrollX: 0, 
+                        logging: true 
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
 
-            // 6. CLEANUP PHASE
-            // Remove the temporary div from the DOM
-            if (tempDiv.parentNode) {
+                if (zip) {
+                    const blob = await html2pdf().set(opt).from(tempDiv).output('blob');
+                    zip.file(opt.filename, blob);
+                } else {
+                    await html2pdf().set(opt).from(tempDiv).save();
+                }
+
+                // Cleanup
                 document.body.removeChild(tempDiv);
             }
 
-            // Success State
+            if (zip) {
+                const zipBlob = await zip.generateAsync({ type: "blob" });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(zipBlob);
+                link.download = "KELLYNEPDF_WORD_TO_PDF.zip";
+                link.click();
+            }
+
+            // SUCCESS STATE
             if (titleBox) {
                 titleBox.innerText = "CONVERSION SUCCESSFULLY COMPLETED";
-                titleBox.style.color = "#008000"; // Bright Green
+                titleBox.style.color = "#008000";
                 titleBox.style.fontSize = "22px";
             }
 
-            // BACK TO HOME Button State
+            // BACK TO HOME
             actionBtn.innerHTML = `<span>BACK TO HOME</span>`;
-            actionBtn.style.backgroundColor = "#111"; // Solid Black
-            actionBtn.style.color = "#fff"; // White font
+            actionBtn.style.backgroundColor = "#111";
+            actionBtn.style.color = "#fff";
             actionBtn.style.opacity = "1";
             actionBtn.style.pointerEvents = "auto";
-            actionBtn.onclick = () => {
-                window.location.reload(true); // Hard Refresh
-            };
+            actionBtn.onclick = () => window.location.reload(true);
 
         } catch (error) {
             console.error("Conversion Error:", error);
-            statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: 900;">CONVERSION FAILED. PLEASE TRY AGAIN.</span>`;
+            statusLabel.innerHTML = `<span style="color: #e5322d; font-weight: 900;">FAILED. PLEASE REFRESH.</span>`;
             setTimeout(window.resetUI, 3000);
-            
-            // Cleanup on error
-            const container = document.getElementById('docx-preview-output');
-            if (container) document.body.removeChild(container);
         }
     };
 };
