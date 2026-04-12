@@ -51,28 +51,28 @@ window.runWordToPdf = async function(files) {
                 const file = docxFiles[i];
                 statusLabel.innerText = `Processing (${i + 1}/${docxFiles.length}): ${file.name}`;
 
-                // 1. THE WRAPPER STRUCTURE
-                const wrapper = document.createElement('div');
-                wrapper.style.cssText = 'position: absolute; top: 0; left: 0; width: 0px; height: 0px; overflow: hidden; z-index: -1; pointer-events: none;';
-
+                // 1. THE 'FAR-RIGHT FIXED' STRATEGY
+                // Remove zero-size wrapper. Use fixed positioning far off-screen.
                 const tempDiv = document.createElement('div');
                 tempDiv.id = 'render-container';
                 tempDiv.style.cssText = `
+                    position: fixed; 
+                    top: 0; 
+                    left: 200vw; 
                     width: 800px; 
-                    height: auto;
+                    height: auto; 
                     min-height: 1122px; 
-                    background-color: #ffffff; 
-                    color: #000000; 
-                    padding: 20px; 
-                    font-family: Arial, sans-serif;
+                    background: white; 
+                    z-index: 9999; 
+                    color: black;
+                    visibility: visible;
+                    opacity: 1;
                 `;
-                
-                wrapper.appendChild(tempDiv);
-                document.body.appendChild(wrapper);
+                document.body.appendChild(tempDiv);
 
                 const arrayBuffer = await file.arrayBuffer();
                 
-                // 2. BULLETPROOF RENDERING (Try-Catch)
+                // 2. BULLETPROOF RENDERING
                 try {
                     await docx.renderAsync(arrayBuffer, tempDiv, tempDiv, {
                         inWrapper: false,
@@ -80,44 +80,24 @@ window.runWordToPdf = async function(files) {
                         ignoreHeight: false
                     });
                 } catch (renderError) {
-                    console.error("Rendering Failed for:", file.name, renderError);
-                    if (titleBox) {
-                        titleBox.innerText = "UNSUPPORTED FILE FORMAT";
-                        titleBox.style.color = "#e5322d";
-                        titleBox.style.fontWeight = "900";
-                    }
-                    statusLabel.innerText = `Error processing ${file.name}. Conversion Aborted.`;
-                    
+                    console.error("Rendering Failed:", renderError);
+                    if (titleBox) titleBox.innerText = "UNSUPPORTED FILE FORMAT";
                     actionBtn.innerHTML = `<span>BACK TO HOME</span>`;
-                    actionBtn.style.backgroundColor = "#111";
-                    actionBtn.style.opacity = "1";
-                    actionBtn.style.pointerEvents = "auto";
                     actionBtn.onclick = () => window.location.reload(true);
-                    
-                    wrapper.remove();
-                    return; // ABORT entire process
+                    tempDiv.remove();
+                    return;
                 }
 
-                // 3. WAIT FOR INNER IMAGES (Promise.all + Fallback)
+                // 3. THE 3-SECOND WAIT GUARANTEE
+                // Wait for images and a solid 3s repaint delay
                 const imgs = tempDiv.querySelectorAll('img');
-                const imgPromises = Array.from(imgs).map(img => {
-                    if (img.complete) return Promise.resolve();
-                    return new Promise(r => {
-                        img.onload = r;
-                        img.onerror = r;
-                    });
-                });
-
-                // Race against a 2.5s timeout fallback
                 await Promise.race([
-                    Promise.all(imgPromises),
+                    Promise.all(Array.from(imgs).map(img => img.complete ? Promise.resolve() : new Promise(r => img.onload = img.onerror = r))),
                     new Promise(r => setTimeout(r, 2500))
                 ]);
-                
-                // Extra repaint wait
-                await new Promise(r => setTimeout(r, 800));
+                await new Promise(r => setTimeout(r, 3000)); // Mandatory 3s Delay
 
-                // 4. DYNAMIC DIMENSIONS FOR html2canvas
+                // 4. html2canvas EXPLICIT BOUNDS
                 const opt = {
                     margin: 10,
                     filename: file.name.replace(/\.docx$/i, '.pdf'),
@@ -125,12 +105,11 @@ window.runWordToPdf = async function(files) {
                     html2canvas: { 
                         scale: 2, 
                         useCORS: true, 
-                        scrollY: 0, 
                         scrollX: 0, 
+                        scrollY: 0, 
+                        windowWidth: 800,
                         logging: true,
-                        windowWidth: tempDiv.scrollWidth,
-                        windowHeight: tempDiv.scrollHeight,
-                        height: tempDiv.scrollHeight
+                        letterRendering: true
                     },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
@@ -142,7 +121,8 @@ window.runWordToPdf = async function(files) {
                     await html2pdf().set(opt).from(tempDiv).save();
                 }
 
-                wrapper.remove();
+                // 5. SAFE CLEANUP
+                tempDiv.remove();
             }
 
             if (zip) {
