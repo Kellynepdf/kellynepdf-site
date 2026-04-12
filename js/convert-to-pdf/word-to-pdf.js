@@ -52,23 +52,23 @@ window.runWordToPdf = async function(files) {
                 const file = docxFiles[i];
                 statusLabel.innerText = `Processing (${i + 1}/${docxFiles.length}): ${file.name}`;
 
-                // 1. OFF-SCREEN CONTAINER WITH FONT ENFORCEMENT
+                // 1. THE WRAPPER STRUCTURE (Zero-Size Parent trick)
+                const wrapper = document.createElement('div');
+                wrapper.style.cssText = 'position: absolute; top: 0; left: 0; width: 0px; height: 0px; overflow: hidden; z-index: -1; pointer-events: none;';
+
                 const tempDiv = document.createElement('div');
                 tempDiv.id = 'render-container';
                 tempDiv.style.cssText = `
-                    position: absolute; 
-                    top: 0; 
-                    left: 0; 
                     width: 800px; 
-                    z-index: -1; 
+                    min-height: 1122px; 
                     background-color: #ffffff; 
-                    color: #000000 !important; 
-                    font-family: Arial, sans-serif; 
-                    min-height: 1122px;
-                    visibility: visible;
-                    opacity: 1;
+                    color: #000000; 
+                    padding: 20px; 
+                    font-family: Arial, sans-serif;
                 `;
-                document.body.appendChild(tempDiv);
+                
+                wrapper.appendChild(tempDiv);
+                document.body.appendChild(wrapper);
 
                 const arrayBuffer = await file.arrayBuffer();
                 
@@ -100,14 +100,16 @@ window.runWordToPdf = async function(files) {
                 };
 
                 if (zip) {
+                    // Pass tempDiv, NOT the wrapper
                     const blob = await html2pdf().set(opt).from(tempDiv).output('blob');
                     zip.file(opt.filename, blob);
                 } else {
+                    // Pass tempDiv, NOT the wrapper
                     await html2pdf().set(opt).from(tempDiv).save();
                 }
 
-                // Cleanup
-                document.body.removeChild(tempDiv);
+                // 4. SAFE CLEANUP
+                wrapper.remove();
             }
 
             if (zip) {
