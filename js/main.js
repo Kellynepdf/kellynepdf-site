@@ -70,7 +70,8 @@ const toolScriptsMap = {
     'Redact PDF': 'js/security/redact-pdf.js',
     'Compare PDF': 'js/security/compare-pdf.js',
     'AI Summarizer': 'js/intelligence/ai-summarizer.js',
-    'Translate PDF': 'js/intelligence/translate-pdf.js'
+    'Translate PDF': 'js/intelligence/translate-pdf.js',
+    'Digital Sign': 'js/esign-pdf/digital-sign.js'
 };
 
 const loadedScripts = new Set();
@@ -214,6 +215,8 @@ window.handleGlobalFiles = async function(files) {
         if (await waitForTool('runJpgToPdf', 'JPG to PDF')) await window.runJpgToPdf(files);
     } else if (tool.includes("WORD TO PDF")) {
         if (await waitForTool('runWordToPdf', 'WORD to PDF')) await window.runWordToPdf(files);
+    } else if (tool.includes("DIGITAL SIGN")) {
+        if (await waitForTool('runDigitalSign', 'Digital Sign')) await window.runDigitalSign(files);
     } else {
         console.log("No specific engine for:", tool);
     }
