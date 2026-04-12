@@ -4,7 +4,7 @@
  * Features: Bulk Processing, High Resolution, Sequential Queue, and Memory Cleanup
  */
 
-window.runPdfToJpg = async function(files) {
+window.runPDFtoJPG = window.runPdfToJpg = async function(files) {
     if (!files || files.length === 0) return;
 
     const statusLabel = document.getElementById('status-label');
@@ -46,7 +46,9 @@ window.runPdfToJpg = async function(files) {
 
         try {
             const zip = new JSZip();
-            const pdfjsLib = window['pdfjs-dist/build/pdf'];
+            const pdfjsLib = window.pdfjsLib || window['pdfjs-dist/build/pdf'];
+            if (!pdfjsLib) throw new Error("PDF.js library not found");
+            
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
             let pdfCount = 0;

@@ -224,7 +224,7 @@ window.handleGlobalFiles = async function(files) {
     } else if (tool.includes("WORD TO PDF")) {
         if (await waitForTool('runWordToPdf', 'WORD to PDF')) await window.runWordToPdf(files);
     } else if (tool.includes("PDF TO JPG")) {
-        if (await waitForTool('runPdfToJpg', 'PDF to JPG')) await window.runPdfToJpg(files);
+        if (await waitForTool('runPDFtoJPG', 'PDF to JPG')) await window.runPDFtoJPG(files);
     } else if (tool.includes("DIGITAL SIGN")) {
         if (await waitForTool('runDigitalSign', 'Digital Sign')) await window.runDigitalSign(files);
     } else {
