@@ -19,23 +19,27 @@ window.runDigitalSign = async function(files) {
             margin: 20px auto;
             max-width: 100%;
             width: 800px;
-            height: 500px;
-            border: 2px dashed #ddd;
-            border-radius: 12px;
-            background: #f9f9f9;
+            height: 520px;
+            border: 2px dashed #e5322d;
+            border-radius: 20px;
+            background: #fff;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             overflow: visible;
-            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         `;
         
         const placeholder = document.createElement('div');
         placeholder.id = 'esign-placeholder';
         placeholder.innerHTML = `
-            <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" style="width:60px; opacity:0.3; margin-bottom:15px;">
-            <p style="color:#888; font-weight:700;">No PDF uploaded. Drag or select a file to begin.</p>
+            <div style="width: 80px; height: 80px; background: #fff1f0; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" style="width:40px;">
+            </div>
+            <h3 style="margin: 0; font-weight: 900; color: #111;">Ready to eSign</h3>
+            <p style="color:#666; font-size: 14px; margin-top: 8px;">Upload a PDF to start adding signatures.</p>
         `;
         placeholder.style.textAlign = 'center';
         viewerContainer.appendChild(placeholder);
@@ -48,20 +52,24 @@ window.runDigitalSign = async function(files) {
     const dropZone = document.getElementById('drop-zone');
 
     const handleFile = async (file) => {
-        if (!file || file.type !== 'application/pdf') {
-            statusLabel.innerHTML = `<span style="color:#e5322d;">ERROR: PLEASE UPLOAD A VALID PDF</span>`;
+        if (!file) return;
+        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+            statusLabel.innerHTML = `<span style="color:#e5322d; font-weight:bold;">ERROR: ONLY PDF FILES SUPPORTED</span>`;
             return;
         }
 
         try {
-            statusLabel.innerText = "Rendering PDF...";
+            statusLabel.innerText = "OPENING SECURE VIEWER...";
             const buffer = await file.arrayBuffer();
-            window.originalPdfBuffer = buffer; // Store globally for pdf-lib later
+            window.originalPdfBuffer = buffer; 
 
-            const pdfjs = window['pdfjs-dist/build/pdf'];
-            pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            // Robust pdfjs Access
+            const pdfjsLib = window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
+            if (!pdfjsLib) throw new Error("PDF.js library not found");
+            
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-            const loadingTask = pdfjs.getDocument({ data: buffer });
+            const loadingTask = pdfjsLib.getDocument({ data: buffer });
             const pdf = await loadingTask.promise;
             const page = await pdf.getPage(1);
             
@@ -74,26 +82,25 @@ window.runDigitalSign = async function(files) {
 
             await page.render({ canvasContext: context, viewport: viewport }).promise;
 
-            // Update Viewer UI
+            // Unlock Viewer
             viewerContainer.innerHTML = ''; 
             viewerContainer.style.width = viewport.width + 'px';
             viewerContainer.style.height = viewport.height + 'px';
-            viewerContainer.style.border = "none";
+            viewerContainer.style.border = "1px solid #ddd";
             viewerContainer.style.background = "#fff";
             viewerContainer.appendChild(canvas);
 
-            statusLabel.innerText = "PDF Loaded. You can now Add Signature.";
+            statusLabel.innerText = "PDF LOADED SUCCESSFULLY";
+            statusLabel.style.color = "#008000";
             
-            // Enable 'ADD SIGNATURE' buttons
             if (window.showEsignControls) window.showEsignControls();
 
         } catch (err) {
             console.error(err);
-            statusLabel.innerText = "Failed to render PDF.";
+            statusLabel.innerText = "ERROR LOADING PDF. PLEASE REFRESH.";
         }
     };
 
-    // If initial call has files, process them
     if (files && files.length > 0) {
         handleFile(files[0]);
     }

@@ -116,6 +116,14 @@ window.updateTool = function(name) {
     }
 
     loadToolScript(name);
+
+    // Immediate Initialization for tools that support empty state (like Digital Sign)
+    setTimeout(async () => {
+        const funcName = toolScriptsMap[name] ? 'run' + name.replace(/\s+/g, '') : null;
+        if (funcName && typeof window[funcName] === 'function') {
+            await window[funcName]([]);
+        }
+    }, 500);
 }
 
 window.animateText = function(id, text) {
