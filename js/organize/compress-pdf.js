@@ -15,32 +15,88 @@ window.runCompress = async function(files) {
     // Hide cloud icon during processing
     if (defaultIcon) defaultIcon.style.display = 'none';
 
-    // ── STEP 1: Instant Size Estimation — 90% Reduction Target ──
     const originalSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-    const estimatedSizeMB = (originalSizeMB * 0.1).toFixed(2); // strictly 10% of original
 
     if (titleBox) {
-        titleBox.innerHTML = `ORIGINAL SIZE: ${originalSizeMB} MB | <span style="color: #ff0000;">ESTIMATED SIZE: ${estimatedSizeMB} MB</span>`;
+        titleBox.innerHTML = `ORIGINAL SIZE: ${originalSizeMB} MB`;
         titleBox.style.color = '#333';
         titleBox.style.fontSize = '20px';
         titleBox.style.fontWeight = '900';
     }
 
+    // State variable for compression quality
+    let selectedQuality = 0.6;
+
+    // Ensure no existing options UI is present
+    let existingOpts = document.getElementById('compression-options');
+    if (existingOpts) existingOpts.remove();
+
+    const optionsContainer = document.createElement('div');
+    optionsContainer.id = 'compression-options';
+    optionsContainer.style.cssText = `
+        position: relative;
+        z-index: 50;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin: 25px auto;
+        text-align: left;
+        max-width: 550px;
+        background: #ffffff;
+        padding: 25px;
+        border-radius: 12px;
+        border: 2px solid #ccc;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    `;
+    optionsContainer.innerHTML = `
+        <label style="cursor:pointer; display:flex; align-items:center; gap:15px; font-size:16px; color:#000000 !important; font-weight:bold; padding:10px; border-radius:8px;">
+            <input type="radio" name="pdf_quality" value="0.8" style="transform:scale(1.5); cursor:pointer; accent-color:#ff0000;">
+            <span>High Quality <span style="font-weight:normal; color:#444;">(Less Compression - Best for Scanned & Images)</span></span>
+        </label>
+        <label style="cursor:pointer; display:flex; align-items:center; gap:15px; font-size:16px; color:#000000 !important; font-weight:bold; padding:10px; border-radius:8px;">
+            <input type="radio" name="pdf_quality" value="0.6" checked style="transform:scale(1.5); cursor:pointer; accent-color:#ff0000;">
+            <span>Standard / Recommended <span style="font-weight:normal; color:#444;">(Balances Size & Readability)</span></span>
+        </label>
+        <label style="cursor:pointer; display:flex; align-items:center; gap:15px; font-size:16px; color:#000000 !important; font-weight:bold; padding:10px; border-radius:8px;">
+            <input type="radio" name="pdf_quality" value="0.3" style="transform:scale(1.5); cursor:pointer; accent-color:#ff0000;">
+            <span>Minimum Size <span style="font-weight:normal; color:#444;">(High Compression - Text Only PDFs)</span></span>
+        </label>
+    `;
+    actionBtn.parentNode.insertBefore(optionsContainer, actionBtn);
+
+    // Expand the drop-zone height dynamically to prevent clipping the button
+    if (actionBtn && actionBtn.parentNode) {
+        actionBtn.parentNode.style.height = 'auto';
+        actionBtn.parentNode.style.minHeight = '400px';
+        actionBtn.parentNode.style.paddingBottom = '40px';
+    }
+
+    // Explicitly track changes to ensure quality target updates dynamically
+    const radioInputs = optionsContainer.querySelectorAll('input[name="pdf_quality"]');
+    radioInputs.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if(e.target.checked) {
+                selectedQuality = parseFloat(e.target.value);
+            }
+        });
+    });
+
+
     // ── Status Label UI ──
     if (statusLabel) {
-        statusLabel.innerHTML = `READY FOR HIGH-POWER COMPRESSION`;
+        statusLabel.innerHTML = `READY FOR COMPRESSION`;
         statusLabel.style.color = '#ff0000';
         statusLabel.style.fontWeight = '900';
         statusLabel.style.fontSize = '18px';
     }
 
-    // ── "CLICK TO COMPRESS" Button — Solid Red (#ff0000) ──
-    actionBtn.innerHTML = `<span style="color: white; font-weight: 900; font-size: 15px; letter-spacing: 1.5px;">CLICK TO COMPRESS</span>`;
+    // ── "COMPRESS & DOWNLOAD" Button ──
+    actionBtn.innerHTML = `<span style="color: white; font-weight: 900; font-size: 15px; letter-spacing: 1.5px;">COMPRESS & DOWNLOAD</span>`;
     actionBtn.style.cssText = `
         display: flex !important;
         justify-content: center;
         align-items: center;
-        background-color: #ff0000 !important;
+        background-color: #e5322d !important;
         color: #fff !important;
         border: none;
         padding: 20px 50px;
@@ -66,10 +122,10 @@ window.runCompress = async function(files) {
         e.stopImmediatePropagation();
         e.preventDefault();
 
-        // ── "KELLYNE COMPRESSING..." with Spinner ──
+        // ── "COMPRESSING..." with Spinner ──
         actionBtn.disabled = true;
         actionBtn.style.cursor = 'not-allowed';
-        actionBtn.innerHTML = `<span style="color: white; font-weight: 900; font-size: 14px; letter-spacing: 0.5px;">KELLYNE COMPRESSING...</span>
+        actionBtn.innerHTML = `<span style="color: white; font-weight: 900; font-size: 14px; letter-spacing: 0.5px;">COMPRESSING...</span>
             <style>@keyframes kellyne-spin { 100% { transform: rotate(360deg); } }</style>
             <svg viewBox="0 0 50 50" style="width:20px;height:20px;animation:kellyne-spin 0.8s linear infinite;vertical-align:middle;margin-left:10px;">
                 <circle cx="25" cy="25" r="20" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="31.4 31.4"></circle>
@@ -80,6 +136,8 @@ window.runCompress = async function(files) {
             statusLabel.style.color = '#e5322d';
         }
 
+        const qualityTarget = selectedQuality; // Grab the exact verified state
+        
         try {
             if (!window.pdfjsLib) throw new Error('pdfjsLib is not loaded');
             if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
@@ -90,8 +148,10 @@ window.runCompress = async function(files) {
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
             const newDoc = await PDFLib.PDFDocument.create();
 
-            // ── Target 90% Reduction: Aggressive scale 0.3, quality 0.1 ──
-            const scale = 0.3;
+            // Determine scale based on quality target
+            let scale = 1.5; // Default for good quality
+            if (qualityTarget <= 0.3) scale = 0.8;
+            else if (qualityTarget <= 0.6) scale = 1.0;
 
             for (let i = 1; i <= pdf.numPages; i++) {
                 if (statusLabel) statusLabel.innerText = `Shrinking page ${i} of ${pdf.numPages}...`;
@@ -104,19 +164,29 @@ window.runCompress = async function(files) {
                 canvas.height = Math.round(viewport.height);
                 const ctx = canvas.getContext('2d');
 
+                // White background to avoid black pages for transparent backgrounds
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
                 await page.render({ canvasContext: ctx, viewport }).promise;
                 
                 const imgBytes = await new Promise(resolve => {
                     canvas.toBlob(async (blob) => {
                         const buffer = await blob.arrayBuffer();
                         resolve(new Uint8Array(buffer));
-                    }, 'image/jpeg', 0.1); // High-power compression (10% quality)
+                    }, 'image/jpeg', qualityTarget);
+
                 });
                 const img = await newDoc.embedJpg(imgBytes);
                 
                 const origViewport = page.getViewport({ scale: 1.0 });
                 const p = newDoc.addPage([origViewport.width, origViewport.height]);
                 p.drawImage(img, { x: 0, y: 0, width: origViewport.width, height: origViewport.height });
+                
+                // Memory Cleanup (Crucial for large PDFs)
+                page.cleanup();
+                canvas.width = 0;
+                canvas.height = 0;
             }
 
             let pdfBytes = await newDoc.save();
@@ -174,7 +244,7 @@ window.runCompress = async function(files) {
 
             actionBtn.onclick = (e2) => {
                 e2.preventDefault();
-                window.location.assign('index.html');
+                window.location.reload(true);
             };
 
             URL.revokeObjectURL(url);
