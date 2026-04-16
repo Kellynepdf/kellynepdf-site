@@ -11,16 +11,37 @@
     const dropZone = document.getElementById('drop-zone');
     
     // 1. Force Create the Input (If Missing)
-    let forceInput = document.getElementById('force-jpg-input');
+    let forceInput = document.getElementById('jpg-upload-input');
     if (!forceInput) {
         forceInput = document.createElement('input');
         forceInput.type = 'file';
-        forceInput.id = 'force-jpg-input';
+        forceInput.id = 'jpg-upload-input';
         forceInput.multiple = true;
-        forceInput.accept = 'image/*, .jpg, .jpeg, .png, .JPG, .JPEG, .PNG';
+        forceInput.accept = 'image/*, .jpg, .jpeg, .png';
         forceInput.style.display = 'none';
         document.body.appendChild(forceInput);
     }
+
+    const handleFiles = (rawFiles) => {
+        const filesArr = Array.from(rawFiles);
+        if (filesArr.length === 0) return;
+        
+        if (!window.jpgGlobalState) {
+            window.jpgGlobalState = [];
+        }
+        
+        const isValidImage = (file) => file.type.startsWith('image/') || /\.(jpg|jpeg|png)$/i.test(file.name);
+        
+        filesArr.forEach(file => {
+            if (isValidImage(file)) {
+                window.jpgGlobalState.push(file);
+            }
+        });
+        
+        if (window.jpgGlobalState.length > 0) {
+            window.runJpgToPdf(window.jpgGlobalState);
+        }
+    };
     
     if (dropZone) {
         // 2. Aggressive Click Binding
@@ -28,44 +49,43 @@
             if (window.currentActiveTool === 'JPG TO PDF') {
                 const btn = document.getElementById('action-button');
                 if (!btn || !btn.classList.contains('download-ready')) {
-                    document.getElementById('force-jpg-input').click();
+                    document.getElementById('jpg-upload-input').click();
                 }
             }
         });
+
+        // Add isolated drop binding to overwrite default if present
+        dropZone.addEventListener('dragover', (e) => {
+            if (window.currentActiveTool === 'JPG TO PDF') {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
+        
+        dropZone.addEventListener('drop', (e) => {
+            if (window.currentActiveTool === 'JPG TO PDF') {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const btn = document.getElementById('action-button');
+                if (!btn || !btn.classList.contains('download-ready')) {
+                    if (e.dataTransfer && e.dataTransfer.files) {
+                        handleFiles(e.dataTransfer.files);
+                    }
+                }
+            }
+        }, true);
     }
 
     // 3. Robust Change Event & Reset
     forceInput.addEventListener('change', (e) => {
         if (window.currentActiveTool === 'JPG TO PDF') {
-            const files = Array.from(e.target.files);
-            if (files.length === 0) return;
-            
-            // Initialize global state if it doesn't exist
-            if (!window.jpgGlobalState) {
-                window.jpgGlobalState = [];
-            }
-
-            const isValidImage = (file) => {
-                if (!file) return false;
-                const typeValid = file.type && file.type.startsWith('image/');
-                const nameValid = file.name && /\\.(jpg|jpeg|png)$/i.test(file.name);
-                return typeValid || nameValid;
-            };
-
-            files.forEach(file => {
-                if (isValidImage(file)) {
-                    window.jpgGlobalState.push(file);
-                }
-            });
-            
-            if (window.jpgGlobalState.length > 0) {
-                window.runJpgToPdf(window.jpgGlobalState);
-            }
-            
+            handleFiles(e.target.files);
             // CRITICAL RESET
             e.target.value = '';
         }
     });
+
 })();
 
 window.runJpgToPdf = async function(files) {
@@ -78,22 +98,22 @@ window.runJpgToPdf = async function(files) {
     // Release the lock slightly later, allowing UI setup to complete before next possible trigger
     setTimeout(() => { window._isJpgProcessing = false; }, 500);
 
-    // Ignore internal init calls with empty array or undefined
     if (!files || files.length === 0) return;
+
+    // Resolve global state correctly in case called from outside bypassing our handleFiles
+    if (files !== window.jpgGlobalState) {
+        if (!window.jpgGlobalState) window.jpgGlobalState = [];
+        const isValidImage = (file) => file.type.startsWith('image/') || /\.(jpg|jpeg|png)$/i.test(file.name);
+        const newValidFiles = Array.from(files).filter(isValidImage);
+        window.jpgGlobalState = window.jpgGlobalState.concat(newValidFiles);
+    }
+
+    const imageFiles = window.jpgGlobalState;
 
     const titleBox = document.getElementById('tool-title-box');
     const btn = document.getElementById('action-button');
     const statusLabel = document.getElementById('status-label');
     const defaultIcon = document.getElementById('default-upload-icon');
-
-    // ── STEP 1: Filter for valid images ──
-    const isValidImage = (file) => {
-        if (!file) return false;
-        const typeValid = file.type && file.type.startsWith('image/');
-        const nameValid = file.name && /\\.(jpg|jpeg|png)$/i.test(file.name);
-        return typeValid || nameValid;
-    };
-    const imageFiles = files.filter(isValidImage);
 
     if (imageFiles.length === 0) {
         if (statusLabel) {
@@ -112,7 +132,7 @@ window.runJpgToPdf = async function(files) {
 
     const dropdownContainer = document.createElement('div');
     dropdownContainer.id = 'jpg-settings-container';
-    dropdownContainer.style.cssText = 'display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; margin: 15px 0; z-index: 100; position: relative;';
+    dropdownContainer.style.cssText = 'display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; margin: 15px 0; z-index: 100; position: relative; width: 100%;';
 
     const selectsDiv = document.createElement('div');
     selectsDiv.style.cssText = 'display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;';
@@ -133,37 +153,56 @@ window.runJpgToPdf = async function(files) {
         </select>
     `;
 
-    // Dynamic Visual Feedback Box
-    const previewBoxWrapper = document.createElement('div');
-    previewBoxWrapper.style.cssText = 'margin-top: 10px; display: flex; flex-direction: column; align-items: center;';
-    previewBoxWrapper.innerHTML = `
-        <span style="font-size: 13px; font-weight: 800; color: #888; margin-bottom: 8px; text-transform: uppercase;">Layout Preview</span>
-        <div id="layout-preview-box" style="height: 85px; aspect-ratio: 210/297; border: 2.5px solid #e5322d; background: #fffdfd; border-radius: 4px; box-shadow: 0 6px 12px rgba(229,50,45,0.1); transition: aspect-ratio 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);"></div>
+    // Preview Gallery Container
+    const galleryWrapper = document.createElement('div');
+    galleryWrapper.id = 'jpg-preview-gallery-wrapper';
+    galleryWrapper.style.cssText = 'margin-top: 15px; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 800px;';
+    
+    galleryWrapper.innerHTML = `
+        <span style="font-size: 13px; font-weight: 800; color: #888; margin-bottom: 12px; text-transform: uppercase;">Preview Gallery</span>
+        <div id="jpg-preview-gallery" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; width: 100%; max-height: 400px; overflow-y: auto; padding: 10px; border-radius: 8px; background: #f9f9f9; border: 1px dashed #ccc;">
+        </div>
     `;
 
     dropdownContainer.appendChild(selectsDiv);
-    dropdownContainer.appendChild(previewBoxWrapper);
+    dropdownContainer.appendChild(galleryWrapper);
     
-    // Inject dropdowns and preview directly before the action button
+    // Inject dropdowns and gallery before the action button
     btn.parentNode.insertBefore(dropdownContainer, btn);
+
+    const gallery = galleryWrapper.querySelector('#jpg-preview-gallery');
+
+    // Populate gallery with proper DOM safely generated IDs
+    imageFiles.forEach((file, index) => {
+        const id = 'img-preview-box-' + Math.random().toString(36).substring(2, 9) + '-' + Date.now() + '-' + index;
+        const pagePreviewBox = document.createElement('div');
+        pagePreviewBox.id = id;
+        pagePreviewBox.className = 'page-preview-box';
+        pagePreviewBox.style.cssText = 'background: #fff; display: flex; justify-content: center; align-items: center; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden; transition: all 0.3s ease; border-radius: 4px; flex-shrink: 0;';
+        
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.style.cssText = 'max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none;';
+        
+        pagePreviewBox.appendChild(img);
+        gallery.appendChild(pagePreviewBox);
+    });
 
     const updateLayoutPreview = () => {
         const ori = document.getElementById('jpg-orientation').value;
-        const size = document.getElementById('jpg-size').value;
-        const preview = document.getElementById('layout-preview-box');
-        if (!preview) return;
+        const previewBoxes = document.querySelectorAll('.page-preview-box');
         
-        let w, h;
-        if (size === 'a4') { w = 210; h = 297; }
-        else if (size === 'a3') { w = 297; h = 420; }
-        else if (size === 'letter') { w = 215.9; h = 279.4; }
-        else { w = 210; h = 297; }
-
-        if (ori === 'l') {
-            const temp = w; w = h; h = temp;
-        }
-        
-        preview.style.aspectRatio = `${w} / ${h}`;
+        previewBoxes.forEach(box => {
+            if (ori === 'l') {
+                box.style.aspectRatio = '1.414 / 1';
+                box.style.width = '200px';
+                box.style.borderColor = '#4a90e2';
+            } else {
+                box.style.aspectRatio = '1 / 1.414';
+                box.style.width = '150px';
+                box.style.borderColor = '#e5322d'; 
+            }
+        });
     };
 
     // Listen for orientation or size changes to update box dynamically
@@ -253,7 +292,7 @@ window.runJpgToPdf = async function(files) {
                 }
 
                 const imageUrl = URL.createObjectURL(imgFile);
-                const safeId = 'img-' + i;
+                const safeId = 'img-j-' + Date.now() + '-' + i;
 
                 const img = await new Promise((resolve, reject) => {
                     const image = new Image();
