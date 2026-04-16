@@ -9,44 +9,44 @@
     window._jpgToPdfInitDone = true;
 
     const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('file-input');
     
-    if (dropZone && fileInput) {
-        // Enforce exact behavior on click anywhere in the drag box
+    // 1. Force Create the Input (If Missing)
+    let forceInput = document.getElementById('force-jpg-input');
+    if (!forceInput) {
+        forceInput = document.createElement('input');
+        forceInput.type = 'file';
+        forceInput.id = 'force-jpg-input';
+        forceInput.multiple = true;
+        forceInput.accept = 'image/jpeg, image/png, image/jpg';
+        forceInput.style.display = 'none';
+        document.body.appendChild(forceInput);
+    }
+    
+    if (dropZone) {
+        // 2. Aggressive Click Binding
         dropZone.addEventListener('click', (e) => {
             if (window.currentActiveTool === 'JPG TO PDF') {
                 const btn = document.getElementById('action-button');
-                // Don't pop open dialog if we are already showing "Convert To PDF" button
                 if (!btn || !btn.classList.contains('download-ready')) {
-                    if (e.target !== fileInput && e.target.id !== 'file-input') {
-                        // Apply properties for this tool strictly
-                        fileInput.removeAttribute('webkitdirectory');
-                        fileInput.removeAttribute('directory');
-                        fileInput.setAttribute('multiple', 'multiple');
-                        fileInput.setAttribute('accept', 'image/jpeg, image/png, image/jpg');
-
-                        // Programmatic trigger
-                        fileInput.click();
-                    }
-                }
-            }
-        });
-
-        // 2. Handling the 'Change' Event (extract files, feed into state management)
-        fileInput.addEventListener('change', (e) => {
-            if (window.currentActiveTool === 'JPG TO PDF') {
-                if (e.target.files && e.target.files.length > 0) {
-                    // Extract them directly using e.target.files
-                    const extractedFiles = Array.from(e.target.files);
-                    // Pass exactly into the processing rendering function
-                    window.runJpgToPdf(extractedFiles);
-                    
-                    // Reset value so identical subsequent files will trigger 'change' again if needed
-                    e.target.value = '';
+                    document.getElementById('force-jpg-input').click();
                 }
             }
         });
     }
+
+    // 3. Robust Change Event & Reset
+    forceInput.addEventListener('change', (e) => {
+        if (window.currentActiveTool === 'JPG TO PDF') {
+            const files = e.target.files;
+            if (!files || files.length === 0) return;
+            
+            const extractedFiles = Array.from(files);
+            window.runJpgToPdf(extractedFiles);
+            
+            // CRITICAL RESET
+            e.target.value = '';
+        }
+    });
 })();
 
 window.runJpgToPdf = async function(files) {
