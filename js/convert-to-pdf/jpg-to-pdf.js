@@ -17,39 +17,17 @@
         forceInput.type = 'file';
         forceInput.id = 'jpg-upload-input';
         forceInput.multiple = true;
-        forceInput.accept = '*/*';
+        forceInput.accept = '.jpg, .jpeg, .png, image/jpeg, image/png';
         forceInput.style.display = 'none';
         document.body.appendChild(forceInput);
     }
-
-    const handleFiles = (rawFiles) => {
-        const filesArr = Array.from(rawFiles);
-        if (filesArr.length === 0) return;
-        
-        if (!window.jpgGlobalState) {
-            window.jpgGlobalState = [];
-        }
-        
-        const isValidImage = (file) => {
-            if (!file) return false;
-            return file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|heic)$/i.test(file.name);
-        };
-        
-        filesArr.forEach(file => {
-            if (isValidImage(file)) {
-                window.jpgGlobalState.push(file);
-            }
-        });
-        
-        if (window.jpgGlobalState.length > 0) {
-            window.runJpgToPdf(window.jpgGlobalState);
-        }
-    };
     
     if (dropZone) {
         // 2. Aggressive Click Binding
         dropZone.addEventListener('click', (e) => {
             if (window.currentActiveTool === 'JPG TO PDF') {
+                e.preventDefault();
+                e.stopPropagation();
                 const btn = document.getElementById('action-button');
                 if (!btn || !btn.classList.contains('download-ready')) {
                     document.getElementById('jpg-upload-input').click();
@@ -73,7 +51,26 @@
                 const btn = document.getElementById('action-button');
                 if (!btn || !btn.classList.contains('download-ready')) {
                     if (e.dataTransfer && e.dataTransfer.files) {
-                        handleFiles(e.dataTransfer.files);
+                        const rawFiles = e.dataTransfer.files;
+                        const filesArr = Array.from(rawFiles);
+                        if (filesArr.length === 0) return;
+                        
+                        if (!window.jpgGlobalState) window.jpgGlobalState = [];
+                        
+                        const isValidImage = (file) => {
+                            if (!file) return false;
+                            return file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|heic)$/i.test(file.name);
+                        };
+                        
+                        filesArr.forEach(file => {
+                            if (isValidImage(file)) {
+                                window.jpgGlobalState.push(file);
+                            }
+                        });
+                        
+                        if (window.jpgGlobalState.length > 0) {
+                            window.runJpgToPdf(window.jpgGlobalState);
+                        }
                     }
                 }
             }
@@ -83,7 +80,30 @@
     // 3. Robust Change Event & Reset
     forceInput.addEventListener('change', (e) => {
         if (window.currentActiveTool === 'JPG TO PDF') {
-            handleFiles(e.target.files);
+            e.preventDefault();
+            e.stopPropagation();
+
+            const rawFiles = e.target.files;
+            if (!rawFiles || rawFiles.length === 0) return;
+
+            const filesArr = Array.from(rawFiles);
+            if (!window.jpgGlobalState) window.jpgGlobalState = [];
+
+            const isValidImage = (file) => {
+                if (!file) return false;
+                return file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|heic)$/i.test(file.name);
+            };
+
+            filesArr.forEach(file => {
+                if (isValidImage(file)) {
+                    window.jpgGlobalState.push(file);
+                }
+            });
+
+            if (window.jpgGlobalState.length > 0) {
+                window.runJpgToPdf(window.jpgGlobalState);
+            }
+
             // CRITICAL RESET
             e.target.value = '';
         }
