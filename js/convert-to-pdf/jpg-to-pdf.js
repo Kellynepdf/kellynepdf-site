@@ -17,7 +17,7 @@
         forceInput.type = 'file';
         forceInput.id = 'force-jpg-input';
         forceInput.multiple = true;
-        forceInput.accept = 'image/jpeg, image/png, image/jpg';
+        forceInput.accept = 'image/*, .jpg, .jpeg, .png';
         forceInput.style.display = 'none';
         document.body.appendChild(forceInput);
     }
@@ -37,11 +37,27 @@
     // 3. Robust Change Event & Reset
     forceInput.addEventListener('change', (e) => {
         if (window.currentActiveTool === 'JPG TO PDF') {
-            const files = e.target.files;
-            if (!files || files.length === 0) return;
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
             
-            const extractedFiles = Array.from(files);
-            window.runJpgToPdf(extractedFiles);
+            // Initialize global state if it doesn't exist
+            if (!window.jpgGlobalState) {
+                window.jpgGlobalState = [];
+            }
+
+            files.forEach(file => {
+                // Ensure proper type validation within the loop itself
+                const type = file.type.toLowerCase();
+                const name = file.name.toLowerCase();
+                if (type.includes('image/jpeg') || type.includes('image/png') || type.includes('image/jpg') ||
+                    name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png')) {
+                    window.jpgGlobalState.push(file);
+                }
+            });
+            
+            if (window.jpgGlobalState.length > 0) {
+                window.runJpgToPdf(window.jpgGlobalState);
+            }
             
             // CRITICAL RESET
             e.target.value = '';
@@ -71,7 +87,7 @@ window.runJpgToPdf = async function(files) {
     const imageFiles = files.filter(f => {
         const type = f.type.toLowerCase();
         const name = f.name.toLowerCase();
-        return type.includes('image/jpeg') || type.includes('image/png') || 
+        return type.includes('image/jpeg') || type.includes('image/png') || type.includes('image/jpg') ||
                name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png');
     });
 
@@ -290,6 +306,9 @@ window.runJpgToPdf = async function(files) {
             
             // Remove dropdowns and preview upon success for cleaner UI
             if (dropdownContainer) dropdownContainer.style.display = 'none';
+
+            // Clear global state on success
+            window.jpgGlobalState = [];
 
             // ── "BACK TO HOME" Button — Solid Black (#111) ──
             btn.disabled = false;
