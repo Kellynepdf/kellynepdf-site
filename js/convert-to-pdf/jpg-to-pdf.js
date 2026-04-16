@@ -3,8 +3,47 @@
  * Logic: Convert multiple images into a single professional PDF document.
  */
 
+// ── FIXED EVENT BINDING FOR MANUAL UPLOADS (ISOLATED) ──
+(function() {
+    if (window._jpgToPdfInitDone) return;
+    window._jpgToPdfInitDone = true;
+
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    
+    if (dropZone && fileInput) {
+        // Remove folder restrictions so images can be manually selected
+        fileInput.removeAttribute('webkitdirectory');
+        fileInput.removeAttribute('directory');
+        fileInput.setAttribute('accept', 'image/jpeg, image/png, image/jpg');
+
+        // Programmatically trigger the hidden input specifically for our tool
+        dropZone.addEventListener('click', (e) => {
+            if (window.currentActiveTool === 'JPG TO PDF') {
+                const btn = document.getElementById('action-button');
+                if (!btn || !btn.classList.contains('download-ready')) {
+                    // Prevent triggering click multiple times
+                    if (e.target !== fileInput) {
+                        fileInput.click();
+                    }
+                }
+            }
+        });
+
+        // Pass selected images exactly to the processing logic
+        fileInput.addEventListener('change', (e) => {
+            if (window.currentActiveTool === 'JPG TO PDF') {
+                if (e.target.files && e.target.files.length > 0) {
+                    window.runJpgToPdf(Array.from(e.target.files));
+                }
+            }
+        });
+    }
+})();
+
 window.runJpgToPdf = async function(files) {
     console.log("window.runJpgToPdf triggered with files:", files);
+    // Ignore internal init calls with empty array or undefined
     if (!files || files.length === 0) return;
 
     const titleBox = document.getElementById('tool-title-box');
@@ -31,20 +70,24 @@ window.runJpgToPdf = async function(files) {
     // Hide cloud icon during processing
     if (defaultIcon) defaultIcon.style.display = 'none';
 
-    // ── UI Implementation: Options ──
+    // ── UI Implementation: Options & Dynamic Layout Preview ──
     const existingDropdowns = document.getElementById('jpg-settings-container');
     if (existingDropdowns) existingDropdowns.remove();
 
     const dropdownContainer = document.createElement('div');
     dropdownContainer.id = 'jpg-settings-container';
-    dropdownContainer.style.cssText = 'display: flex; justify-content: center; gap: 15px; margin: 15px 0; z-index: 100; position: relative; flex-wrap: wrap;';
-    dropdownContainer.innerHTML = `
+    dropdownContainer.style.cssText = 'display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; margin: 15px 0; z-index: 100; position: relative;';
+
+    const selectsDiv = document.createElement('div');
+    selectsDiv.style.cssText = 'display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;';
+    selectsDiv.innerHTML = `
         <select id="jpg-orientation" style="padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-weight: 700; color: #333; outline: none; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
             <option value="p" selected>Portrait (Default)</option>
             <option value="l">Landscape</option>
         </select>
         <select id="jpg-size" style="padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-weight: 700; color: #333; outline: none; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
             <option value="a4" selected>A4 (Default)</option>
+            <option value="a3">A3</option>
             <option value="letter">US Letter</option>
         </select>
         <select id="jpg-margin" style="padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-weight: 700; color: #333; outline: none; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
@@ -53,9 +96,46 @@ window.runJpgToPdf = async function(files) {
             <option value="30">Big (~30px/20mm)</option>
         </select>
     `;
+
+    // Dynamic Visual Feedback Box
+    const previewBoxWrapper = document.createElement('div');
+    previewBoxWrapper.style.cssText = 'margin-top: 10px; display: flex; flex-direction: column; align-items: center;';
+    previewBoxWrapper.innerHTML = `
+        <span style="font-size: 13px; font-weight: 800; color: #888; margin-bottom: 8px; text-transform: uppercase;">Layout Preview</span>
+        <div id="layout-preview-box" style="height: 85px; aspect-ratio: 210/297; border: 2.5px solid #e5322d; background: #fffdfd; border-radius: 4px; box-shadow: 0 6px 12px rgba(229,50,45,0.1); transition: aspect-ratio 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);"></div>
+    `;
+
+    dropdownContainer.appendChild(selectsDiv);
+    dropdownContainer.appendChild(previewBoxWrapper);
     
-    // Inject dropdowns directly before the action button
+    // Inject dropdowns and preview directly before the action button
     btn.parentNode.insertBefore(dropdownContainer, btn);
+
+    const updateLayoutPreview = () => {
+        const ori = document.getElementById('jpg-orientation').value;
+        const size = document.getElementById('jpg-size').value;
+        const preview = document.getElementById('layout-preview-box');
+        if (!preview) return;
+        
+        let w, h;
+        if (size === 'a4') { w = 210; h = 297; }
+        else if (size === 'a3') { w = 297; h = 420; }
+        else if (size === 'letter') { w = 215.9; h = 279.4; }
+        else { w = 210; h = 297; }
+
+        if (ori === 'l') {
+            const temp = w; w = h; h = temp;
+        }
+        
+        preview.style.aspectRatio = `${w} / ${h}`;
+    };
+
+    // Listen for orientation or size changes to update box dynamically
+    document.getElementById('jpg-orientation').addEventListener('change', updateLayoutPreview);
+    document.getElementById('jpg-size').addEventListener('change', updateLayoutPreview);
+    
+    // Initialize preview with defaults immediately
+    updateLayoutPreview();
 
     // ── STEP 2: "READY TO CONVERT" UI ──
     if (statusLabel) {
@@ -78,7 +158,7 @@ window.runJpgToPdf = async function(files) {
         border-radius: 30px;
         cursor: pointer;
         width: auto;
-        margin: 20px auto 0;
+        margin: 15px auto 0;
         opacity: 1 !important;
         visibility: visible !important;
         z-index: 100;
@@ -115,7 +195,7 @@ window.runJpgToPdf = async function(files) {
             const pageSize = document.getElementById('jpg-size').value;
             const marginPx = parseInt(document.getElementById('jpg-margin').value, 10);
 
-            // Approximation of pixel to mm (1 px ~ 0.264583 mm) - but we can just use units in the standard mapping or simply treat 'margin' value mapped directly. The user requested: No margin=0px, Small=~15px/10mm, Big=~30px/20mm. Let's map directly to mm:
+            // Approximation of pixel to mm 
             const marginMm = marginPx === 0 ? 0 : (marginPx === 15 ? 10 : 20);
 
             const { jsPDF } = window.jspdf;
@@ -169,7 +249,6 @@ window.runJpgToPdf = async function(files) {
 
                 const fileExt = imgFile.name.split('.').pop().toLowerCase();
                 let imgFormat = fileExt === 'png' ? 'PNG' : 'JPEG';
-                // Also fallback to type if necessary
                 if (imgFile.type === 'image/png') imgFormat = 'PNG';
 
                 doc.addImage(dataUrl, imgFormat, x, y, drawW, drawH);
@@ -193,7 +272,7 @@ window.runJpgToPdf = async function(files) {
             const dropZone = document.getElementById('drop-zone');
             if (dropZone) dropZone.classList.add('success-tool-glow');
             
-            // Remove dropdowns upon success for cleaner UI
+            // Remove dropdowns and preview upon success for cleaner UI
             if (dropdownContainer) dropdownContainer.style.display = 'none';
 
             // ── "BACK TO HOME" Button — Solid Black (#111) ──
