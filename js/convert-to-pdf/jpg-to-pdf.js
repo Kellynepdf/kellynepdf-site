@@ -17,7 +17,7 @@
         forceInput.type = 'file';
         forceInput.id = 'jpg-upload-input';
         forceInput.multiple = true;
-        forceInput.accept = 'image/*, .jpg, .jpeg, .png';
+        forceInput.accept = '*/*';
         forceInput.style.display = 'none';
         document.body.appendChild(forceInput);
     }
@@ -30,7 +30,10 @@
             window.jpgGlobalState = [];
         }
         
-        const isValidImage = (file) => file.type.startsWith('image/') || /\.(jpg|jpeg|png)$/i.test(file.name);
+        const isValidImage = (file) => {
+            if (!file) return false;
+            return file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|heic)$/i.test(file.name);
+        };
         
         filesArr.forEach(file => {
             if (isValidImage(file)) {
@@ -103,7 +106,10 @@ window.runJpgToPdf = async function(files) {
     // Resolve global state correctly in case called from outside bypassing our handleFiles
     if (files !== window.jpgGlobalState) {
         if (!window.jpgGlobalState) window.jpgGlobalState = [];
-        const isValidImage = (file) => file.type.startsWith('image/') || /\.(jpg|jpeg|png)$/i.test(file.name);
+        const isValidImage = (file) => {
+            if (!file) return false;
+            return file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|heic)$/i.test(file.name);
+        };
         const newValidFiles = Array.from(files).filter(isValidImage);
         window.jpgGlobalState = window.jpgGlobalState.concat(newValidFiles);
     }
@@ -111,7 +117,7 @@ window.runJpgToPdf = async function(files) {
     const imageFiles = window.jpgGlobalState;
 
     const titleBox = document.getElementById('tool-title-box');
-    const btn = document.getElementById('action-button');
+    let btn = document.getElementById('action-button');
     const statusLabel = document.getElementById('status-label');
     const defaultIcon = document.getElementById('default-upload-icon');
 
@@ -167,8 +173,20 @@ window.runJpgToPdf = async function(files) {
     dropdownContainer.appendChild(selectsDiv);
     dropdownContainer.appendChild(galleryWrapper);
     
-    // Inject dropdowns and gallery before the action button
-    btn.parentNode.insertBefore(dropdownContainer, btn);
+    // Re-inject the ACTION BUTTON dynamically below the gallery container
+    if (!btn) {
+        btn = document.createElement('button');
+        btn.id = 'action-button';
+    }
+    
+    // Append button properly ensuring it stays separate from the gallery div updating layout
+    dropdownContainer.appendChild(btn);
+    
+    // Safely insert the container into the UI
+    const targetDropZone = document.getElementById('drop-zone');
+    if (targetDropZone && targetDropZone.parentNode) {
+        targetDropZone.parentNode.insertBefore(dropdownContainer, targetDropZone.nextSibling);
+    }
 
     const gallery = galleryWrapper.querySelector('#jpg-preview-gallery');
 
