@@ -46,11 +46,17 @@
             }
 
             files.forEach(file => {
-                // Ensure proper type validation within the loop itself
-                const type = file.type.toLowerCase();
-                const name = file.name.toLowerCase();
-                if (type.includes('image/jpeg') || type.includes('image/png') || type.includes('image/jpg') ||
-                    name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png')) {
+                const type = file.type ? file.type.toLowerCase() : '';
+                const name = file.name ? file.name.toLowerCase() : '';
+                
+                let isValid = false;
+                if (type.match(/image\/(jpeg|jpg|png)/i)) {
+                    isValid = true;
+                } else if (name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png')) {
+                    isValid = true;
+                }
+                
+                if (isValid) {
                     window.jpgGlobalState.push(file);
                 }
             });
@@ -85,10 +91,11 @@ window.runJpgToPdf = async function(files) {
 
     // ── STEP 1: Filter for valid images ──
     const imageFiles = files.filter(f => {
-        const type = f.type.toLowerCase();
-        const name = f.name.toLowerCase();
-        return type.includes('image/jpeg') || type.includes('image/png') || type.includes('image/jpg') ||
-               name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png');
+        const type = f.type ? f.type.toLowerCase() : '';
+        const name = f.name ? f.name.toLowerCase() : '';
+        
+        if (type.match(/image\/(jpeg|jpg|png)/i)) return true;
+        return name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png');
     });
 
     if (imageFiles.length === 0) {
@@ -248,18 +255,13 @@ window.runJpgToPdf = async function(files) {
                     doc.addPage(pageSize, orientation);
                 }
 
-                const dataUrl = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = ev => resolve(ev.target.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(imgFile);
-                });
+                const imageUrl = URL.createObjectURL(imgFile);
 
                 const img = await new Promise((resolve, reject) => {
                     const image = new Image();
                     image.onload = () => resolve(image);
                     image.onerror = reject;
-                    image.src = dataUrl;
+                    image.src = imageUrl;
                 });
 
                 const maxW = pageWidth - (marginMm * 2);
@@ -283,7 +285,10 @@ window.runJpgToPdf = async function(files) {
                 let imgFormat = fileExt === 'png' ? 'PNG' : 'JPEG';
                 if (imgFile.type === 'image/png') imgFormat = 'PNG';
 
-                doc.addImage(dataUrl, imgFormat, x, y, drawW, drawH);
+                doc.addImage(img, imgFormat, x, y, drawW, drawH);
+                
+                // Release object URL memory for performance on 10MB+ images
+                URL.revokeObjectURL(imageUrl);
             }
 
             // ── SUCCESS UI & DOWNLOAD ──
