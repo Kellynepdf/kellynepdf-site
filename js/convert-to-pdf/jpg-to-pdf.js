@@ -12,29 +12,37 @@
     const fileInput = document.getElementById('file-input');
     
     if (dropZone && fileInput) {
-        // Remove folder restrictions so images can be manually selected
-        fileInput.removeAttribute('webkitdirectory');
-        fileInput.removeAttribute('directory');
-        fileInput.setAttribute('accept', 'image/jpeg, image/png, image/jpg');
-
-        // Programmatically trigger the hidden input specifically for our tool
+        // Enforce exact behavior on click anywhere in the drag box
         dropZone.addEventListener('click', (e) => {
             if (window.currentActiveTool === 'JPG TO PDF') {
                 const btn = document.getElementById('action-button');
+                // Don't pop open dialog if we are already showing "Convert To PDF" button
                 if (!btn || !btn.classList.contains('download-ready')) {
-                    // Prevent triggering click multiple times
-                    if (e.target !== fileInput) {
+                    if (e.target !== fileInput && e.target.id !== 'file-input') {
+                        // Apply properties for this tool strictly
+                        fileInput.removeAttribute('webkitdirectory');
+                        fileInput.removeAttribute('directory');
+                        fileInput.setAttribute('multiple', 'multiple');
+                        fileInput.setAttribute('accept', 'image/jpeg, image/png, image/jpg');
+
+                        // Programmatic trigger
                         fileInput.click();
                     }
                 }
             }
         });
 
-        // Pass selected images exactly to the processing logic
+        // 2. Handling the 'Change' Event (extract files, feed into state management)
         fileInput.addEventListener('change', (e) => {
             if (window.currentActiveTool === 'JPG TO PDF') {
                 if (e.target.files && e.target.files.length > 0) {
-                    window.runJpgToPdf(Array.from(e.target.files));
+                    // Extract them directly using e.target.files
+                    const extractedFiles = Array.from(e.target.files);
+                    // Pass exactly into the processing rendering function
+                    window.runJpgToPdf(extractedFiles);
+                    
+                    // Reset value so identical subsequent files will trigger 'change' again if needed
+                    e.target.value = '';
                 }
             }
         });
@@ -43,6 +51,14 @@
 
 window.runJpgToPdf = async function(files) {
     console.log("window.runJpgToPdf triggered with files:", files);
+    
+    // Prevent duplicate execution from simultaneous event listeners
+    if (window._isJpgProcessing) return;
+    window._isJpgProcessing = true;
+    
+    // Release the lock slightly later, allowing UI setup to complete before next possible trigger
+    setTimeout(() => { window._isJpgProcessing = false; }, 500);
+
     // Ignore internal init calls with empty array or undefined
     if (!files || files.length === 0) return;
 
