@@ -17,7 +17,7 @@
         forceInput.type = 'file';
         forceInput.id = 'force-jpg-input';
         forceInput.multiple = true;
-        forceInput.accept = 'image/*, .jpg, .jpeg, .png';
+        forceInput.accept = 'image/*, .jpg, .jpeg, .png, .JPG, .JPEG, .PNG';
         forceInput.style.display = 'none';
         document.body.appendChild(forceInput);
     }
@@ -45,18 +45,15 @@
                 window.jpgGlobalState = [];
             }
 
+            const isValidImage = (file) => {
+                if (!file) return false;
+                const typeValid = file.type && file.type.startsWith('image/');
+                const nameValid = file.name && /\\.(jpg|jpeg|png)$/i.test(file.name);
+                return typeValid || nameValid;
+            };
+
             files.forEach(file => {
-                const type = file.type ? file.type.toLowerCase() : '';
-                const name = file.name ? file.name.toLowerCase() : '';
-                
-                let isValid = false;
-                if (type.match(/image\/(jpeg|jpg|png)/i)) {
-                    isValid = true;
-                } else if (name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png')) {
-                    isValid = true;
-                }
-                
-                if (isValid) {
+                if (isValidImage(file)) {
                     window.jpgGlobalState.push(file);
                 }
             });
@@ -90,13 +87,13 @@ window.runJpgToPdf = async function(files) {
     const defaultIcon = document.getElementById('default-upload-icon');
 
     // ── STEP 1: Filter for valid images ──
-    const imageFiles = files.filter(f => {
-        const type = f.type ? f.type.toLowerCase() : '';
-        const name = f.name ? f.name.toLowerCase() : '';
-        
-        if (type.match(/image\/(jpeg|jpg|png)/i)) return true;
-        return name.endsWith('.jpg') || name.endsWith('.jpeg') || name.endsWith('.png');
-    });
+    const isValidImage = (file) => {
+        if (!file) return false;
+        const typeValid = file.type && file.type.startsWith('image/');
+        const nameValid = file.name && /\\.(jpg|jpeg|png)$/i.test(file.name);
+        return typeValid || nameValid;
+    };
+    const imageFiles = files.filter(isValidImage);
 
     if (imageFiles.length === 0) {
         if (statusLabel) {
@@ -256,9 +253,11 @@ window.runJpgToPdf = async function(files) {
                 }
 
                 const imageUrl = URL.createObjectURL(imgFile);
+                const safeId = 'img-' + i;
 
                 const img = await new Promise((resolve, reject) => {
                     const image = new Image();
+                    image.id = safeId;
                     image.onload = () => resolve(image);
                     image.onerror = reject;
                     image.src = imageUrl;
