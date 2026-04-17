@@ -53,6 +53,11 @@
         // 2. DUMB CLICK HANDLER
         dropZone.addEventListener('click', (e) => {
             if (window.currentActiveTool === 'JPG TO PDF') {
+                // Do not intercept clicks on interactive elements like buttons or selects
+                if (e.target.closest('button') || e.target.closest('select')) {
+                    return;
+                }
+
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
@@ -409,22 +414,8 @@ window.renderPreviewGallery = function() {
                 dropZone.innerHTML = `
                   <div style="color: green; font-weight: bold; padding: 30px 0 10px; font-size: 22px;">CONVERSION SUCCESSFULLY COMPLETED</div>
                   <div style="font-weight: bold; margin-bottom: 25px; font-size: 14px;">${imageFiles.length} IMAGES CONVERTED SUCCESSFULLY</div>
-                  <button type="button" id="reset-redirect-btn" style="background-color: #111111; color: #ffffff; padding: 12px 40px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; display: block; margin: 0 auto; max-width: 280px; width: 100%; font-size: 14px;">BACK TO HOME</button>
+                  <button type="button" onclick="window.location.href = window.location.pathname; window.location.reload(true);" style="background-color: #111111; color: #ffffff; padding: 12px 40px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; display: block; margin: 0 auto; max-width: 280px; width: 100%; font-size: 14px;">BACK TO HOME</button>
                 `;
-                
-                const resetBtn = document.getElementById('reset-redirect-btn');
-                if (resetBtn) {
-                  resetBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Route to Merge PDF
-                    window.location.hash = 'merge-pdf'; 
-                    
-                    // Force a hard refresh from the server
-                    window.location.reload(true); 
-                  });
-                }
             }
 
         } catch (err) {
