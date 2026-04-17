@@ -4,36 +4,63 @@
  */
 
 // ── FIXED EVENT BINDING FOR MANUAL UPLOADS (ISOLATED) ──
+
 (function() {
     if (window._jpgToPdfInitDone) return;
     window._jpgToPdfInitDone = true;
 
     const dropZone = document.getElementById('drop-zone');
     
-    // 1. Force Create the Input (If Missing)
-    let forceInput = document.getElementById('jpg-upload-input');
-    if (!forceInput) {
-        forceInput = document.createElement('input');
-        forceInput.type = 'file';
-        forceInput.id = 'jpg-upload-input';
-        forceInput.multiple = true;
-        forceInput.accept = '.jpg, .jpeg, .png, image/jpeg, image/png';
-        forceInput.style.display = 'none';
-        document.body.appendChild(forceInput);
-    }
+    // 1. Clean up and force fresh input
+    let oldInput = document.getElementById('jpg-upload-input');
+    if (oldInput) oldInput.remove();
     
+    document.body.insertAdjacentHTML('beforeend', '<input type="file" id="jpg-upload-input" multiple accept="image/*, .jpg, .jpeg, .png, .PNG, .JPG, .JPEG" style="display: none;">');
+    let forceInput = document.getElementById('jpg-upload-input');
+
+    // Bind Change Listener directly to the input, completely outside the click listener
+    forceInput.addEventListener('change', (e) => {
+        if (window.currentActiveTool === 'JPG TO PDF') {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const rawFiles = e.target.files;
+            if (!rawFiles || rawFiles.length === 0) return;
+
+            const validFiles = Array.from(rawFiles).filter(file => {
+                if (!file) return false;
+                const isImageMime = file.type.startsWith('image/');
+                const hasImageExt = /\.(jpg|jpeg|png)$/i.test(file.name);
+                return isImageMime || hasImageExt;
+            });
+
+            if (!window.jpgGlobalState) window.jpgGlobalState = [];
+            
+            validFiles.forEach(file => {
+                window.jpgGlobalState.push(file);
+            });
+
+            if (window.jpgGlobalState.length > 0) {
+                window.renderPreviewGallery();
+            }
+
+            // CRITICAL RESET
+            e.target.value = '';
+        }
+    });
+
     if (dropZone) {
-        // 2. Aggressive Click Binding
+        // 2. DUMB CLICK HANDLER
         dropZone.addEventListener('click', (e) => {
             if (window.currentActiveTool === 'JPG TO PDF') {
                 e.preventDefault();
                 e.stopPropagation();
-                const btn = document.getElementById('action-button');
-                if (!btn || !btn.classList.contains('download-ready')) {
-                    document.getElementById('jpg-upload-input').click();
-                }
+                e.stopImmediatePropagation();
+                
+                const uploadInput = document.getElementById('jpg-upload-input');
+                if(uploadInput) uploadInput.click();
             }
-        });
+        }, true);
 
         // Add isolated drop binding to overwrite default if present
         dropZone.addEventListener('dragover', (e) => {
@@ -52,89 +79,52 @@
                 if (!btn || !btn.classList.contains('download-ready')) {
                     if (e.dataTransfer && e.dataTransfer.files) {
                         const rawFiles = e.dataTransfer.files;
-                        const filesArr = Array.from(rawFiles);
-                        if (filesArr.length === 0) return;
+                        if (!rawFiles || rawFiles.length === 0) return;
+                        
+                        const validFiles = Array.from(rawFiles).filter(file => {
+                            if (!file) return false;
+                            const isImageMime = file.type.startsWith('image/');
+                            const hasImageExt = /\.(jpg|jpeg|png)$/i.test(file.name);
+                            return isImageMime || hasImageExt;
+                        });
                         
                         if (!window.jpgGlobalState) window.jpgGlobalState = [];
                         
-                        const isValidImage = (file) => {
-                            if (!file) return false;
-                            return file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|heic)$/i.test(file.name);
-                        };
-                        
-                        filesArr.forEach(file => {
-                            if (isValidImage(file)) {
-                                window.jpgGlobalState.push(file);
-                            }
+                        validFiles.forEach(file => {
+                            window.jpgGlobalState.push(file);
                         });
                         
                         if (window.jpgGlobalState.length > 0) {
-                            window.runJpgToPdf(window.jpgGlobalState);
+                            window.renderPreviewGallery();
                         }
                     }
                 }
             }
         }, true);
     }
-
-    // 3. Robust Change Event & Reset
-    forceInput.addEventListener('change', (e) => {
-        if (window.currentActiveTool === 'JPG TO PDF') {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const rawFiles = e.target.files;
-            if (!rawFiles || rawFiles.length === 0) return;
-
-            const filesArr = Array.from(rawFiles);
-            if (!window.jpgGlobalState) window.jpgGlobalState = [];
-
-            const isValidImage = (file) => {
-                if (!file) return false;
-                return file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|heic)$/i.test(file.name);
-            };
-
-            filesArr.forEach(file => {
-                if (isValidImage(file)) {
-                    window.jpgGlobalState.push(file);
-                }
-            });
-
-            if (window.jpgGlobalState.length > 0) {
-                window.runJpgToPdf(window.jpgGlobalState);
-            }
-
-            // CRITICAL RESET
-            e.target.value = '';
-        }
-    });
-
 })();
 
-window.runJpgToPdf = async function(files) {
-    console.log("window.runJpgToPdf triggered with files:", files);
-    
-    // Prevent duplicate execution from simultaneous event listeners
-    if (window._isJpgProcessing) return;
-    window._isJpgProcessing = true;
-    
-    // Release the lock slightly later, allowing UI setup to complete before next possible trigger
-    setTimeout(() => { window._isJpgProcessing = false; }, 500);
-
+window.runJpgToPdf = function(files) {
     if (!files || files.length === 0) return;
 
-    // Resolve global state correctly in case called from outside bypassing our handleFiles
     if (files !== window.jpgGlobalState) {
         if (!window.jpgGlobalState) window.jpgGlobalState = [];
-        const isValidImage = (file) => {
+        const newValidFiles = Array.from(files).filter(file => {
             if (!file) return false;
-            return file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp|heic)$/i.test(file.name);
-        };
-        const newValidFiles = Array.from(files).filter(isValidImage);
+            const isImageMime = file.type.startsWith('image/');
+            const hasImageExt = /\.(jpg|jpeg|png)$/i.test(file.name);
+            return isImageMime || hasImageExt;
+        });
         window.jpgGlobalState = window.jpgGlobalState.concat(newValidFiles);
     }
 
-    const imageFiles = window.jpgGlobalState;
+    if (window.jpgGlobalState.length > 0) {
+        window.renderPreviewGallery();
+    }
+};
+
+window.renderPreviewGallery = function() {
+    const imageFiles = window.jpgGlobalState || [];
 
     const titleBox = document.getElementById('tool-title-box');
     let btn = document.getElementById('action-button');
@@ -216,22 +206,49 @@ window.runJpgToPdf = async function(files) {
         const pagePreviewBox = document.createElement('div');
         pagePreviewBox.id = id;
         pagePreviewBox.className = 'page-preview-box';
-        pagePreviewBox.style.cssText = 'background: #fff; display: flex; justify-content: center; align-items: center; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden; transition: all 0.3s ease; border-radius: 4px; flex-shrink: 0;';
+        pagePreviewBox.style.cssText = 'background: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 2px solid #ddd; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden; transition: all 0.3s ease; border-radius: 4px; flex-shrink: 0; padding: 5px;';
         
         const img = document.createElement('img');
         img.src = URL.createObjectURL(file);
-        img.style.cssText = 'max-width: 100%; max-height: 100%; object-fit: contain; pointer-events: none;';
+        img.style.cssText = 'max-width: 100%; max-height: 80%; object-fit: contain; pointer-events: none;';
+        
+        // Per-Image Orientation Control
+        const select = document.createElement('select');
+        select.className = 'image-orientation-select';
+        select.style.cssText = 'margin-top:5px; font-size:12px; width:100%; padding: 2px; border-radius: 4px; border: 1px solid #ccc; font-weight: bold;';
+        select.innerHTML = `
+            <option value="p" selected>Portrait</option>
+            <option value="l">Landscape</option>
+        `;
         
         pagePreviewBox.appendChild(img);
+        pagePreviewBox.appendChild(select);
         gallery.appendChild(pagePreviewBox);
+
+        // Individual selection updates its own box
+        select.onchange = () => {
+            if (select.value === 'l') {
+                pagePreviewBox.style.aspectRatio = '1.414 / 1';
+                pagePreviewBox.style.width = '200px';
+                pagePreviewBox.style.borderColor = '#4a90e2';
+            } else {
+                pagePreviewBox.style.aspectRatio = '1 / 1.414';
+                pagePreviewBox.style.width = '150px';
+                pagePreviewBox.style.borderColor = '#e5322d'; 
+            }
+        };
     });
 
     const updateLayoutPreview = () => {
-        const ori = document.getElementById('jpg-orientation').value;
+        const globalOri = document.getElementById('jpg-orientation').value;
         const previewBoxes = document.querySelectorAll('.page-preview-box');
+        const individualSelects = document.querySelectorAll('.image-orientation-select');
         
-        previewBoxes.forEach(box => {
-            if (ori === 'l') {
+        previewBoxes.forEach((box, i) => {
+            const select = individualSelects[i];
+            if (select) select.value = globalOri;
+
+            if (globalOri === 'l') {
                 box.style.aspectRatio = '1.414 / 1';
                 box.style.width = '200px';
                 box.style.borderColor = '#4a90e2';
@@ -304,30 +321,31 @@ window.runJpgToPdf = async function(files) {
         try {
             if (!window.jspdf || !window.jspdf.jsPDF) throw new Error("jsPDF not loaded");
 
-            const orientation = document.getElementById('jpg-orientation').value;
+            const globalOrientation = document.getElementById('jpg-orientation').value;
             const pageSize = document.getElementById('jpg-size').value;
-            const marginPx = parseInt(document.getElementById('jpg-margin').value, 10);
-
-            // Approximation of pixel to mm 
-            const marginMm = marginPx === 0 ? 0 : (marginPx === 15 ? 10 : 20);
+            const marginValue = parseInt(document.getElementById('jpg-margin').value, 10);
+            
+            const individualSelects = Array.from(document.querySelectorAll('.image-orientation-select'));
 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({
-                orientation: orientation,
+                orientation: individualSelects[0] ? individualSelects[0].value : globalOrientation,
                 unit: 'mm',
                 format: pageSize
             });
 
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
-
             for (let i = 0; i < imageFiles.length; i++) {
                 const imgFile = imageFiles[i];
+                const individualOrientation = individualSelects[i] ? individualSelects[i].value : globalOrientation;
+
                 if (statusLabel) statusLabel.innerText = `Converting: ${imgFile.name} (${i+1}/${imageFiles.length})`;
 
                 if (i > 0) {
-                    doc.addPage(pageSize, orientation);
+                    doc.addPage(pageSize, individualOrientation);
                 }
+
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
 
                 const imageUrl = URL.createObjectURL(imgFile);
                 const safeId = 'img-j-' + Date.now() + '-' + i;
@@ -340,8 +358,8 @@ window.runJpgToPdf = async function(files) {
                     image.src = imageUrl;
                 });
 
-                const maxW = pageWidth - (marginMm * 2);
-                const maxH = pageHeight - (marginMm * 2);
+                const maxW = pageWidth - marginValue;
+                const maxH = pageHeight - marginValue;
                 const imgRatio = img.width / img.height;
                 const pageRatio = maxW / maxH;
                 
@@ -354,8 +372,8 @@ window.runJpgToPdf = async function(files) {
                     drawW = drawH * imgRatio;
                 }
 
-                const x = marginMm + (maxW - drawW) / 2;
-                const y = marginMm + (maxH - drawH) / 2;
+                const x = (pageWidth - drawW) / 2;
+                const y = (pageHeight - drawH) / 2;
 
                 const fileExt = imgFile.name.split('.').pop().toLowerCase();
                 let imgFormat = fileExt === 'png' ? 'PNG' : 'JPEG';
@@ -370,64 +388,44 @@ window.runJpgToPdf = async function(files) {
             // ── SUCCESS UI & DOWNLOAD ──
             doc.save('KELLYNEPDF_JPG_TO_PDF.pdf');
 
-            if (titleBox) {
-                titleBox.innerText = 'CONVERSION SUCCESSFULLY COMPLETED';
-                titleBox.style.color = '#008000';
-                titleBox.style.fontSize = '22px';
-                titleBox.style.fontWeight = '900';
-            }
+            // NUCLEAR FIX: Physically destroy the input so it CANNOT be triggered
+            const hiddenInput = document.getElementById('jpg-upload-input');
+            if (hiddenInput) hiddenInput.remove();
 
-            if (statusLabel) {
-                statusLabel.innerHTML = `${imageFiles.length} IMAGES CONVERTED SUCCESSFULLY`;
-                statusLabel.style.color = '#008000';
-            }
+            if (titleBox) titleBox.style.display = 'none';
 
-            const dropZone = document.getElementById('drop-zone');
-            if (dropZone) dropZone.classList.add('success-tool-glow');
-            
-            // Remove dropdowns and preview upon success for cleaner UI
-            if (dropdownContainer) dropdownContainer.style.display = 'none';
+            // Fully remove extra elements to prevent ID collisions
+            if (dropdownContainer) dropdownContainer.remove();
 
             // Clear global state on success
             window.jpgGlobalState = [];
 
-            // ── "BACK TO HOME" Button — Solid Black (#111) ──
-            btn.disabled = false;
-            btn.style.cursor = 'pointer';
-            btn.innerHTML = `<span style="color: white; font-weight: 900; font-size: 15px; text-transform: uppercase;">BACK TO HOME</span>`;
-            
-            const finalStyles = {
-                'display': 'inline-block',
-                'background-color': '#111111',
-                'color': '#ffffff',
-                'border': 'none',
-                'padding': '18px 45px',
-                'border-radius': '35px',
-                'width': 'auto',
-                'margin': '25px auto 0',
-                'cursor': 'pointer',
-                'opacity': '1',
-                'visibility': 'visible',
-                'font-weight': '900',
-                'box-shadow': '0 10px 25px rgba(0,0,0,0.2)',
-                'text-align': 'center',
-                'text-decoration': 'none',
-                'z-index': '9999',
-                'position': 'relative',
-                'pointer-events': 'all'
-            };
-
-            Object.keys(finalStyles).forEach(key => {
-                btn.style.setProperty(key, finalStyles[key], 'important');
-            });
-
-            btn.onclick = (e2) => {
-                e2.stopPropagation();
-                e2.stopImmediatePropagation();
-                e2.preventDefault();
-                console.log("Back to Home Clicked - Hard Refreshing...");
-                window.location.reload(true);
-            };
+            const dropZone = document.getElementById('drop-zone');
+            if (dropZone) {
+                // Sever any label/for connections
+                dropZone.removeAttribute('for');
+                
+                dropZone.classList.add('success-tool-glow');
+                dropZone.innerHTML = `
+                  <div style="color: green; font-weight: bold; padding: 30px 0 10px; font-size: 22px;">CONVERSION SUCCESSFULLY COMPLETED</div>
+                  <div style="font-weight: bold; margin-bottom: 25px; font-size: 14px;">${imageFiles.length} IMAGES CONVERTED SUCCESSFULLY</div>
+                  <button type="button" id="reset-redirect-btn" style="background-color: #111111; color: #ffffff; padding: 12px 40px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; display: block; margin: 0 auto; max-width: 280px; width: 100%; font-size: 14px;">BACK TO HOME</button>
+                `;
+                
+                const resetBtn = document.getElementById('reset-redirect-btn');
+                if (resetBtn) {
+                  resetBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Route to Merge PDF
+                    window.location.hash = 'merge-pdf'; 
+                    
+                    // Force a hard refresh from the server
+                    window.location.reload(true); 
+                  });
+                }
+            }
 
         } catch (err) {
             console.error("Conversion Error:", err);
